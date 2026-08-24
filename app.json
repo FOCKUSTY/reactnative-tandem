@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "reactnative-tandem",
-    "slug": "reactnative-tandem",
+    "slug": "fockusty",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,10 +16,20 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.tandem.fockusty"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "41645609-01c0-4044-8de5-ee2184053e21"
+      }
+    },
+    "owner": "fockustys-team",
+    "plugins": [
+      "expo-secure-store"
+    ]
   }
 }
