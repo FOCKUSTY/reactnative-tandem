@@ -28,8 +28,6 @@
       }
     },
     "owner": "fockustys-team",
-    "plugins": [
-      "expo-secure-store"
-    ]
+    "plugins": ["expo-secure-store"]
   }
 }
