@@ -1,43 +1,51 @@
-import { useState } from "react";
 import { Alert } from "react-native";
-import { useAuth } from "../../contexts/auth.context";
-import { usersService } from "../../api/services/users.service";
-import { getPartner } from "../../utils/partner.utils";
+
+import { useAuth } from "../../contexts";
+import { usersService } from "../../api";
+import { getPartner } from "../../utils";
+
+import { useForm } from "../use-form.hook";
 
 export const useLinkPartner = () => {
   const { me, refreshMe } = useAuth();
-  const [partnerUsername, setPartnerUsername] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const partner = getPartner(me);
+  const isLinked = !!me?.pair;
 
-  const handleLink = async () => {
-    if (!partnerUsername.trim()) {
-      Alert.alert("Ошибка", "Введите имя пользователя партнёра");
-      return;
-    }
-    setLoading(true);
-    try {
-      await usersService.linkPartner(partnerUsername.trim());
+  const form = useForm({
+    initialValues: { partnerUsername: "" },
+    validate: (values) => {
+      const errors: any = {};
+      if (!values.partnerUsername.trim()) {
+        errors.partnerUsername = "Введите имя пользователя";
+      }
+      return errors;
+    },
+    onSubmit: async (values) => {
+      await usersService.linkPartner(values.partnerUsername.trim());
       await refreshMe();
       Alert.alert("Успех", "Партнёр успешно привязан!");
-      setPartnerUsername("");
+      form.reset();
+    },
+  });
+
+  const handleLink = async () => {
+    try {
+      await form.handleSubmit();
     } catch (error: any) {
       Alert.alert(
         "Ошибка",
         error.response?.data?.message || "Не удалось привязать",
       );
-    } finally {
-      setLoading(false);
     }
   };
 
   return {
     partner,
-    partnerUsername,
-    setPartnerUsername,
-    loading,
+    partnerUsername: form.values.partnerUsername,
+    setPartnerUsername: (text: string) =>
+      form.setFieldValue("partnerUsername", text),
+    loading: form.isSubmitting,
     handleLink,
-    isLinked: !!me?.pair,
+    isLinked,
   };
 };
