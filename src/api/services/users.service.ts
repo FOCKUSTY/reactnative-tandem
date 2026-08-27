@@ -1,10 +1,5 @@
 import api from "../client";
-import { User } from "../../types";
-
-export interface MeResponse extends User {
-  partnerId: string | null;
-  partner: User | null;
-}
+import { MeResponse } from "../../types";
 
 export const usersService = {
   getMe: () => api.get<MeResponse>("/users/me"),

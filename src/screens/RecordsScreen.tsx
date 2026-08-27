@@ -33,8 +33,9 @@ export default function RecordsScreen() {
   const route = useRoute<RecordsScreenRouteProp>();
   const { sectionId, title } = route.params;
 
-  const { filters } = useFilters();
-  const { data: records = [], isLoading } = useRecords(filters);
+  const { data: records = [], isLoading } = useRecords({
+    sectionIds: [sectionId],
+  });
   const deleteMutation = useDeleteRecord();
 
   React.useLayoutEffect(() => {

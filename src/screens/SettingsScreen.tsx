@@ -34,7 +34,7 @@ export default function SettingsScreen() {
     ]);
   };
 
-  const isPartnerLinked = !!me?.partnerId;
+  const isPartnerLinked = !!me?.pair;
 
   const SettingsItem = ({
     icon,

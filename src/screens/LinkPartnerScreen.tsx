@@ -11,6 +11,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { usersService } from "../api/services/users.service";
 import { useTheme } from "../contexts/ThemeContext";
 import { ThemeColors } from "../theme/colors";
+import { getPartner } from "../utils/partner";
 
 export default function LinkPartnerScreen() {
   const { me, refreshMe } = useAuth();
@@ -18,6 +19,8 @@ export default function LinkPartnerScreen() {
   const styles = getStyles(colors);
   const [partnerUsername, setPartnerUsername] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const partner = getPartner(me);
 
   const handleLink = async () => {
     if (!partnerUsername.trim()) {
@@ -43,11 +46,11 @@ export default function LinkPartnerScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Не будьте одиноки</Text>
-      {me?.partnerId ? (
+      {me?.pair ? (
         <View style={styles.linkedContainer}>
           <Text style={styles.linkedText}>Вы уже привязаны</Text>
           <Text style={styles.linkedSubtext}>
-            Партнёр: {me.partner?.name || me.partner?.username || "неизвестно"}
+            Партнёр: {partner?.name || partner?.username || "неизвестно"}
           </Text>
         </View>
       ) : (

@@ -23,6 +23,7 @@ import {
 import { Section } from "../types";
 import { RootStackParamList } from "../../App";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import { useAuth } from "../contexts/AuthContext";
 
 const SECTION_ICONS: Record<string, string> = {
   rules: "rule",
@@ -40,6 +41,7 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function SectionsScreen() {
   const { colors } = useTheme();
+  const { user } = useAuth();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProp>();
 
@@ -127,28 +129,30 @@ export default function SectionsScreen() {
     return "folder";
   };
 
-  const renderItem = ({ item }: { item: Section }) => (
-    <TouchableOpacity
-      style={styles.card}
-      onPress={() => handlePress(item)}
-      onLongPress={() => handleDeleteSection(item)}
-      activeOpacity={0.7}
-    >
-      <View style={styles.iconContainer}>
-        <Icon name={getIcon(item)} size={32} color={colors.primary} />
-      </View>
-      <View style={styles.textContainer}>
-        <Text style={styles.title}>{item.name}</Text>
-        <Text style={styles.count}>{item._count?.records || 0} записей</Text>
-      </View>
-      {item.isSystem && (
-        <View style={styles.systemBadge}>
-          <Text style={styles.systemBadgeText}>Сист.</Text>
+  const renderItem = ({ item }: { item: Section }) => {
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        onPress={() => handlePress(item)}
+        onLongPress={() => handleDeleteSection(item)}
+        activeOpacity={0.7}
+      >
+        <View style={styles.iconContainer}>
+          <Icon name={getIcon(item)} size={32} color={colors.primary} />
         </View>
-      )}
-      <Icon name="chevron-right" size={24} color={colors.textMuted} />
-    </TouchableOpacity>
-  );
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.count}>{item._count?.records || 0} записей</Text>
+        </View>
+        {item.isSystem && (
+          <View style={styles.systemBadge}>
+            <Text style={styles.systemBadgeText}>Сист.</Text>
+          </View>
+        )}
+        <Icon name="chevron-right" size={24} color={colors.textMuted} />
+      </TouchableOpacity>
+    );
+  };
 
   if (isLoading && !refreshing) {
     return (
@@ -224,6 +228,11 @@ export default function SectionsScreen() {
 
 const getStyles = (colors: ThemeColors) =>
   StyleSheet.create({
+    partnerLabel: {
+      fontSize: 12,
+      color: colors.textMuted,
+      marginTop: 2,
+    },
     container: {
       flex: 1,
       backgroundColor: colors.background,

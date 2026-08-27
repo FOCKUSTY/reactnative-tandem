@@ -110,14 +110,14 @@ function AppNavigator() {
       ) : (
         <>
           <Stack.Screen
-            name="Filters"
-            component={FiltersScreen}
-            options={{ title: "Фильтры" }}
-          />
-          <Stack.Screen
             name="Main"
             component={MainTabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Filters"
+            component={FiltersScreen}
+            options={{ title: "Фильтры" }}
           />
           <Stack.Screen
             name="LinkPartner"
