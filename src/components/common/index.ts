@@ -6,3 +6,4 @@ export * from "./tags-input.component";
 export * from "./tags-input-filter.component";
 export * from "./sort-controls.component";
 export * from "./status-switches.component";
+export * from "./modal-wrapper.component";

@@ -5,14 +5,14 @@ import {
   View,
   Text,
   TouchableOpacity,
-  Modal,
   FlatList,
   ActivityIndicator,
-  TextInput,
 } from "react-native";
 
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { ModalWrapper } from "../common";
+import { CreateSectionModal } from "./create-section-modal.component";
 
 export type SectionSelectorProperties = {
   sections: Section[];
@@ -48,17 +48,14 @@ export const SectionSelectorComponent = ({
 
   const renderSectionItem = ({ item }: { item: Section }) => (
     <TouchableOpacity
-      style={[
-        styles.sectionOption,
-        item.id === selectedId && styles.sectionOptionSelected,
-      ]}
+      style={[styles.option, item.id === selectedId && styles.optionSelected]}
       onPress={() => {
         onSelect(item.id);
         setModalVisible(false);
       }}
     >
-      <View style={styles.sectionOptionContent}>
-        <Text style={styles.sectionOptionName}>{item.name}</Text>
+      <View style={styles.optionContent}>
+        <Text style={styles.optionName}>{item.name}</Text>
         {item.isSystem && (
           <View style={styles.systemBadge}>
             <Text style={styles.systemBadgeText}>Сист.</Text>
@@ -73,102 +70,53 @@ export const SectionSelectorComponent = ({
 
   return (
     <>
-      <TouchableOpacity
-        style={styles.sectionSelector}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.sectionSelectorText}>
-          {selectedSection ? selectedSection.name : "Выберите секцию"}
+      <TouchableOpacity style={styles.selector} onPress={() => setModalVisible(true)}>
+        <Text style={styles.selectorText}>
+          {selectedSection ? selectedSection.name : 'Выберите секцию'}
         </Text>
-        <MaterialIcons
-          name="arrow-drop-down"
-          size={24}
-          color={colors.textMuted}
-        />
+        <MaterialIcons name="arrow-drop-down" size={24} color={colors.textMuted} />
       </TouchableOpacity>
 
-      <Modal
+      <ModalWrapper
         visible={modalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
+        onClose={() => setModalVisible(false)}
+        title="Выберите секцию"
+        showCancel={false}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Выберите секцию</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)}>
-                <MaterialIcons name="close" size={24} color={colors.text} />
-              </TouchableOpacity>
-            </View>
-
-            {loading ? (
-              <ActivityIndicator size="large" color={colors.primary} />
-            ) : (
-              <>
-                <FlatList
-                  data={sections}
-                  keyExtractor={(item) => item.id}
-                  renderItem={renderSectionItem}
-                  contentContainerStyle={styles.sectionList}
-                />
-                <TouchableOpacity
-                  style={styles.createSectionButton}
-                  onPress={() => {
-                    setModalVisible(false);
-                    setCreateModalVisible(true);
-                  }}
-                >
-                  <MaterialIcons name="add" size={20} color={colors.primary} />
-                  <Text style={styles.createSectionButtonText}>
-                    Создать новую секцию
-                  </Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        visible={createModalVisible}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setCreateModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Создать секцию</Text>
-            <TextInput
-              style={styles.modalInput}
-              placeholder="Название секции"
-              placeholderTextColor={colors.textMuted}
-              value={newSectionName}
-              onChangeText={setNewSectionName}
-              autoFocus
+        {loading ? (
+          <ActivityIndicator size="large" color={colors.primary} />
+        ) : (
+          <>
+            <FlatList
+              data={sections}
+              keyExtractor={(item) => item.id}
+              renderItem={renderSectionItem}
+              contentContainerStyle={styles.list}
             />
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalCancel]}
-                onPress={() => {
-                  setCreateModalVisible(false);
-                  setNewSectionName("");
-                }}
-              >
-                <Text style={styles.modalButtonText}>Отмена</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, styles.modalCreate]}
-                onPress={onCreateSection}
-              >
-                <Text style={[styles.modalButtonText, { color: "#fff" }]}>
-                  Создать
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+            <TouchableOpacity
+              style={styles.createButton}
+              onPress={() => {
+                setModalVisible(false);
+                setCreateModalVisible(true);
+              }}
+            >
+              <MaterialIcons name="add" size={20} color={colors.primary} />
+              <Text style={styles.createButtonText}>Создать новую секцию</Text>
+            </TouchableOpacity>
+          </>
+        )}
+      </ModalWrapper>
+
+      <CreateSectionModal
+        visible={createModalVisible}
+        onClose={() => {
+          setCreateModalVisible(false);
+          setNewSectionName('');
+        }}
+        sectionName={newSectionName}
+        setSectionName={setNewSectionName}
+        onCreate={onCreateSection}
+      />
     </>
   );
 };
