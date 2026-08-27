@@ -1,4 +1,4 @@
-import { MeResponse } from "../api/services/users.service";
+import { MeResponse } from "../types";
 
 export const getPartner = (me?: MeResponse | null) => {
   if (!me) {

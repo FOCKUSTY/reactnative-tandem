@@ -7,8 +7,8 @@ import React, {
 } from "react";
 import { storage } from "../utils/storage";
 import { authService } from "../api/services/auth.service";
-import { usersService, MeResponse } from "../api/services/users.service";
-import { User } from "../types";
+import { usersService } from "../api/services/users.service";
+import { MeResponse, User } from "../types";
 import { handleApiError } from "../utils/errorHandler";
 
 interface AuthContextType {

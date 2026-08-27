@@ -22,7 +22,7 @@ export default function PartnerLinkBanner() {
     loadHideStatus();
   }, []);
 
-  if (!me || me.partnerId || isHidden) return null;
+  if (!me || me.pair || isHidden) return null;
 
   const handleHide = async () => {
     await storage.setItem(STORAGE_KEYS.HIDE_PARTNER_BANNER, "true");
