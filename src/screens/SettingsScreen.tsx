@@ -36,7 +36,6 @@ export default function SettingsScreen() {
 
   const isPartnerLinked = !!me?.partnerId;
 
-  // Компонент элемента списка настроек
   const SettingsItem = ({
     icon,
     label,
@@ -136,7 +135,7 @@ export default function SettingsScreen() {
           <SettingsItem
             icon="info"
             label="Версия"
-            rightElement={<Text style={styles.valueText}>1.0.0</Text>}
+            rightElement={<Text style={styles.valueText}>0.0.1-indev</Text>}
           />
           <SettingsItem
             icon="heart"
@@ -152,7 +151,7 @@ export default function SettingsScreen() {
       </TouchableOpacity>
 
       <View style={styles.footer}>
-        <Text style={styles.footerText}>Тандем v1.0.0</Text>
+        <Text style={styles.footerText}>Тандем 0.0.1-indev</Text>
       </View>
     </ScrollView>
   );

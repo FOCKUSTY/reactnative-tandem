@@ -1,12 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { recordsService } from "../api/services/records.service";
-import { MyRecord, Section, CreateRecordDto, UpdateRecordDto } from "../types";
+import { MyRecord, CreateRecordDto, UpdateRecordDto } from "../types";
+import { RecordFilters } from "../contexts/FiltersContext";
 
-export const useRecords = (section: Section) => {
+export const useRecords = (filters?: RecordFilters) => {
   return useQuery<MyRecord[]>({
-    queryKey: ["records", section],
-    queryFn: () => recordsService.getRecords(section).then((res) => res.data),
-    enabled: !!section,
+    queryKey: ["records", filters],
+    queryFn: () => recordsService.getRecords(filters).then((res) => res.data),
+    enabled: true,
+  });
+};
+
+export const useRecordsBySlug = (slug: string) => {
+  return useQuery<MyRecord[]>({
+    queryKey: ["records", slug],
+    queryFn: () =>
+      recordsService.getRecordsBySlug(slug).then((res) => res.data),
+    enabled: !!slug,
   });
 };
 
@@ -16,26 +26,28 @@ export const useCreateRecord = () => {
     mutationFn: (data) =>
       recordsService.createRecord(data).then((res) => res.data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["records", variables.section],
-      });
+      queryClient.invalidateQueries({ queryKey: ["records"] });
+      if (variables.sectionId) {
+        queryClient.invalidateQueries({
+          queryKey: ["records", variables.sectionId],
+        });
+      }
     },
   });
 };
 
 export const useUpdateRecord = () => {
   const queryClient = useQueryClient();
-  return useMutation<
-    MyRecord,
-    Error,
-    { id: string; data: UpdateRecordDto; section: Section }
-  >({
+  return useMutation<MyRecord, Error, { id: string; data: UpdateRecordDto }>({
     mutationFn: ({ id, data }) =>
       recordsService.updateRecord(id, data).then((res) => res.data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["records", variables.section],
-      });
+      queryClient.invalidateQueries({ queryKey: ["records"] });
+      if (variables.data.sectionId) {
+        queryClient.invalidateQueries({
+          queryKey: ["records", variables.data.sectionId],
+        });
+      }
     },
   });
 };

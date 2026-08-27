@@ -14,14 +14,23 @@ import HomeScreen from "./src/screens/HomeScreen";
 
 import LinkPartnerScreen from "./src/screens/LinkPartnerScreen";
 import SettingsScreen from "./src/screens/SettingsScreen";
-import { Section } from "./src/types";
+import { MyRecord } from "./src/types";
+import SectionsScreen from "./src/screens/SectionsScreen";
+import RecordsScreen from "./src/screens/RecordsScreen";
+import RecordDetail from "./src/screens/RecordDetail";
+import CreateRecordScreen from "./src/screens/CreateRecordScreen";
+import { FiltersProvider } from "./src/contexts/FiltersContext";
+import FiltersScreen from "./src/screens/FiltersScreen";
+import FilterScreen from "./src/screens/FilterScreen";
 
 export type RootStackParamList = {
   Login: undefined;
   Main: undefined;
-  Records: { section: Section; title: string };
-  RecordDetail: { id: string; section: Section };
-  CreateRecord: { section: Section; record?: any };
+  Filters: undefined;
+  Filter: undefined;
+  Records: { sectionId: string; title: string };
+  RecordDetail: { id: string };
+  CreateRecord: { sectionId: string; record?: MyRecord };
   LinkPartner: undefined;
   Settings: undefined;
 };
@@ -39,8 +48,9 @@ function MainTabs() {
         tabBarIcon: ({ color, size }) => {
           let iconName: MaterialIconsIconName;
           if (route.name === "Tandem") iconName = "home";
-          else if (route.name === "Разделы") iconName = "grid-4x4";
+          else if (route.name === "Разделы") iconName = "menu";
           else if (route.name === "Настройки") iconName = "settings";
+          else if (route.name === "Фильтр") iconName = "filter-list-alt";
           else iconName = "circle";
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
@@ -62,6 +72,8 @@ function MainTabs() {
       })}
     >
       <Tab.Screen name="Tandem" component={HomeScreen} />
+      <Tab.Screen name="Разделы" component={SectionsScreen} />
+      <Tab.Screen name="Фильтр" component={FilterScreen} />
       <Tab.Screen name="Настройки" component={SettingsScreen} />
     </Tab.Navigator>
   );
@@ -98,6 +110,11 @@ function AppNavigator() {
       ) : (
         <>
           <Stack.Screen
+            name="Filters"
+            component={FiltersScreen}
+            options={{ title: "Фильтры" }}
+          />
+          <Stack.Screen
             name="Main"
             component={MainTabs}
             options={{ headerShown: false }}
@@ -106,6 +123,27 @@ function AppNavigator() {
             name="LinkPartner"
             component={LinkPartnerScreen}
             options={{ title: "Привязка партнёра" }}
+          />
+          <Stack.Screen
+            name="CreateRecord"
+            component={CreateRecordScreen}
+            options={({ route }) => ({
+              title: (route.params as { record?: MyRecord })?.record
+                ? "Редактировать запись"
+                : "Создать запись",
+            })}
+          />
+          <Stack.Screen
+            name="Records"
+            component={RecordsScreen}
+            options={({ route }) => ({
+              title: (route.params as { title: string })?.title || "Записи",
+            })}
+          />
+          <Stack.Screen
+            name="RecordDetail"
+            component={RecordDetail}
+            options={{ title: "Запись" }}
           />
           <Stack.Screen
             name="Settings"
@@ -123,9 +161,11 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <AuthProvider>
-          <NavigationContainer>
-            <AppNavigator />
-          </NavigationContainer>
+          <FiltersProvider>
+            <NavigationContainer>
+              <AppNavigator />
+            </NavigationContainer>
+          </FiltersProvider>
         </AuthProvider>
       </ThemeProvider>
     </QueryClientProvider>
