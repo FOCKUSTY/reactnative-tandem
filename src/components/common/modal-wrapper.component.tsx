@@ -1,7 +1,13 @@
-import { ReactNode } from 'react';
-import { Modal, View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useTheme } from '../../contexts';
-import { createStyles } from '../../utils';
+import { ReactNode } from "react";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { useTheme } from "../../contexts";
+import { createStyles } from "../../utils";
 
 export type ModalWrapperProps = {
   visible: boolean;
@@ -22,8 +28,8 @@ export const ModalWrapper = ({
   title,
   children,
   onConfirm,
-  confirmText = 'Сохранить',
-  cancelText = 'Отмена',
+  confirmText = "Сохранить",
+  cancelText = "Отмена",
   loading = false,
   showCancel = true,
   confirmDisabled = false,
@@ -32,20 +38,32 @@ export const ModalWrapper = ({
   const styles = getStyles(colors);
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
       <View style={styles.overlay}>
         <View style={styles.content}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.body}>{children}</View>
           <View style={styles.actions}>
             {showCancel && (
-              <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={onClose}>
+              <TouchableOpacity
+                style={[styles.button, styles.cancelButton]}
+                onPress={onClose}
+              >
                 <Text style={styles.cancelText}>{cancelText}</Text>
               </TouchableOpacity>
             )}
             {onConfirm && (
               <TouchableOpacity
-                style={[styles.button, styles.confirmButton, (loading || confirmDisabled) && styles.disabled]}
+                style={[
+                  styles.button,
+                  styles.confirmButton,
+                  (loading || confirmDisabled) && styles.disabled,
+                ]}
                 onPress={onConfirm}
                 disabled={loading || confirmDisabled}
               >
@@ -66,20 +84,20 @@ export const ModalWrapper = ({
 const getStyles = createStyles((colors) => ({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     backgroundColor: colors.card,
     borderRadius: 12,
     padding: 24,
-    width: '85%',
+    width: "85%",
     maxWidth: 400,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     color: colors.text,
     marginBottom: 16,
   },
@@ -87,8 +105,8 @@ const getStyles = createStyles((colors) => ({
     marginBottom: 16,
   },
   actions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
+    flexDirection: "row",
+    justifyContent: "flex-end",
     gap: 12,
   },
   button: {
@@ -96,7 +114,7 @@ const getStyles = createStyles((colors) => ({
     paddingVertical: 10,
     borderRadius: 8,
     minWidth: 80,
-    alignItems: 'center',
+    alignItems: "center",
   },
   cancelButton: {
     backgroundColor: colors.inputBackground,
@@ -113,7 +131,7 @@ const getStyles = createStyles((colors) => ({
   },
   confirmText: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: '600',
+    color: "#fff",
+    fontWeight: "600",
   },
 }));

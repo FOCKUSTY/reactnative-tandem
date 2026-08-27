@@ -1,6 +1,8 @@
 import type { Section, CreateSectionDto, UpdateSectionDto } from "../../types";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+
 import { sectionsService } from "../../api";
+import { useCreate, useUpdate, useDelete } from "../api";
 
 export const useSections = () => {
   return useQuery<Section[]>({
@@ -10,34 +12,23 @@ export const useSections = () => {
 };
 
 export const useCreateSection = () => {
-  const queryClient = useQueryClient();
-  return useMutation<Section, Error, CreateSectionDto>({
-    mutationFn: (data) =>
-      sectionsService.createSection(data).then((res) => res.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
-    },
-  });
+  return useCreate<Section, CreateSectionDto>(
+    (data) => sectionsService.createSection(data).then((res) => res.data),
+    ["sections"],
+  );
 };
 
 export const useUpdateSection = () => {
-  const queryClient = useQueryClient();
-  return useMutation<Section, Error, { id: string; data: UpdateSectionDto }>({
-    mutationFn: ({ id, data }) =>
+  return useUpdate<Section, { id: string; data: UpdateSectionDto }>(
+    ({ id, data }) =>
       sectionsService.updateSection(id, data).then((res) => res.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
-    },
-  });
+    ["sections"],
+  );
 };
 
 export const useDeleteSection = () => {
-  const queryClient = useQueryClient();
-  return useMutation<void, Error, string>({
-    mutationFn: (id) =>
-      sectionsService.deleteSection(id).then((res) => res.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sections"] });
-    },
-  });
+  return useDelete<void>(
+    (id) => sectionsService.deleteSection(id).then((res) => res.data),
+    ["sections"],
+  );
 };

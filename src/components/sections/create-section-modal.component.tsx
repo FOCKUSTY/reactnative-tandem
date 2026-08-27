@@ -1,7 +1,7 @@
-import { TextInput } from 'react-native';
-import { ModalWrapper } from '../common';
-import { useTheme } from '../../contexts';
-import { createStyles } from '../../utils';
+import { TextInput } from "react-native";
+import { ModalWrapper } from "../common";
+import { useTheme } from "../../contexts";
+import { createStyles } from "../../utils";
 
 export type CreateSectionModalProps = {
   visible: boolean;

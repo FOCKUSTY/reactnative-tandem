@@ -1,8 +1,9 @@
 import type { MyRecord, CreateRecordDto, UpdateRecordDto } from "../../types";
+import { useQuery } from "@tanstack/react-query";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { recordsService } from "../../api";
 import { RecordFilters } from "../../contexts";
+import { useCreate, useUpdate, useDelete } from "../api";
 
 export const useRecords = (filters?: RecordFilters) => {
   return useQuery<MyRecord[]>({
@@ -22,43 +23,23 @@ export const useRecordsBySlug = (slug: string) => {
 };
 
 export const useCreateRecord = () => {
-  const queryClient = useQueryClient();
-  return useMutation<MyRecord, Error, CreateRecordDto>({
-    mutationFn: (data) =>
-      recordsService.createRecord(data).then((res) => res.data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["records"] });
-      if (variables.sectionId) {
-        queryClient.invalidateQueries({
-          queryKey: ["records", variables.sectionId],
-        });
-      }
-    },
-  });
+  return useCreate<MyRecord, CreateRecordDto>(
+    (data) => recordsService.createRecord(data).then((res) => res.data),
+    ["records"],
+  );
 };
 
 export const useUpdateRecord = () => {
-  const queryClient = useQueryClient();
-  return useMutation<MyRecord, Error, { id: string; data: UpdateRecordDto }>({
-    mutationFn: ({ id, data }) =>
+  return useUpdate<MyRecord, { id: string; data: UpdateRecordDto }>(
+    ({ id, data }) =>
       recordsService.updateRecord(id, data).then((res) => res.data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["records"] });
-      if (variables.data.sectionId) {
-        queryClient.invalidateQueries({
-          queryKey: ["records", variables.data.sectionId],
-        });
-      }
-    },
-  });
+    ["records"],
+  );
 };
 
 export const useDeleteRecord = () => {
-  const queryClient = useQueryClient();
-  return useMutation<void, Error, string>({
-    mutationFn: (id) => recordsService.deleteRecord(id).then((res) => res.data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["records"] });
-    },
-  });
+  return useDelete<void>(
+    (id) => recordsService.deleteRecord(id).then((res) => res.data),
+    ["records"],
+  );
 };

@@ -70,11 +70,18 @@ export const SectionSelectorComponent = ({
 
   return (
     <>
-      <TouchableOpacity style={styles.selector} onPress={() => setModalVisible(true)}>
+      <TouchableOpacity
+        style={styles.selector}
+        onPress={() => setModalVisible(true)}
+      >
         <Text style={styles.selectorText}>
-          {selectedSection ? selectedSection.name : 'Выберите секцию'}
+          {selectedSection ? selectedSection.name : "Выберите секцию"}
         </Text>
-        <MaterialIcons name="arrow-drop-down" size={24} color={colors.textMuted} />
+        <MaterialIcons
+          name="arrow-drop-down"
+          size={24}
+          color={colors.textMuted}
+        />
       </TouchableOpacity>
 
       <ModalWrapper
@@ -111,7 +118,7 @@ export const SectionSelectorComponent = ({
         visible={createModalVisible}
         onClose={() => {
           setCreateModalVisible(false);
-          setNewSectionName('');
+          setNewSectionName("");
         }}
         sectionName={newSectionName}
         setSectionName={setNewSectionName}
