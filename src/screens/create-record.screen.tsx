@@ -151,51 +151,10 @@ export const CreateRecordScreen = () => {
   );
 };
 
-const getStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-  field: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 6,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: colors.inputBackground,
-    color: colors.text,
-    padding: 12,
-    borderRadius: 8,
-    fontSize: 16,
-  },
-  textArea: {
-    minHeight: 120,
-    textAlignVertical: "top",
-  },
-  saveButton: {
-    backgroundColor: colors.primary,
-    padding: 16,
-    borderRadius: 8,
-    alignItems: "center",
-  },
-  saveButtonDisabled: {
-    opacity: 0.6,
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
+const getStyles = createStyles(() => ({
+  content: { padding: 16, paddingBottom: 40 },
+  textArea: { minHeight: 120, textAlignVertical: "top" },
+  saveButtonDisabled: { opacity: 0.6 },
 }));
 
 export default CreateRecordScreen;

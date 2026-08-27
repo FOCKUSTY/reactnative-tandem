@@ -111,25 +111,12 @@ export const FilterScreen = () => {
 };
 
 const getStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   filtersContainer: {
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: colors.cardBorder,
     maxHeight: "40%",
-  },
-  field: {
-    marginBottom: 16,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 8,
   },
   resetButton: {
     marginTop: 16,
@@ -138,20 +125,8 @@ const getStyles = createStyles((colors) => ({
     backgroundColor: colors.danger + "20",
     alignItems: "center",
   },
-  resetButtonText: {
-    color: colors.danger,
-    fontWeight: "600",
-  },
-  resultsContainer: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  resultsCount: {
-    fontSize: 14,
-    color: colors.textMuted,
-    marginVertical: 8,
-  },
-  listContent: {
-    paddingBottom: 16,
-  },
+  resetButtonText: { color: colors.danger, fontWeight: "600" },
+  resultsContainer: { flex: 1, paddingHorizontal: 16 },
+  resultsCount: { fontSize: 14, color: colors.textMuted, marginVertical: 8 },
+  listContent: { paddingBottom: 16 },
 }));

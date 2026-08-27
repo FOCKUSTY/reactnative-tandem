@@ -64,10 +64,6 @@ export const RecordsScreen = () => {
 };
 
 const getStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   headerButton: {
     marginRight: 16,
   },

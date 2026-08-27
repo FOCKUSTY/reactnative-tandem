@@ -87,10 +87,6 @@ export const RecordDetailsScreen = () => {
 };
 
 const getStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   centered: {
     flex: 1,
     justifyContent: "center",

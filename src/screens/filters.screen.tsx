@@ -117,28 +117,12 @@ export const FiltersScreen = () => {
 };
 
 const getStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 40,
-  },
+  content: { padding: 16, paddingBottom: 40 },
   title: {
     fontSize: 24,
     fontWeight: "bold",
     color: colors.text,
     marginBottom: 20,
-  },
-  field: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: colors.text,
-    marginBottom: 8,
   },
 }));
 

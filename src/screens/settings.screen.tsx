@@ -30,10 +30,6 @@ export const SettingsScreen = () => {
 };
 
 const getStyles = createStyles((colors) => ({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
   content: {
     padding: 16,
     paddingBottom: 40,
