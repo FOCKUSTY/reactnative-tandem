@@ -1,7 +1,7 @@
 import axios from "axios";
-import { storage } from "../utils/storage";
 
-export const API_BASE = "http://192.168.0.100:8080/api";
+import { storage } from "../utils";
+import { API_BASE } from "../constants";
 
 const api = axios.create({
   baseURL: API_BASE,
@@ -20,6 +20,7 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(async (response) => {
   console.log(
+    "Response URL:",
     `${response.config.baseURL}${response.config.url}`,
     response.status,
     response.statusText,

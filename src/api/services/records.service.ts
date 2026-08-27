@@ -1,19 +1,11 @@
-import api from "../client";
-import { MyRecord, CreateRecordDto, UpdateRecordDto } from "../../types";
+import type {
+  MyRecord,
+  CreateRecordDto,
+  UpdateRecordDto,
+  GetRecordsParams,
+} from "../../types";
 
-export interface GetRecordsParams {
-  sectionIds?: string[];
-  tags?: string[];
-  isCompleted?: boolean;
-  isPinned?: boolean;
-  dateFrom?: string;
-  dateTo?: string;
-  search?: string;
-  sortBy?: "dateEvent" | "createdAt" | "updatedAt" | "title";
-  sortOrder?: "asc" | "desc";
-  limit?: number;
-  offset?: number;
-}
+import api from "../client";
 
 export const recordsService = {
   getRecords: (params?: GetRecordsParams) => {

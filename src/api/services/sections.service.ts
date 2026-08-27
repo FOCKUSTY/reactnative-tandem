@@ -1,5 +1,5 @@
+import type { Section, CreateSectionDto, UpdateSectionDto } from "../../types";
 import api from "../client";
-import { Section, CreateSectionDto, UpdateSectionDto } from "../../types";
 
 export const sectionsService = {
   getSections: () => api.get<Section[]>("/sections"),

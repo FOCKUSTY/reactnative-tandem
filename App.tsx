@@ -1,3 +1,5 @@
+import type { MyRecord, RootStackParameters } from "./src/types";
+
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
@@ -7,39 +9,32 @@ import {
   MaterialIconsIconName,
 } from "@react-native-vector-icons/material-icons";
 
-import { AuthProvider, useAuth } from "./src/contexts/AuthContext";
-import { ThemeProvider, useTheme } from "./src/contexts/ThemeContext";
-import LoginScreen from "./src/screens/LoginScreen";
-import HomeScreen from "./src/screens/HomeScreen";
+import {
+  FiltersProvider,
+  ThemeProvider,
+  useTheme,
+  AuthProvider,
+  useAuth,
+} from "./src/contexts";
 
-import LinkPartnerScreen from "./src/screens/LinkPartnerScreen";
-import SettingsScreen from "./src/screens/SettingsScreen";
-import { MyRecord } from "./src/types";
-import SectionsScreen from "./src/screens/SectionsScreen";
-import RecordsScreen from "./src/screens/RecordsScreen";
-import RecordDetail from "./src/screens/RecordDetail";
-import CreateRecordScreen from "./src/screens/CreateRecordScreen";
-import { FiltersProvider } from "./src/contexts/FiltersContext";
-import FiltersScreen from "./src/screens/FiltersScreen";
-import FilterScreen from "./src/screens/FilterScreen";
+import {
+  LoginScreen,
+  HomeScreen,
+  LinkPartnerScreen,
+  SettingsScreen,
+  RecordsScreen,
+  RecordDetailsScreen,
+  FiltersScreen,
+  FilterScreen,
+  SectionsScreen,
+  CreateRecordScreen,
+} from "./src/screens";
 
-export type RootStackParamList = {
-  Login: undefined;
-  Main: undefined;
-  Filters: undefined;
-  Filter: undefined;
-  Records: { sectionId: string; title: string };
-  RecordDetail: { id: string };
-  CreateRecord: { sectionId: string; record?: MyRecord };
-  LinkPartner: undefined;
-  Settings: undefined;
-};
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParameters>();
 const Tab = createBottomTabNavigator();
 const queryClient = new QueryClient();
 
-function MainTabs() {
+const MainTabs = () => {
   const { colors } = useTheme();
 
   return (
@@ -77,9 +72,9 @@ function MainTabs() {
       <Tab.Screen name="Настройки" component={SettingsScreen} />
     </Tab.Navigator>
   );
-}
+};
 
-function AppNavigator() {
+const AppNavigator = () => {
   const { user, isLoading } = useAuth();
   const { colors } = useTheme();
 
@@ -142,7 +137,7 @@ function AppNavigator() {
           />
           <Stack.Screen
             name="RecordDetail"
-            component={RecordDetail}
+            component={RecordDetailsScreen}
             options={{ title: "Запись" }}
           />
           <Stack.Screen
@@ -154,9 +149,9 @@ function AppNavigator() {
       )}
     </Stack.Navigator>
   );
-}
+};
 
-export default function App() {
+const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
@@ -170,4 +165,6 @@ export default function App() {
       </ThemeProvider>
     </QueryClientProvider>
   );
-}
+};
+
+export default App;

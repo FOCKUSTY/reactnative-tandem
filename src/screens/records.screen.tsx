@@ -1,0 +1,104 @@
+import { MaterialIcons } from "@react-native-vector-icons/material-icons";
+import { useNavigation } from "@react-navigation/native";
+import { useLayoutEffect } from "react";
+import { FlatList } from "react-native";
+import { View, TouchableOpacity, ActivityIndicator, Text } from "react-native";
+
+import { RecordCard } from "../components";
+import { useRecordsList } from "../hooks";
+import { createStyles } from "../utils";
+import { useTheme } from "../contexts";
+
+export const RecordsScreen = () => {
+  const { colors } = useTheme();
+  const styles = getStyles(colors);
+  const { records, isLoading, title, handleDelete, handleCreate } =
+    useRecordsList();
+
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title,
+      headerRight: () => (
+        <TouchableOpacity onPress={handleCreate} style={styles.headerButton}>
+          <MaterialIcons name="add" size={28} color={colors.primary} />
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, title, colors]);
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color={colors.primary} />
+      </View>
+    );
+  }
+
+  if (records.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <MaterialIcons name="inbox" size={64} color={colors.textMuted} />
+        <Text style={styles.emptyText}>Нет записей в этом разделе</Text>
+        <TouchableOpacity style={styles.emptyButton} onPress={handleCreate}>
+          <Text style={styles.emptyButtonText}>Создать первую запись</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={records}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <RecordCard record={item} onDelete={handleDelete} showDelete />
+        )}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
+      />
+    </View>
+  );
+};
+
+const getStyles = createStyles((colors) => ({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  headerButton: {
+    marginRight: 16,
+  },
+  listContent: {
+    padding: 16,
+    paddingBottom: 32,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 24,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.textMuted,
+    marginTop: 12,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  emptyButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  emptyButtonText: {
+    color: "#fff",
+    fontWeight: "600",
+    fontSize: 16,
+  },
+}));
+
+export default RecordsScreen;

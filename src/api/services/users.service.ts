@@ -1,5 +1,5 @@
+import type { MeResponse } from "../../types";
 import api from "../client";
-import { MeResponse } from "../../types";
 
 export const usersService = {
   getMe: () => api.get<MeResponse>("/users/me"),
