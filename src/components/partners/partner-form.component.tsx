@@ -1,6 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type PartnerFormProperties = {
   username: string;
@@ -16,17 +17,17 @@ export const PartnerForm = ({
   onSubmit,
 }: PartnerFormProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View>
       <Text style={styles.description}>
-        Введите имя пользователя вашей второй половинки, чтобы видеть общие
-        записи.
+        {t("settings.partnerFormDescription")}
       </Text>
       <TextInput
         style={styles.input}
-        placeholder="Имя пользователя"
+        placeholder={t("auth.username")}
         placeholderTextColor={colors.textMuted}
         value={username}
         onChangeText={setUsername}
@@ -38,7 +39,7 @@ export const PartnerForm = ({
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? "Привязка..." : "Привязать"}
+          {loading ? t("settings.linking") : t("settings.linkPartner")}
         </Text>
       </TouchableOpacity>
     </View>

@@ -2,6 +2,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type TagsInputProps = {
   tags: string[];
@@ -19,6 +20,7 @@ export const TagsInputComponent = ({
   onRemoveTag,
 }: TagsInputProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
@@ -26,7 +28,7 @@ export const TagsInputComponent = ({
       <View style={styles.tagInputContainer}>
         <TextInput
           style={[styles.input, styles.tagInput]}
-          placeholder="Введите тег"
+          placeholder={t("common.enterTag")}
           placeholderTextColor={colors.textMuted}
           value={inputValue}
           onChangeText={onInputChange}

@@ -1,6 +1,7 @@
 import { TextInput } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type TagsInputFilterProperties = {
   value: string;
@@ -11,15 +12,16 @@ export type TagsInputFilterProperties = {
 export const TagsInputFilter = ({
   value,
   onChange,
-  placeholder = "например: работа, личное, важное",
+  placeholder,
 }: TagsInputFilterProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <TextInput
       style={styles.input}
-      placeholder={placeholder}
+      placeholder={placeholder ?? t("filters.tagsPlaceholder")}
       placeholderTextColor={colors.textMuted}
       value={value}
       onChangeText={onChange}

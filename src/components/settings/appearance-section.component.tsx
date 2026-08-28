@@ -2,6 +2,7 @@ import { View, Text, Switch } from "react-native";
 import { ThemeMode } from "../../constants";
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 import { SettingsItem } from "./settings-item.component";
 
@@ -15,15 +16,16 @@ export const AppearanceSection = ({
   onToggleTheme,
 }: AppearanceSectionProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Внешний вид</Text>
+      <Text style={styles.sectionTitle}>{t("settings.appearance")}</Text>
       <View style={styles.card}>
         <SettingsItem
           icon="dark-mode"
-          label="Тёмная тема"
+          label={t("settings.darkTheme")}
           rightElement={
             <Switch
               value={mode === "dark"}

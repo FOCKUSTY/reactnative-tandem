@@ -9,8 +9,10 @@ import { RecordContent } from "../components";
 import { useRecordDetail } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
+import { useTranslate } from "../hooks";
 
 export const RecordDetailsScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const { record, isLoading, error, handleDelete, handleEdit } =
@@ -20,7 +22,7 @@ export const RecordDetailsScreen = () => {
   useLayoutEffect(() => {
     if (record) {
       navigation.setOptions({
-        title: record.title || "Запись",
+        title: record.title || t("records.details"),
         headerRight: () => (
           <View style={styles.headerButtons}>
             <TouchableOpacity onPress={handleEdit} style={styles.headerButton}>
@@ -40,12 +42,12 @@ export const RecordDetailsScreen = () => {
         ),
       });
     }
-  }, [record, colors]);
+  }, [record, colors, t]);
 
   if (isLoading) {
     return (
       <View style={[styles.container, styles.centered]}>
-        <Text style={styles.loadingText}>Загрузка...</Text>
+        <Text style={styles.loadingText}>{t("common.loading")}</Text>
       </View>
     );
   }
@@ -55,7 +57,7 @@ export const RecordDetailsScreen = () => {
       <View style={[styles.container, styles.centered]}>
         <MaterialIcons name="error-outline" size={48} color={colors.danger} />
         <Text style={styles.errorText}>
-          {error ? "Не удалось загрузить запись" : "Запись не найдена"}
+          {error ? t("records.error.loadFailed") : t("records.error.notFound")}
         </Text>
       </View>
     );

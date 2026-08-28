@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type RecordMetaProperties = {
   isCompleted: boolean;
@@ -16,28 +17,33 @@ export const RecordMeta = ({
   updatedAt,
 }: RecordMetaProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View style={styles.metaContainer}>
       <View style={styles.metaRow}>
-        <Text style={styles.metaLabel}>Статус:</Text>
+        <Text style={styles.metaLabel}>{t("records.meta.status")}</Text>
         <Text style={[styles.metaValue, isCompleted && styles.completed]}>
-          {isCompleted ? "✅ Выполнено" : "⏳ В процессе"}
+          {isCompleted
+            ? t("records.meta.completed")
+            : t("records.meta.inProgress")}
         </Text>
       </View>
       <View style={styles.metaRow}>
-        <Text style={styles.metaLabel}>Закреплено:</Text>
-        <Text style={styles.metaValue}>{isPinned ? "📌 Да" : "Нет"}</Text>
+        <Text style={styles.metaLabel}>{t("records.meta.pinned")}</Text>
+        <Text style={styles.metaValue}>
+          {isPinned ? t("records.meta.yes") : t("records.meta.no")}
+        </Text>
       </View>
       <View style={styles.metaRow}>
-        <Text style={styles.metaLabel}>Создано:</Text>
+        <Text style={styles.metaLabel}>{t("records.meta.createdAt")}</Text>
         <Text style={styles.metaValue}>
           {new Date(createdAt).toLocaleString()}
         </Text>
       </View>
       <View style={styles.metaRow}>
-        <Text style={styles.metaLabel}>Обновлено:</Text>
+        <Text style={styles.metaLabel}>{t("records.meta.updatedAt")}</Text>
         <Text style={styles.metaValue}>
           {new Date(updatedAt).toLocaleString()}
         </Text>

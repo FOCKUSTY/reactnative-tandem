@@ -29,6 +29,11 @@ import {
   SectionsScreen,
   CreateRecordScreen,
 } from "./src/screens";
+import { useEffect, useState } from "react";
+
+import { I18nextProvider } from "react-i18next";
+import { i18n, initI18n } from "./src/i18n";
+import { useTranslate } from "./src/hooks";
 
 const Stack = createNativeStackNavigator<RootStackParameters>();
 const Tab = createBottomTabNavigator();
@@ -36,16 +41,18 @@ const queryClient = new QueryClient();
 
 const MainTabs = () => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
 
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName: MaterialIconsIconName;
-          if (route.name === "Tandem") iconName = "home";
-          else if (route.name === "Разделы") iconName = "menu";
-          else if (route.name === "Настройки") iconName = "settings";
-          else if (route.name === "Фильтр") iconName = "filter-list-alt";
+          if (route.name === t("home.title")) iconName = "home";
+          else if (route.name === t("sections.title")) iconName = "menu";
+          else if (route.name === t("settings.title")) iconName = "settings";
+          else if (route.name === t("filters.title"))
+            iconName = "filter-list-alt";
           else iconName = "circle";
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
@@ -66,10 +73,26 @@ const MainTabs = () => {
         headerShadowVisible: false,
       })}
     >
-      <Tab.Screen name="Tandem" component={HomeScreen} />
-      <Tab.Screen name="Разделы" component={SectionsScreen} />
-      <Tab.Screen name="Фильтр" component={FilterScreen} />
-      <Tab.Screen name="Настройки" component={SettingsScreen} />
+      <Tab.Screen
+        name={t("home.title")}
+        component={HomeScreen}
+        options={{ title: t("home.title") }}
+      />
+      <Tab.Screen
+        name={t("sections.title")}
+        component={SectionsScreen}
+        options={{ title: t("sections.title") }}
+      />
+      <Tab.Screen
+        name={t("filters.title")}
+        component={FilterScreen}
+        options={{ title: t("filters.title") }}
+      />
+      <Tab.Screen
+        name={t("settings.title")}
+        component={SettingsScreen}
+        options={{ title: t("settings.title") }}
+      />
     </Tab.Navigator>
   );
 };
@@ -77,6 +100,7 @@ const MainTabs = () => {
 const AppNavigator = () => {
   const { user, isLoading } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslate();
 
   if (isLoading) return null;
 
@@ -112,38 +136,40 @@ const AppNavigator = () => {
           <Stack.Screen
             name="Filters"
             component={FiltersScreen}
-            options={{ title: "Фильтры" }}
+            options={{ title: t("filters.title") }}
           />
           <Stack.Screen
             name="LinkPartner"
             component={LinkPartnerScreen}
-            options={{ title: "Привязка партнёра" }}
+            options={{ title: t("settings.linkPartner") }}
           />
           <Stack.Screen
             name="CreateRecord"
             component={CreateRecordScreen}
             options={({ route }) => ({
               title: (route.params as { record?: MyRecord })?.record
-                ? "Редактировать запись"
-                : "Создать запись",
+                ? t("records.editTitle")
+                : t("records.createTitle"),
             })}
           />
           <Stack.Screen
             name="Records"
             component={RecordsScreen}
             options={({ route }) => ({
-              title: (route.params as { title: string })?.title || "Записи",
+              title:
+                (route.params as { title: string })?.title ||
+                t("records.title"),
             })}
           />
           <Stack.Screen
             name="RecordDetail"
             component={RecordDetailsScreen}
-            options={{ title: "Запись" }}
+            options={{ title: t("records.details") }}
           />
           <Stack.Screen
             name="Settings"
             component={SettingsScreen}
-            options={{ title: "Настройки" }}
+            options={{ title: t("settings.title") }}
           />
         </>
       )}
@@ -152,18 +178,30 @@ const AppNavigator = () => {
 };
 
 const App = () => {
+  const [isReady, setIsReady] = useState<boolean>(false);
+
+  useEffect(() => {
+    initI18n().then(() => setIsReady(true));
+  }, []);
+
+  if (!isReady) {
+    return null;
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <AuthProvider>
-          <FiltersProvider>
-            <NavigationContainer>
-              <AppNavigator />
-            </NavigationContainer>
-          </FiltersProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <I18nextProvider i18n={i18n}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <FiltersProvider>
+              <NavigationContainer>
+                <AppNavigator />
+              </NavigationContainer>
+            </FiltersProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </I18nextProvider>
   );
 };
 

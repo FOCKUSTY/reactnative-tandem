@@ -2,6 +2,7 @@ import { View, Text, Switch } from "react-native";
 import { useTheme } from "../../contexts";
 import { ThemeColors } from "../../constants";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type StatusSwitchesProperties = {
   isCompleted: boolean | undefined;
@@ -17,12 +18,13 @@ export const StatusSwitches = ({
   onPinnedChange,
 }: StatusSwitchesProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View>
       <View style={styles.switchRow}>
-        <Text style={styles.label}>Только завершённые</Text>
+        <Text style={styles.label}>{t("filters.switches.onlyCompleted")}</Text>
         <Switch
           value={isCompleted === true}
           onValueChange={(val) => onCompletedChange(val ? true : undefined)}
@@ -31,7 +33,7 @@ export const StatusSwitches = ({
         />
       </View>
       <View style={styles.switchRow}>
-        <Text style={styles.label}>Только не завершённые</Text>
+        <Text style={styles.label}>{t("filters.switches.onlyActive")}</Text>
         <Switch
           value={isCompleted === false}
           onValueChange={(val) => onCompletedChange(val ? false : undefined)}
@@ -40,7 +42,7 @@ export const StatusSwitches = ({
         />
       </View>
       <View style={styles.switchRow}>
-        <Text style={styles.label}>Только закреплённые</Text>
+        <Text style={styles.label}>{t("filters.switches.onlyPinned")}</Text>
         <Switch
           value={isPinned === true}
           onValueChange={(val) => onPinnedChange(val ? true : undefined)}

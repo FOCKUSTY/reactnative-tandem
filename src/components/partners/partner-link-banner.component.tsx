@@ -7,10 +7,12 @@ import { useState, useEffect } from "react";
 import { useAuth, useTheme } from "../../contexts";
 import { storage, createStyles } from "../../utils";
 import { STORAGE_KEYS } from "../../constants";
+import { useTranslate } from "../../hooks";
 
 export const PartnerLinkBannerComponent = () => {
   const { me } = useAuth();
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
   const [hidden, setHidden] = useState(false);
@@ -33,10 +35,9 @@ export const PartnerLinkBannerComponent = () => {
   return (
     <View style={styles.banner}>
       <View style={styles.content}>
-        <Text style={styles.title}>Привяжите вторую половинку</Text>
+        <Text style={styles.title}>{t("settings.linkPartnerTitle")}</Text>
         <Text style={styles.description}>
-          Чтобы видеть общие записи и планировать вместе, свяжите свой аккаунт с
-          партнёром.
+          {t("settings.bannerDescription")}
         </Text>
       </View>
       <View style={styles.actions}>
@@ -44,7 +45,7 @@ export const PartnerLinkBannerComponent = () => {
           style={styles.linkButton}
           onPress={() => navigation.navigate("LinkPartner")}
         >
-          <Text style={styles.linkButtonText}>Привязать</Text>
+          <Text style={styles.linkButtonText}>{t("settings.linkPartner")}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.hideButton} onPress={handleHide}>
           <Text style={styles.hideButtonText}>✕</Text>

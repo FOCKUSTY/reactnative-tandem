@@ -1,0 +1,199 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "saving": "Saving...",
+    "selectDate": "Select date",
+    "search": "Search by text",
+    "enterTag": "Enter tag",
+    "from": "From",
+    "to": "To",
+    "at": "at",
+    "more": "more",
+    "viewAll": "View all",
+    "confirm": "Confirm"
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "username": "Username",
+    "password": "Password",
+    "login": "Sign in",
+    "loginLoading": "Signing in...",
+    "errors": {
+      "usernameRequired": "Enter username",
+      "passwordRequired": "Enter password",
+      "invalidCredentials": "Invalid credentials"
+    }
+  },
+  "home": {
+    "title": "Home",
+    "greeting": "Hello, {{name}}",
+    "upcomingDates": "Upcoming dates",
+    "activePlans": "Active plans",
+    "noDates": "No upcoming dates",
+    "noPlans": "No active plans",
+    "addDate": "Add date",
+    "viewAllDates": "All dates",
+    "viewAllPlans": "All plans"
+  },
+  "sections": {
+    "title": "Sections",
+    "create": "Create section",
+    "name": "Section name",
+    "system": "Syst.",
+    "recordsCount": "{{count}} records",
+    "empty": "No sections",
+    "createFirst": "Create first section",
+    "deleteConfirm": {
+      "title": "Delete section?",
+      "message": "All records in section \"{{name}}\" will also be deleted.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "systemCannotDelete": "System sections cannot be deleted",
+    "createNew": "Create new section",
+    "systemSectionTitle": "System section",
+    "errors": {
+      "nameRequired": "Enter section name",
+      "createFailed": "Failed to create section"
+    }
+  },
+  "records": {
+    "title": "Records",
+    "empty": "No records in this section",
+    "createFirst": "Create first record",
+    "deleteConfirm": {
+      "title": "Delete record?",
+      "message": "This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    },
+    "details": "Record",
+    "editTitle": "Edit record",
+    "createTitle": "Create record",
+    "untitled": "Untitled",
+    "noContent": "No content",
+    "field": {
+      "section": "Section",
+      "title": "Title",
+      "content": "Content",
+      "date": "Event date",
+      "tags": "Tags",
+      "completed": "Completed",
+      "pinned": "Pinned",
+      "selectSection": "Select section"
+    },
+    "markdownHint": "Markdown supported",
+    "saveSuccess": "Record saved",
+    "createSuccess": "Record created",
+    "placeholder": {
+      "title": "Enter title",
+      "content": "Enter content (Markdown supported)"
+    },
+    "error": {
+      "loadFailed": "Failed to load record",
+      "notFound": "Record not found"
+    },
+    "meta": {
+      "status": "Status:",
+      "completed": "✅ Completed",
+      "inProgress": "⏳ In progress",
+      "pinned": "Pinned:",
+      "yes": "📌 Yes",
+      "no": "No",
+      "createdAt": "Created at:",
+      "updatedAt": "Updated at:"
+    },
+    "errors": {
+      "selectSection": "Select section",
+      "titleOrContentRequired": "Enter title or content",
+      "saveFailed": "Failed to save record"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "profile": "Profile",
+    "partner": "Partner",
+    "appearance": "Appearance",
+    "darkTheme": "Dark theme",
+    "language": "Language",
+    "about": "About",
+    "version": "Version",
+    "logout": "Log out",
+    "logoutConfirm": {
+      "title": "Log out",
+      "message": "Are you sure you want to log out?",
+      "cancel": "Cancel",
+      "confirm": "Log out"
+    },
+    "linkPartner": "Link partner",
+    "linked": "Linked",
+    "notLinked": "Not linked",
+    "linkPartnerTitle": "Don't be alone",
+    "alreadyLinked": "You are already linked",
+    "partnerLabel": "Partner:",
+    "unknown": "unknown",
+    "partnerFormDescription": "Enter your partner's username to see shared records.",
+    "linking": "Linking...",
+    "bannerDescription": "To see shared records and plan together, link your account with your partner.",
+    "madeWithLove": "Made with love",
+    "user": "User"
+  },
+  "filters": {
+    "title": "Filters",
+    "searchLabel": "Search",
+    "sectionsLabel": "Sections",
+    "tagsLabel": "Tags (comma separated)",
+    "tagsPlaceholder": "e.g.: work, personal, important",
+    "apply": "Apply",
+    "reset": "Reset",
+    "status": {
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "pinned": {
+      "all": "All",
+      "pinned": "Pinned",
+      "unpinned": "Unpinned"
+    },
+    "statusTitle": "Status",
+    "pinnedTitle": "Pinned",
+    "resultsCount": "Found: {{count}}",
+    "switches": {
+      "onlyCompleted": "Only completed",
+      "onlyActive": "Only active",
+      "onlyPinned": "Only pinned"
+    }
+  },
+  "sort": {
+    "title": "Sort",
+    "fields": {
+      "date": "Date",
+      "createdAt": "Created at",
+      "title": "Title"
+    },
+    "order": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    }
+  },
+  "languages": {
+    "en": "English",
+    "ru": "Russian",
+    "system": "System"
+  },
+  "partner": {
+    "errors": {
+      "usernameRequired": "Enter username",
+      "linkFailed": "Failed to link partner"
+    },
+    "linkSuccessMessage": "Partner successfully linked!"
+  }
+}

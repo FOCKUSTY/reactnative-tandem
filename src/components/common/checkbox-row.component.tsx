@@ -2,6 +2,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type CheckboxRowProperties = {
   completed: boolean;
@@ -17,6 +18,7 @@ export const CheckboxRowComponent = ({
   onTogglePinned,
 }: CheckboxRowProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
@@ -27,7 +29,7 @@ export const CheckboxRowComponent = ({
           size={24}
           color={colors.primary}
         />
-        <Text style={styles.checkboxLabel}>Выполнено</Text>
+        <Text style={styles.checkboxLabel}>{t("records.field.completed")}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.checkboxItem} onPress={onTogglePinned}>
@@ -36,7 +38,7 @@ export const CheckboxRowComponent = ({
           size={24}
           color={colors.primary}
         />
-        <Text style={styles.checkboxLabel}>Закреплено</Text>
+        <Text style={styles.checkboxLabel}>{t("records.field.pinned")}</Text>
       </TouchableOpacity>
     </View>
   );

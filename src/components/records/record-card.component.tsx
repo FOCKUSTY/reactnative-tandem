@@ -6,6 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type RecordCardProps = {
   record: MyRecord;
@@ -19,6 +20,7 @@ export const RecordCard = ({
   showDelete = false,
 }: RecordCardProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
 
@@ -34,7 +36,7 @@ export const RecordCard = ({
     >
       <View style={styles.header}>
         <Text style={styles.title} numberOfLines={1}>
-          {record.title || "Без заголовка"}
+          {record.title || t("records.untitled")}
         </Text>
         {showDelete && onDelete && (
           <TouchableOpacity

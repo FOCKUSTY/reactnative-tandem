@@ -4,3 +4,4 @@ export * from "./records";
 export * from "./sections";
 export * from "./filters";
 export * from "./settings";
+export * from "./i18n";

@@ -2,6 +2,7 @@ import type { Section } from "../../types";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type FilterSectionChipsProperties = {
   sections: Section[];
@@ -15,11 +16,12 @@ export const FilterSectionChips = ({
   onToggle,
 }: FilterSectionChipsProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Секции</Text>
+      <Text style={styles.title}>{t("filters.sectionsLabel")}</Text>
       <View style={styles.chipsContainer}>
         {sections.map((section) => (
           <TouchableOpacity

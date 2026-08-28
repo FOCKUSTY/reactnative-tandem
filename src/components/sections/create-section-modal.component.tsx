@@ -2,6 +2,7 @@ import { TextInput } from "react-native";
 import { ModalWrapper } from "../common";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type CreateSectionModalProps = {
   visible: boolean;
@@ -21,20 +22,21 @@ export const CreateSectionModal = ({
   loading = false,
 }: CreateSectionModalProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <ModalWrapper
       visible={visible}
       onClose={onClose}
-      title="Создать секцию"
-      confirmText="Создать"
+      title={t("sections.create")}
+      confirmText={t("common.create")}
       onConfirm={onCreate}
       loading={loading}
     >
       <TextInput
         style={styles.input}
-        placeholder="Название секции"
+        placeholder={t("sections.name")}
         placeholderTextColor={colors.textMuted}
         value={sectionName}
         onChangeText={setSectionName}

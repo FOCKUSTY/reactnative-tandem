@@ -66,7 +66,6 @@ export function useDelete<TData = void>(
     mutationFn,
     onSuccess: (data, id, result, context) => {
       queryClient.invalidateQueries({ queryKey });
-      // Удаляем кеш конкретной записи, если он есть
       queryClient.removeQueries({ queryKey: [...queryKey, id] });
       options?.onSuccess?.(data, id, result, context);
     },

@@ -16,20 +16,10 @@ import {
   RadioGroup,
   RecordCard,
 } from "../components";
-
-const statusOptions = [
-  { value: "all" as const, label: "Все" },
-  { value: "active" as const, label: "Активные" },
-  { value: "completed" as const, label: "Выполненные" },
-];
-
-const pinnedOptions = [
-  { value: "all" as const, label: "Все" },
-  { value: "pinned" as const, label: "Закреплённые" },
-  { value: "unpinned" as const, label: "Не закреплённые" },
-];
+import { useTranslate } from "../hooks";
 
 export const FilterScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
@@ -43,6 +33,18 @@ export const FilterScreen = () => {
     resetFilters,
   } = useFilter();
 
+  const statusOptions = [
+    { value: "all" as const, label: t("filters.status.all") },
+    { value: "active" as const, label: t("filters.status.active") },
+    { value: "completed" as const, label: t("filters.status.completed") },
+  ];
+
+  const pinnedOptions = [
+    { value: "all" as const, label: t("filters.pinned.all") },
+    { value: "pinned" as const, label: t("filters.pinned.pinned") },
+    { value: "unpinned" as const, label: t("filters.pinned.unpinned") },
+  ];
+
   return (
     <View style={styles.container}>
       <ScrollView style={styles.filtersContainer}>
@@ -53,7 +55,7 @@ export const FilterScreen = () => {
         />
 
         <View style={styles.field}>
-          <Text style={styles.label}>Теги (через запятую)</Text>
+          <Text style={styles.label}>{t("filters.tagsLabel")}</Text>
           <TagsInputFilter
             value={filters.tags.join(", ")}
             onChange={handleTagChange}
@@ -72,7 +74,7 @@ export const FilterScreen = () => {
         />
 
         <RadioGroup
-          title="Статус"
+          title={t("filters.statusTitle")}
           options={statusOptions}
           selected={filters.status}
           onSelect={(value) =>
@@ -81,7 +83,7 @@ export const FilterScreen = () => {
         />
 
         <RadioGroup
-          title="Закреплено"
+          title={t("filters.pinnedTitle")}
           options={pinnedOptions}
           selected={filters.pinned}
           onSelect={(value) =>
@@ -90,13 +92,13 @@ export const FilterScreen = () => {
         />
 
         <TouchableOpacity style={styles.resetButton} onPress={resetFilters}>
-          <Text style={styles.resetButtonText}>Сбросить фильтры</Text>
+          <Text style={styles.resetButtonText}>{t("filters.reset")}</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <View style={styles.resultsContainer}>
         <Text style={styles.resultsCount}>
-          Найдено: {filteredRecords.length}
+          {t("filters.resultsCount", { count: filteredRecords.length })}
         </Text>
         <FlatList
           data={filteredRecords}

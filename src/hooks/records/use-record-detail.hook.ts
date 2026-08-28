@@ -5,6 +5,7 @@ import { Alert } from "react-native";
 
 import { useRecord } from "./use-record.hook";
 import { useDeleteRecord } from "./use-records.hook";
+import { useTranslate } from "../i18n";
 
 export type RecordDetailRouteProperties = {
   key: string;
@@ -13,6 +14,7 @@ export type RecordDetailRouteProperties = {
 };
 
 export const useRecordDetail = () => {
+  const { t } = useTranslate();
   const navigation = useNavigation<NavigationProperty>();
   const route = useRoute<RecordDetailRouteProperties>();
   const { id } = route.params;
@@ -22,18 +24,22 @@ export const useRecordDetail = () => {
 
   const handleDelete = () => {
     if (!record) return;
-    Alert.alert("Удалить запись?", "Это действие нельзя отменить.", [
-      { text: "Отмена", style: "cancel" },
-      {
-        text: "Удалить",
-        style: "destructive",
-        onPress: () => {
-          deleteMutation.mutate(id, {
-            onSuccess: () => navigation.goBack(),
-          });
+    Alert.alert(
+      t("records.deleteConfirm.title"),
+      t("records.deleteConfirm.message"),
+      [
+        { text: t("records.deleteConfirm.cancel"), style: "cancel" },
+        {
+          text: t("records.deleteConfirm.confirm"),
+          style: "destructive",
+          onPress: () => {
+            deleteMutation.mutate(id, {
+              onSuccess: () => navigation.goBack(),
+            });
+          },
         },
-      },
-    ]);
+      ],
+    );
   };
 
   const handleEdit = () => {

@@ -6,6 +6,7 @@ import { View, Text } from "react-native";
 
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 import { SettingsItem } from "./settings-item.component";
 
@@ -15,16 +16,17 @@ export type PartnerSectionProps = {
 
 export const PartnerSection = ({ isPartnerLinked }: PartnerSectionProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Партнёр</Text>
+      <Text style={styles.sectionTitle}>{t("settings.partner")}</Text>
       <View style={styles.card}>
         <SettingsItem
           icon="verified-user"
-          label="Привязка партнёра"
+          label={t("settings.linkPartner")}
           onPress={() => navigation.navigate("LinkPartner")}
           rightElement={
             <View style={styles.statusBadge}>
@@ -36,7 +38,9 @@ export const PartnerSection = ({ isPartnerLinked }: PartnerSectionProps) => {
                     : styles.statusNotLinked,
                 ]}
               >
-                {isPartnerLinked ? "Привязан" : "Не привязан"}
+                {isPartnerLinked
+                  ? t("settings.linked")
+                  : t("settings.notLinked")}
               </Text>
               <MaterialIcons
                 name="chevron-right"

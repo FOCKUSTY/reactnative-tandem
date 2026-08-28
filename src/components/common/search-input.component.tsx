@@ -2,6 +2,7 @@ import { TextInput } from "react-native";
 import { useTheme } from "../../contexts";
 import { ThemeColors } from "../../constants";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type SearchInputProperties = {
   value: string;
@@ -12,15 +13,16 @@ export type SearchInputProperties = {
 export const SearchInput = ({
   value,
   onChange,
-  placeholder = "Поиск по тексту",
+  placeholder,
 }: SearchInputProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <TextInput
       style={styles.input}
-      placeholder={placeholder}
+      placeholder={placeholder ?? t("common.search")}
       placeholderTextColor={colors.textMuted}
       value={value}
       onChangeText={onChange}

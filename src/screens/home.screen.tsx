@@ -3,9 +3,11 @@ import { View, Text } from "react-native";
 import { PartnerLinkBannerComponent, SectionPreview } from "../components";
 import { createStyles, getFilteredRecords } from "../utils";
 import { useAuth, useTheme } from "../contexts";
-import { useRecords } from "../hooks";
+import { useRecords, useTranslate } from "../hooks";
 
 export const HomeScreen = () => {
+  const { t } = useTranslate();
+
   const { colors } = useTheme();
   const { user } = useAuth();
   const styles = getStyles(colors);
@@ -22,25 +24,27 @@ export const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.greeting}>Привет, {user?.name}</Text>
+      <Text style={styles.greeting}>
+        {t("home.greeting", { name: user?.name })}
+      </Text>
       <PartnerLinkBannerComponent />
 
       <SectionPreview
         records={upcomingDates}
         sectionSlug="dates"
-        title="Ближайшие даты"
-        emptyMessage="Нет предстоящих дат"
-        createLabel="Добавить дату"
-        viewAllLabel="Все даты"
+        title={t("home.upcomingDates")}
+        emptyMessage={t("home.noDates")}
+        createLabel={t("home.addDate")}
+        viewAllLabel={t("home.viewAllDates")}
       />
 
       <SectionPreview
         records={activePlans}
         sectionSlug="plans"
-        title="Активные планы"
-        emptyMessage="Нет активных планов"
-        createLabel="Создать план"
-        viewAllLabel="Все планы"
+        title={t("home.activePlans")}
+        emptyMessage={t("home.noPlans")}
+        createLabel={t("common.create")}
+        viewAllLabel={t("home.viewAllPlans")}
       />
     </View>
   );

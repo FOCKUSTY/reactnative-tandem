@@ -9,8 +9,10 @@ import {
   useCreateSection,
   useDeleteSection,
 } from "./use-sections.hook";
+import { useTranslate } from "../i18n";
 
 export const useSectionsList = () => {
+  const { t } = useTranslate();
   const navigation = useNavigation<NavigationProperty>();
   const { data: sections = [], isLoading, refetch } = useSections();
   const createMutation = useCreateSection();
@@ -28,7 +30,7 @@ export const useSectionsList = () => {
 
   const handleCreateSection = async () => {
     if (!newSectionName.trim()) {
-      Alert.alert("Ошибка", "Введите название секции");
+      Alert.alert(t("common.error"), t("sections.errors.nameRequired"));
       return;
     }
     try {
@@ -41,22 +43,25 @@ export const useSectionsList = () => {
       setNewSectionName("");
       setModalVisible(false);
     } catch {
-      Alert.alert("Ошибка", "Не удалось создать секцию");
+      Alert.alert(t("common.error"), t("sections.errors.createFailed"));
     }
   };
 
   const handleDeleteSection = (section: Section) => {
     if (section.isSystem) {
-      Alert.alert("Системная секция", "Системные секции нельзя удалить");
+      Alert.alert(
+        t("sections.systemSectionTitle"),
+        t("sections.systemCannotDelete"),
+      );
       return;
     }
     Alert.alert(
-      "Удалить секцию?",
-      `Все записи в секции "${section.name}" также будут удалены.`,
+      t("sections.deleteConfirm.title"),
+      t("sections.deleteConfirm.message", { name: section.name }),
       [
-        { text: "Отмена", style: "cancel" },
+        { text: t("sections.deleteConfirm.cancel"), style: "cancel" },
         {
-          text: "Удалить",
+          text: t("sections.deleteConfirm.confirm"),
           style: "destructive",
           onPress: () => deleteMutation.mutate(section.id),
         },

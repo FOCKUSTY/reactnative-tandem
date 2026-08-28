@@ -13,6 +13,7 @@ import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
 import { ModalWrapper } from "../common";
 import { CreateSectionModal } from "./create-section-modal.component";
+import { useTranslate } from "../../hooks";
 
 export type SectionSelectorProperties = {
   sections: Section[];
@@ -42,6 +43,7 @@ export const SectionSelectorComponent = ({
   onCreateSection,
 }: SectionSelectorProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   const selectedSection = sections.find((s) => s.id === selectedId);
@@ -58,7 +60,7 @@ export const SectionSelectorComponent = ({
         <Text style={styles.optionName}>{item.name}</Text>
         {item.isSystem && (
           <View style={styles.systemBadge}>
-            <Text style={styles.systemBadgeText}>Сист.</Text>
+            <Text style={styles.systemBadgeText}>{t("sections.system")}</Text>
           </View>
         )}
       </View>
@@ -75,7 +77,9 @@ export const SectionSelectorComponent = ({
         onPress={() => setModalVisible(true)}
       >
         <Text style={styles.selectorText}>
-          {selectedSection ? selectedSection.name : "Выберите секцию"}
+          {selectedSection
+            ? selectedSection.name
+            : t("records.field.selectSection")}
         </Text>
         <MaterialIcons
           name="arrow-drop-down"
@@ -87,7 +91,7 @@ export const SectionSelectorComponent = ({
       <ModalWrapper
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        title="Выберите секцию"
+        title={t("records.field.selectSection")}
         showCancel={false}
       >
         {loading ? (
@@ -108,7 +112,9 @@ export const SectionSelectorComponent = ({
               }}
             >
               <MaterialIcons name="add" size={20} color={colors.primary} />
-              <Text style={styles.createButtonText}>Создать новую секцию</Text>
+              <Text style={styles.createButtonText}>
+                {t("sections.createNew")}
+              </Text>
             </TouchableOpacity>
           </>
         )}
@@ -129,7 +135,7 @@ export const SectionSelectorComponent = ({
 };
 
 const getStyles = createStyles((colors) => ({
-  sectionSelector: {
+  selector: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -139,38 +145,14 @@ const getStyles = createStyles((colors) => ({
     padding: 12,
     borderRadius: 8,
   },
-  sectionSelectorText: {
+  selectorText: {
     color: colors.text,
     fontSize: 16,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.5)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: colors.card,
-    borderRadius: 12,
-    padding: 24,
-    width: "90%",
-    maxHeight: "80%",
-  },
-  modalHeader: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 16,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: colors.text,
-  },
-  sectionList: {
+  list: {
     paddingBottom: 8,
   },
-  sectionOption: {
+  option: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -179,15 +161,15 @@ const getStyles = createStyles((colors) => ({
     borderBottomWidth: 1,
     borderBottomColor: colors.cardBorder,
   },
-  sectionOptionSelected: {
+  optionSelected: {
     backgroundColor: colors.inputBackground,
     borderRadius: 4,
   },
-  sectionOptionContent: {
+  optionContent: {
     flexDirection: "row",
     alignItems: "center",
   },
-  sectionOptionName: {
+  optionName: {
     fontSize: 16,
     color: colors.text,
   },
@@ -202,7 +184,7 @@ const getStyles = createStyles((colors) => ({
     fontSize: 10,
     color: colors.textMuted,
   },
-  createSectionButton: {
+  createButton: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -211,40 +193,10 @@ const getStyles = createStyles((colors) => ({
     borderTopWidth: 1,
     borderTopColor: colors.cardBorder,
   },
-  createSectionButtonText: {
+  createButtonText: {
     color: colors.primary,
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
-  },
-  modalInput: {
-    borderWidth: 1,
-    borderColor: colors.inputBorder,
-    backgroundColor: colors.inputBackground,
-    color: colors.text,
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 16,
-    fontSize: 16,
-  },
-  modalButtons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    gap: 12,
-  },
-  modalButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 8,
-  },
-  modalCancel: {
-    backgroundColor: colors.inputBackground,
-  },
-  modalCreate: {
-    backgroundColor: colors.primary,
-  },
-  modalButtonText: {
-    fontSize: 16,
-    color: colors.text,
   },
 }));

@@ -2,6 +2,7 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { ThemeColors } from "../../constants";
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type FilterActionsProps = {
   onClear: () => void;
@@ -10,6 +11,7 @@ export type FilterActionsProps = {
 
 export const FilterActions = ({ onClear, onApply }: FilterActionsProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
@@ -18,13 +20,13 @@ export const FilterActions = ({ onClear, onApply }: FilterActionsProps) => {
         style={[styles.button, styles.clearButton]}
         onPress={onClear}
       >
-        <Text style={styles.buttonText}>Сбросить</Text>
+        <Text style={styles.buttonText}>{t("filters.reset")}</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={[styles.button, styles.applyButton]}
         onPress={onApply}
       >
-        <Text style={styles.buttonText}>Применить</Text>
+        <Text style={styles.buttonText}>{t("filters.apply")}</Text>
       </TouchableOpacity>
     </View>
   );

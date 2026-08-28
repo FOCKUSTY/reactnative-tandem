@@ -1,6 +1,7 @@
 import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type LoginFormProperties = {
   username: string;
@@ -20,14 +21,15 @@ export const LoginForm = ({
   onSubmit,
 }: LoginFormProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View>
-      <Text style={styles.title}>Добро пожаловать</Text>
+      <Text style={styles.title}>{t("auth.welcome")}</Text>
       <TextInput
         style={styles.input}
-        placeholder="Имя пользователя"
+        placeholder={t("auth.username")}
         placeholderTextColor={colors.textMuted}
         value={username}
         onChangeText={setUsername}
@@ -35,7 +37,7 @@ export const LoginForm = ({
       />
       <TextInput
         style={styles.input}
-        placeholder="Пароль"
+        placeholder={t("auth.password")}
         placeholderTextColor={colors.textMuted}
         value={password}
         onChangeText={setPassword}
@@ -46,7 +48,9 @@ export const LoginForm = ({
         onPress={onSubmit}
         disabled={loading}
       >
-        <Text style={styles.buttonText}>{loading ? "Вход..." : "Войти"}</Text>
+        <Text style={styles.buttonText}>
+          {loading ? t("auth.loginLoading") : t("auth.login")}
+        </Text>
       </TouchableOpacity>
     </View>
   );

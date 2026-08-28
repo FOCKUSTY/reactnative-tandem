@@ -18,6 +18,7 @@ import {
   DatePickerComponent,
   CheckboxRowComponent,
 } from "../components";
+import { useTranslate } from "../hooks";
 
 export type CreateRecordRouteProperties = {
   key: string;
@@ -26,6 +27,7 @@ export type CreateRecordRouteProperties = {
 };
 
 export const CreateRecordScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const route = useRoute<CreateRecordRouteProperties>();
@@ -68,7 +70,7 @@ export const CreateRecordScreen = () => {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.field}>
-        <Text style={styles.label}>Секция *</Text>
+        <Text style={styles.label}>{t("records.field.section")} *</Text>
         <SectionSelectorComponent
           sections={sections}
           loading={sectionsLoading}
@@ -85,10 +87,10 @@ export const CreateRecordScreen = () => {
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Заголовок</Text>
+        <Text style={styles.label}>{t("records.field.title")}</Text>
         <TextInput
           style={styles.input}
-          placeholder="Введите заголовок"
+          placeholder={t("records.placeholder.title")}
           placeholderTextColor={colors.textMuted}
           value={title}
           onChangeText={setTitle}
@@ -96,10 +98,10 @@ export const CreateRecordScreen = () => {
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Содержание *</Text>
+        <Text style={styles.label}>{t("records.field.content")} *</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
-          placeholder="Введите содержание (поддерживается Markdown)"
+          placeholder={t("records.placeholder.content")}
           placeholderTextColor={colors.textMuted}
           value={content}
           onChangeText={setContent}
@@ -110,7 +112,7 @@ export const CreateRecordScreen = () => {
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Дата события</Text>
+        <Text style={styles.label}>{t("records.field.date")}</Text>
         <DatePickerComponent
           date={dateEvent}
           visible={datePickerShowed}
@@ -121,7 +123,7 @@ export const CreateRecordScreen = () => {
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Теги</Text>
+        <Text style={styles.label}>{t("records.field.tags")}</Text>
         <TagsInputComponent
           tags={tags}
           inputValue={tagInput}
@@ -144,7 +146,11 @@ export const CreateRecordScreen = () => {
         disabled={loading}
       >
         <Text style={styles.saveButtonText}>
-          {loading ? "Сохранение..." : isEditing ? "Обновить" : "Создать"}
+          {loading
+            ? t("common.saving")
+            : isEditing
+              ? t("common.edit")
+              : t("common.create")}
         </Text>
       </TouchableOpacity>
     </ScrollView>

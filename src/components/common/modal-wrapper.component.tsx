@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type ModalWrapperProps = {
   visible: boolean;
@@ -28,12 +29,13 @@ export const ModalWrapper = ({
   title,
   children,
   onConfirm,
-  confirmText = "Сохранить",
-  cancelText = "Отмена",
+  confirmText,
+  cancelText,
   loading = false,
   showCancel = true,
   confirmDisabled = false,
 }: ModalWrapperProps) => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
 
@@ -54,7 +56,9 @@ export const ModalWrapper = ({
                 style={[styles.button, styles.cancelButton]}
                 onPress={onClose}
               >
-                <Text style={styles.cancelText}>{cancelText}</Text>
+                <Text style={styles.cancelText}>
+                  {cancelText ?? t("common.cancel")}
+                </Text>
               </TouchableOpacity>
             )}
             {onConfirm && (
@@ -70,7 +74,9 @@ export const ModalWrapper = ({
                 {loading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.confirmText}>{confirmText}</Text>
+                  <Text style={styles.confirmText}>
+                    {confirmText ?? t("common.save")}
+                  </Text>
                 )}
               </TouchableOpacity>
             )}

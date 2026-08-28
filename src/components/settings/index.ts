@@ -5,3 +5,4 @@ export * from "./about-section.component";
 export * from "./logout-button.component";
 export * from "./app-footer.component";
 export * from "./settings-item.component";
+export * from "./language-section.component";

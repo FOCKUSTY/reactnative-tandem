@@ -4,6 +4,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type DatePickerProperties = {
   date: Date | null;
@@ -21,6 +22,7 @@ export const DatePickerComponent = ({
   onDateChange,
 }: DatePickerProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
@@ -28,7 +30,7 @@ export const DatePickerComponent = ({
       <TouchableOpacity style={styles.dateButton} onPress={onShow}>
         <MaterialIcons name="event" size={20} color={colors.primary} />
         <Text style={styles.dateButtonText}>
-          {date ? date.toLocaleDateString() : "Выберите дату"}
+          {date ? date.toLocaleDateString() : t("common.selectDate")}
         </Text>
       </TouchableOpacity>
       {visible && (

@@ -3,8 +3,10 @@ import { LinkedPartnerInfo, PartnerForm } from "../components";
 import { useLinkPartner } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
+import { useTranslate } from "../hooks";
 
 export const LinkPartnerScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const {
@@ -18,7 +20,7 @@ export const LinkPartnerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Не будьте одиноки</Text>
+      <Text style={styles.title}>{t("settings.linkPartnerTitle")}</Text>
       {isLinked ? (
         <LinkedPartnerInfo partner={partner} />
       ) : (

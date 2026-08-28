@@ -1,0 +1,199 @@
+{
+  "common": {
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "edit": "Редактировать",
+    "create": "Создать",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "success": "Успех",
+    "saving": "Сохранение...",
+    "selectDate": "Выберите дату",
+    "search": "Поиск по тексту",
+    "enterTag": "Введите тег",
+    "from": "От",
+    "to": "До",
+    "at": "в",
+    "more": "ещё",
+    "viewAll": "Перейти",
+    "confirm": "Подтвердить"
+  },
+  "auth": {
+    "welcome": "Добро пожаловать",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "login": "Войти",
+    "loginLoading": "Вход...",
+    "errors": {
+      "usernameRequired": "Введите имя",
+      "passwordRequired": "Введите пароль",
+      "invalidCredentials": "Неверные данные"
+    }
+  },
+  "home": {
+    "title": "Главная",
+    "greeting": "Привет, {{name}}",
+    "upcomingDates": "Ближайшие даты",
+    "activePlans": "Активные планы",
+    "noDates": "Нет предстоящих дат",
+    "noPlans": "Нет активных планов",
+    "addDate": "Добавить дату",
+    "viewAllDates": "Все даты",
+    "viewAllPlans": "Все планы"
+  },
+  "sections": {
+    "title": "Разделы",
+    "create": "Создать секцию",
+    "name": "Название секции",
+    "system": "Сист.",
+    "recordsCount": "{{count}} записей",
+    "empty": "Нет секций",
+    "createFirst": "Создать первую секцию",
+    "deleteConfirm": {
+      "title": "Удалить секцию?",
+      "message": "Все записи в секции \"{{name}}\" также будут удалены.",
+      "cancel": "Отмена",
+      "confirm": "Удалить"
+    },
+    "systemCannotDelete": "Системные секции нельзя удалить",
+    "createNew": "Создать новую секцию",
+    "systemSectionTitle": "Системная секция",
+    "errors": {
+      "nameRequired": "Введите название секции",
+      "createFailed": "Не удалось создать секцию"
+    }
+  },
+  "records": {
+    "title": "Записи",
+    "empty": "Нет записей в этом разделе",
+    "createFirst": "Создать первую запись",
+    "deleteConfirm": {
+      "title": "Удалить запись?",
+      "message": "Это действие нельзя отменить.",
+      "cancel": "Отмена",
+      "confirm": "Удалить"
+    },
+    "details": "Запись",
+    "editTitle": "Редактировать запись",
+    "createTitle": "Создать запись",
+    "untitled": "Без заголовка",
+    "noContent": "Без содержания",
+    "field": {
+      "section": "Секция",
+      "title": "Заголовок",
+      "content": "Содержание",
+      "date": "Дата события",
+      "tags": "Теги",
+      "completed": "Выполнено",
+      "pinned": "Закреплено",
+      "selectSection": "Выберите секцию"
+    },
+    "markdownHint": "Поддерживается Markdown",
+    "saveSuccess": "Запись сохранена",
+    "createSuccess": "Запись создана",
+    "placeholder": {
+      "title": "Введите заголовок",
+      "content": "Введите содержание (поддерживается Markdown)"
+    },
+    "error": {
+      "loadFailed": "Не удалось загрузить запись",
+      "notFound": "Запись не найдена"
+    },
+    "meta": {
+      "status": "Статус:",
+      "completed": "✅ Выполнено",
+      "inProgress": "⏳ В процессе",
+      "pinned": "Закреплено:",
+      "yes": "📌 Да",
+      "no": "Нет",
+      "createdAt": "Создано:",
+      "updatedAt": "Обновлено:"
+    },
+    "errors": {
+      "selectSection": "Выберите секцию",
+      "titleOrContentRequired": "Введите заголовок или содержание",
+      "saveFailed": "Не удалось сохранить запись"
+    }
+  },
+  "settings": {
+    "title": "Настройки",
+    "profile": "Профиль",
+    "partner": "Партнёр",
+    "appearance": "Внешний вид",
+    "darkTheme": "Тёмная тема",
+    "language": "Язык",
+    "about": "О приложении",
+    "version": "Версия",
+    "logout": "Выйти",
+    "logoutConfirm": {
+      "title": "Выход",
+      "message": "Вы уверены, что хотите выйти?",
+      "cancel": "Отмена",
+      "confirm": "Выйти"
+    },
+    "linkPartner": "Привязать",
+    "linked": "Привязан",
+    "notLinked": "Не привязан",
+    "linkPartnerTitle": "Не будьте одиноки",
+    "alreadyLinked": "Вы уже привязаны",
+    "partnerLabel": "Партнёр:",
+    "unknown": "неизвестно",
+    "partnerFormDescription": "Введите имя пользователя вашей второй половинки, чтобы видеть общие записи.",
+    "linking": "Привязка...",
+    "bannerDescription": "Чтобы видеть общие записи и планировать вместе, свяжите свой аккаунт с партнёром.",
+    "madeWithLove": "Сделано с любовью",
+    "user": "Пользователь"
+  },
+  "filters": {
+    "title": "Фильтры",
+    "searchLabel": "Поиск",
+    "sectionsLabel": "Секции",
+    "tagsLabel": "Теги (через запятую)",
+    "tagsPlaceholder": "например: работа, личное, важное",
+    "apply": "Применить",
+    "reset": "Сбросить",
+    "status": {
+      "all": "Все",
+      "active": "Активные",
+      "completed": "Выполненные"
+    },
+    "pinned": {
+      "all": "Все",
+      "pinned": "Закреплённые",
+      "unpinned": "Не закреплённые"
+    },
+    "statusTitle": "Статус",
+    "pinnedTitle": "Закреплено",
+    "resultsCount": "Найдено: {{count}}",
+    "switches": {
+      "onlyCompleted": "Только завершённые",
+      "onlyActive": "Только не завершённые",
+      "onlyPinned": "Только закреплённые"
+    }
+  },
+  "sort": {
+    "title": "Сортировка",
+    "fields": {
+      "date": "Дата",
+      "createdAt": "Создано",
+      "title": "Заголовок"
+    },
+    "order": {
+      "asc": "По возрастанию",
+      "desc": "По убыванию"
+    }
+  },
+  "languages": {
+    "en": "Английский",
+    "ru": "Русский",
+    "system": "Системный"
+  },
+  "partner": {
+    "errors": {
+      "usernameRequired": "Введите имя пользователя",
+      "linkFailed": "Не удалось привязать партнёра"
+    },
+    "linkSuccessMessage": "Партнёр успешно привязан!"
+  }
+}

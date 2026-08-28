@@ -2,6 +2,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { View, Text } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type RecordHeaderProperties = {
   title?: string;
@@ -11,6 +12,7 @@ export type RecordHeaderProperties = {
 
 export const RecordHeader = ({ title, date, time }: RecordHeaderProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
@@ -20,7 +22,7 @@ export const RecordHeader = ({ title, date, time }: RecordHeaderProperties) => {
         <View style={styles.dateContainer}>
           <MaterialIcons name="event" size={20} color={colors.primary} />
           <Text style={styles.dateText}>
-            {date} {time ? `в ${time}` : ""}
+            {date} {time ? `${t("common.at")} ${time}` : ""}
           </Text>
         </View>
       )}

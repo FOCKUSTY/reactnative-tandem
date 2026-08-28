@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { Alert } from "react-native";
 import { useCreateSection, useSections } from "../sections";
 import { useCreateRecord, useUpdateRecord } from "./use-records.hook";
+import { useTranslate } from "../i18n";
 
 export type UseRecordFormProperties = {
   initialSectionId?: string;
@@ -15,6 +16,7 @@ export const useRecordForm = ({
   initialSectionId,
   record,
 }: UseRecordFormProperties) => {
+  const { t } = useTranslate();
   const navigation = useNavigation<NavigationProperty>();
   const isEditing = !!record;
 
@@ -76,7 +78,7 @@ export const useRecordForm = ({
 
   const handleCreateSection = async () => {
     if (!newSectionName.trim()) {
-      Alert.alert("Ошибка", "Введите название секции");
+      Alert.alert(t("common.error"), t("sections.errors.nameRequired"));
       return;
     }
     try {
@@ -91,17 +93,20 @@ export const useRecordForm = ({
       setCreateSectionModalVisible(false);
       setSectionModalVisible(false);
     } catch {
-      Alert.alert("Ошибка", "Не удалось создать секцию");
+      Alert.alert(t("common.error"), t("sections.errors.createFailed"));
     }
   };
 
   const handleSubmit = async () => {
     if (!selectedSectionId) {
-      Alert.alert("Ошибка", "Выберите секцию");
+      Alert.alert(t("common.error"), t("records.errors.selectSection"));
       return;
     }
     if (!content && !title) {
-      Alert.alert("Ошибка", "Введите заголовок или содержание");
+      Alert.alert(
+        t("common.error"),
+        t("records.errors.titleOrContentRequired"),
+      );
       return;
     }
 
@@ -120,14 +125,14 @@ export const useRecordForm = ({
 
       if (isEditing && record) {
         await updateRecordMutation.mutateAsync({ id: record.id, data });
-        Alert.alert("Успех", "Запись обновлена");
+        Alert.alert(t("common.success"), t("records.saveSuccess"));
       } else {
         await createRecordMutation.mutateAsync(data as any);
-        Alert.alert("Успех", "Запись создана");
+        Alert.alert(t("common.success"), t("records.createSuccess"));
       }
       navigation.goBack();
     } catch {
-      Alert.alert("Ошибка", "Не удалось сохранить запись");
+      Alert.alert(t("common.error"), t("records.errors.saveFailed"));
     } finally {
       setLoading(false);
     }

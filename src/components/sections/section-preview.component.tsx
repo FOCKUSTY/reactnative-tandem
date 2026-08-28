@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
-import { useSections } from "../../hooks";
+import { useSections, useTranslate } from "../../hooks";
 
 export type SectionPreviewProperties = {
   records: MyRecord[];
@@ -23,11 +23,12 @@ export const SectionPreview = ({
   sectionSlug,
   title,
   emptyMessage,
-  createLabel = "Добавить",
-  viewAllLabel = "Перейти",
+  createLabel,
+  viewAllLabel,
   limit = 5,
 }: SectionPreviewProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParameters>>();
@@ -62,7 +63,9 @@ export const SectionPreview = ({
           style={[styles.button, styles.addButton]}
           onPress={handleCreate}
         >
-          <Text style={styles.buttonText}>{createLabel}</Text>
+          <Text style={styles.buttonText}>
+            {createLabel ?? t("common.create")}
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -85,7 +88,9 @@ export const SectionPreview = ({
             activeOpacity={0.6}
           >
             {record.isPinned && (
-              <Text style={styles.pinnedBadge}>📌 Закреплено</Text>
+              <Text style={styles.pinnedBadge}>
+                📌 {t("records.field.pinned")}
+              </Text>
             )}
             {record.dateEvent && (
               <Text style={styles.cardDate}>
@@ -95,7 +100,7 @@ export const SectionPreview = ({
             <Text style={styles.cardText} numberOfLines={2}>
               {record.content?.slice(0, 100) ||
                 record.title ||
-                "Без содержания"}
+                t("records.noContent")}
             </Text>
           </TouchableOpacity>
         ))}
@@ -106,7 +111,9 @@ export const SectionPreview = ({
           style={[styles.button, styles.addButtonSmall]}
           onPress={handleCreate}
         >
-          <Text style={styles.buttonText}>{createLabel}</Text>
+          <Text style={styles.buttonText}>
+            {createLabel ?? t("common.create")}
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.viewAllButton]}
@@ -114,8 +121,8 @@ export const SectionPreview = ({
         >
           <Text style={styles.buttonText}>
             {hasMore
-              ? `${viewAllLabel} (ещё ${records.length - limit})`
-              : viewAllLabel}
+              ? `${viewAllLabel ?? t("common.viewAll")} (${t("common.more")} ${records.length - limit})`
+              : (viewAllLabel ?? t("common.viewAll"))}
           </Text>
         </TouchableOpacity>
       </View>

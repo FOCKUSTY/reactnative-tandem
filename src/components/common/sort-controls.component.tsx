@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { ThemeColors } from "../../constants";
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type SortField = "dateEvent" | "createdAt" | "updatedAt" | "title";
 export type SortOrder = "asc" | "desc";
@@ -20,17 +21,18 @@ export const SortControls = ({
   onSortOrderChange,
 }: SortControlsProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   const fields: { value: SortField; label: string }[] = [
-    { value: "dateEvent", label: "Дата" },
-    { value: "createdAt", label: "Создано" },
-    { value: "title", label: "Заголовок" },
+    { value: "dateEvent", label: t("sort.fields.date") },
+    { value: "createdAt", label: t("sort.fields.createdAt") },
+    { value: "title", label: t("sort.fields.title") },
   ];
 
   return (
     <View>
-      <Text style={styles.label}>Сортировка</Text>
+      <Text style={styles.label}>{t("sort.title")}</Text>
       <View style={styles.sortRow}>
         {fields.map((field) => (
           <TouchableOpacity
@@ -56,7 +58,7 @@ export const SortControls = ({
             onPress={() => onSortOrderChange(order)}
           >
             <Text style={styles.sortButtonText}>
-              {order === "asc" ? "По возрастанию" : "По убыванию"}
+              {order === "asc" ? t("sort.order.asc") : t("sort.order.desc")}
             </Text>
           </TouchableOpacity>
         ))}

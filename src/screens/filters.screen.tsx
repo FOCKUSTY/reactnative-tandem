@@ -14,8 +14,10 @@ import {
   SortControls,
   FilterActions,
 } from "../components";
+import { useTranslate } from "../hooks";
 
 export const FiltersScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
@@ -66,15 +68,15 @@ export const FiltersScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Text style={styles.title}>Фильтры</Text>
+      <Text style={styles.title}>{t("filters.title")}</Text>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Поиск</Text>
+        <Text style={styles.label}>{t("filters.searchLabel")}</Text>
         <SearchInput value={search} onChange={setSearch} />
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Секции (можно выбрать несколько)</Text>
+        <Text style={styles.label}>{t("filters.sectionsLabel")}</Text>
         <SectionsSelector
           sections={sections}
           selectedIds={selectedSectionIds}
@@ -83,7 +85,7 @@ export const FiltersScreen = () => {
       </View>
 
       <View style={styles.field}>
-        <Text style={styles.label}>Теги (через запятую)</Text>
+        <Text style={styles.label}>{t("filters.tagsLabel")}</Text>
         <TagsInputComponent
           tags={[]}
           inputValue={tagsInput}

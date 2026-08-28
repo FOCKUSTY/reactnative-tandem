@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { useState } from "react";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type DateRangePickerProperties = {
   dateFrom: Date | null;
@@ -19,25 +20,26 @@ export const DateRangePicker = ({
   onDateToChange,
 }: DateRangePickerProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
   const [showFrom, setShowFrom] = useState(false);
   const [showTo, setShowTo] = useState(false);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Дата события</Text>
+      <Text style={styles.title}>{t("records.field.date")}</Text>
       <View style={styles.row}>
         <TouchableOpacity
           style={styles.button}
           onPress={() => setShowFrom(true)}
         >
           <Text style={styles.buttonText}>
-            {dateFrom ? dateFrom.toLocaleDateString() : "От"}
+            {dateFrom ? dateFrom.toLocaleDateString() : t("common.from")}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => setShowTo(true)}>
           <Text style={styles.buttonText}>
-            {dateTo ? dateTo.toLocaleDateString() : "До"}
+            {dateTo ? dateTo.toLocaleDateString() : t("common.to")}
           </Text>
         </TouchableOpacity>
       </View>

@@ -2,6 +2,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { TouchableOpacity, Text } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 export type LogoutButtonProps = {
   onPress: () => void;
@@ -9,12 +10,13 @@ export type LogoutButtonProps = {
 
 export const LogoutButton = ({ onPress }: LogoutButtonProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <TouchableOpacity style={styles.logoutButton} onPress={onPress}>
       <MaterialIcons name="logout" size={20} color={colors.danger} />
-      <Text style={styles.logoutText}>Выйти</Text>
+      <Text style={styles.logoutText}>{t("settings.logout")}</Text>
     </TouchableOpacity>
   );
 };

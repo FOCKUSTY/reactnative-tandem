@@ -6,6 +6,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTranslate } from "../../hooks";
 
 const SECTION_ICONS: Record<string, MaterialIconsIconName> = {
   rules: "rule",
@@ -31,6 +32,7 @@ export const SectionCard = ({
   onLongPress,
 }: SectionCardProps) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   const getIcon = (section: Section): MaterialIconsIconName => {
@@ -56,11 +58,13 @@ export const SectionCard = ({
       </View>
       <View style={styles.textContainer}>
         <Text style={styles.title}>{section.name}</Text>
-        <Text style={styles.count}>{section._count?.records || 0} записей</Text>
+        <Text style={styles.count}>
+          {t("sections.recordsCount", { count: section._count?.records || 0 })}
+        </Text>
       </View>
       {section.isSystem && (
         <View style={styles.systemBadge}>
-          <Text style={styles.systemBadgeText}>Сист.</Text>
+          <Text style={styles.systemBadgeText}>{t("sections.system")}</Text>
         </View>
       )}
       <MaterialIcons name="chevron-right" size={24} color={colors.textMuted} />

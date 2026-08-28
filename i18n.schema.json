@@ -1,0 +1,475 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/i18n.schema.json",
+  "title": "Translation Schema",
+  "description": "Schema for translation JSON files",
+  "type": "object",
+  "properties": {
+    "common": {
+      "type": "object",
+      "properties": {
+        "save": { "type": "string" },
+        "cancel": { "type": "string" },
+        "delete": { "type": "string" },
+        "edit": { "type": "string" },
+        "create": { "type": "string" },
+        "loading": { "type": "string" },
+        "error": { "type": "string" },
+        "success": { "type": "string" },
+        "saving": { "type": "string" },
+        "selectDate": { "type": "string" },
+        "search": { "type": "string" },
+        "enterTag": { "type": "string" },
+        "from": { "type": "string" },
+        "to": { "type": "string" },
+        "at": { "type": "string" },
+        "more": { "type": "string" },
+        "viewAll": { "type": "string" },
+        "confirm": { "type": "string" }
+      },
+      "required": [
+        "save",
+        "cancel",
+        "delete",
+        "edit",
+        "create",
+        "loading",
+        "error",
+        "success",
+        "saving",
+        "selectDate",
+        "search",
+        "enterTag",
+        "from",
+        "to",
+        "at",
+        "more",
+        "viewAll",
+        "confirm"
+      ],
+      "additionalProperties": false
+    },
+    "auth": {
+      "type": "object",
+      "properties": {
+        "welcome": { "type": "string" },
+        "username": { "type": "string" },
+        "password": { "type": "string" },
+        "login": { "type": "string" },
+        "loginLoading": { "type": "string" },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "usernameRequired": { "type": "string" },
+            "passwordRequired": { "type": "string" },
+            "invalidCredentials": { "type": "string" }
+          },
+          "required": [
+            "usernameRequired",
+            "passwordRequired",
+            "invalidCredentials"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "welcome",
+        "username",
+        "password",
+        "login",
+        "loginLoading",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "home": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "greeting": { "type": "string" },
+        "upcomingDates": { "type": "string" },
+        "activePlans": { "type": "string" },
+        "noDates": { "type": "string" },
+        "noPlans": { "type": "string" },
+        "addDate": { "type": "string" },
+        "viewAllDates": { "type": "string" },
+        "viewAllPlans": { "type": "string" }
+      },
+      "required": [
+        "title",
+        "greeting",
+        "upcomingDates",
+        "activePlans",
+        "noDates",
+        "noPlans",
+        "addDate",
+        "viewAllDates",
+        "viewAllPlans"
+      ],
+      "additionalProperties": false
+    },
+    "sections": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "create": { "type": "string" },
+        "name": { "type": "string" },
+        "system": { "type": "string" },
+        "recordsCount": { "type": "string" },
+        "empty": { "type": "string" },
+        "createFirst": { "type": "string" },
+        "deleteConfirm": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "message": { "type": "string" },
+            "cancel": { "type": "string" },
+            "confirm": { "type": "string" }
+          },
+          "required": ["title", "message", "cancel", "confirm"],
+          "additionalProperties": false
+        },
+        "systemCannotDelete": { "type": "string" },
+        "systemSectionTitle": { "type": "string" },
+        "createNew": { "type": "string" },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "nameRequired": { "type": "string" },
+            "createFailed": { "type": "string" }
+          },
+          "required": ["nameRequired", "createFailed"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "title",
+        "create",
+        "name",
+        "system",
+        "recordsCount",
+        "empty",
+        "createFirst",
+        "deleteConfirm",
+        "systemCannotDelete",
+        "systemSectionTitle",
+        "createNew",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "records": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "empty": { "type": "string" },
+        "createFirst": { "type": "string" },
+        "deleteConfirm": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "message": { "type": "string" },
+            "cancel": { "type": "string" },
+            "confirm": { "type": "string" }
+          },
+          "required": ["title", "message", "cancel", "confirm"],
+          "additionalProperties": false
+        },
+        "details": { "type": "string" },
+        "editTitle": { "type": "string" },
+        "createTitle": { "type": "string" },
+        "untitled": { "type": "string" },
+        "noContent": { "type": "string" },
+        "field": {
+          "type": "object",
+          "properties": {
+            "section": { "type": "string" },
+            "title": { "type": "string" },
+            "content": { "type": "string" },
+            "date": { "type": "string" },
+            "tags": { "type": "string" },
+            "completed": { "type": "string" },
+            "pinned": { "type": "string" },
+            "selectSection": { "type": "string" }
+          },
+          "required": [
+            "section",
+            "title",
+            "content",
+            "date",
+            "tags",
+            "completed",
+            "pinned",
+            "selectSection"
+          ],
+          "additionalProperties": false
+        },
+        "markdownHint": { "type": "string" },
+        "saveSuccess": { "type": "string" },
+        "createSuccess": { "type": "string" },
+        "placeholder": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "content": { "type": "string" }
+          },
+          "required": ["title", "content"],
+          "additionalProperties": false
+        },
+        "error": {
+          "type": "object",
+          "properties": {
+            "loadFailed": { "type": "string" },
+            "notFound": { "type": "string" }
+          },
+          "required": ["loadFailed", "notFound"],
+          "additionalProperties": false
+        },
+        "meta": {
+          "type": "object",
+          "properties": {
+            "status": { "type": "string" },
+            "completed": { "type": "string" },
+            "inProgress": { "type": "string" },
+            "pinned": { "type": "string" },
+            "yes": { "type": "string" },
+            "no": { "type": "string" },
+            "createdAt": { "type": "string" },
+            "updatedAt": { "type": "string" }
+          },
+          "required": [
+            "status",
+            "completed",
+            "inProgress",
+            "pinned",
+            "yes",
+            "no",
+            "createdAt",
+            "updatedAt"
+          ],
+          "additionalProperties": false
+        },
+        "errors": {
+          "type": "object",
+          "properties": {
+            "selectSection": { "type": "string" },
+            "titleOrContentRequired": { "type": "string" },
+            "saveFailed": { "type": "string" }
+          },
+          "required": ["selectSection", "titleOrContentRequired", "saveFailed"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "title",
+        "empty",
+        "createFirst",
+        "deleteConfirm",
+        "details",
+        "editTitle",
+        "createTitle",
+        "untitled",
+        "noContent",
+        "field",
+        "markdownHint",
+        "saveSuccess",
+        "createSuccess",
+        "placeholder",
+        "error",
+        "meta",
+        "errors"
+      ],
+      "additionalProperties": false
+    },
+    "settings": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "profile": { "type": "string" },
+        "partner": { "type": "string" },
+        "appearance": { "type": "string" },
+        "darkTheme": { "type": "string" },
+        "language": { "type": "string" },
+        "about": { "type": "string" },
+        "version": { "type": "string" },
+        "logout": { "type": "string" },
+        "logoutConfirm": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "message": { "type": "string" },
+            "cancel": { "type": "string" },
+            "confirm": { "type": "string" }
+          },
+          "required": ["title", "message", "cancel", "confirm"],
+          "additionalProperties": false
+        },
+        "linkPartner": { "type": "string" },
+        "linked": { "type": "string" },
+        "notLinked": { "type": "string" },
+        "linkPartnerTitle": { "type": "string" },
+        "alreadyLinked": { "type": "string" },
+        "partnerLabel": { "type": "string" },
+        "unknown": { "type": "string" },
+        "partnerFormDescription": { "type": "string" },
+        "linking": { "type": "string" },
+        "bannerDescription": { "type": "string" },
+        "madeWithLove": { "type": "string" },
+        "user": { "type": "string" }
+      },
+      "required": [
+        "title",
+        "profile",
+        "partner",
+        "appearance",
+        "darkTheme",
+        "language",
+        "about",
+        "version",
+        "logout",
+        "logoutConfirm",
+        "linkPartner",
+        "linked",
+        "notLinked",
+        "linkPartnerTitle",
+        "alreadyLinked",
+        "partnerLabel",
+        "unknown",
+        "partnerFormDescription",
+        "linking",
+        "bannerDescription",
+        "madeWithLove",
+        "user"
+      ],
+      "additionalProperties": false
+    },
+    "languages": {
+      "type": "object",
+      "properties": {
+        "ru": { "type": "string" },
+        "en": { "type": "string" },
+        "system": { "type": "string" }
+      },
+      "required": ["ru", "en", "system"],
+      "additionalProperties": false
+    },
+    "filters": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "searchLabel": { "type": "string" },
+        "sectionsLabel": { "type": "string" },
+        "tagsLabel": { "type": "string" },
+        "tagsPlaceholder": { "type": "string" },
+        "apply": { "type": "string" },
+        "reset": { "type": "string" },
+        "status": {
+          "type": "object",
+          "properties": {
+            "all": { "type": "string" },
+            "active": { "type": "string" },
+            "completed": { "type": "string" }
+          },
+          "required": ["all", "active", "completed"],
+          "additionalProperties": false
+        },
+        "pinned": {
+          "type": "object",
+          "properties": {
+            "all": { "type": "string" },
+            "pinned": { "type": "string" },
+            "unpinned": { "type": "string" }
+          },
+          "required": ["all", "pinned", "unpinned"],
+          "additionalProperties": false
+        },
+        "statusTitle": { "type": "string" },
+        "pinnedTitle": { "type": "string" },
+        "resultsCount": { "type": "string" },
+        "switches": {
+          "type": "object",
+          "properties": {
+            "onlyCompleted": { "type": "string" },
+            "onlyActive": { "type": "string" },
+            "onlyPinned": { "type": "string" }
+          },
+          "required": ["onlyCompleted", "onlyActive", "onlyPinned"],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "title",
+        "searchLabel",
+        "sectionsLabel",
+        "tagsLabel",
+        "tagsPlaceholder",
+        "apply",
+        "reset",
+        "status",
+        "pinned",
+        "statusTitle",
+        "pinnedTitle",
+        "resultsCount",
+        "switches"
+      ],
+      "additionalProperties": false
+    },
+    "sort": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "fields": {
+          "type": "object",
+          "properties": {
+            "date": { "type": "string" },
+            "createdAt": { "type": "string" },
+            "title": { "type": "string" }
+          },
+          "required": ["date", "createdAt", "title"],
+          "additionalProperties": false
+        },
+        "order": {
+          "type": "object",
+          "properties": {
+            "asc": { "type": "string" },
+            "desc": { "type": "string" }
+          },
+          "required": ["asc", "desc"],
+          "additionalProperties": false
+        }
+      },
+      "required": ["title", "fields", "order"],
+      "additionalProperties": false
+    },
+    "partner": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "object",
+          "properties": {
+            "usernameRequired": { "type": "string" },
+            "linkFailed": { "type": "string" }
+          },
+          "required": ["usernameRequired", "linkFailed"],
+          "additionalProperties": false
+        },
+        "linkSuccessMessage": { "type": "string" }
+      },
+      "required": ["errors", "linkSuccessMessage"],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "common",
+    "auth",
+    "home",
+    "sections",
+    "records",
+    "settings",
+    "languages",
+    "filters",
+    "sort",
+    "partner"
+  ],
+  "additionalProperties": false
+}

@@ -2,6 +2,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { View, Text, TouchableOpacity } from "react-native";
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type RecordsEmptyStateProperties = {
   onCreate: () => void;
@@ -11,14 +12,15 @@ export const RecordsEmptyState = ({
   onCreate,
 }: RecordsEmptyStateProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View style={styles.centered}>
       <MaterialIcons name="inbox" size={64} color={colors.textMuted} />
-      <Text style={styles.emptyText}>Нет записей в этом разделе</Text>
+      <Text style={styles.emptyText}>{t("records.empty")}</Text>
       <TouchableOpacity style={styles.emptyButton} onPress={onCreate}>
-        <Text style={styles.emptyButtonText}>Создать первую запись</Text>
+        <Text style={styles.emptyButtonText}>{t("records.createFirst")}</Text>
       </TouchableOpacity>
     </View>
   );

@@ -8,8 +8,10 @@ import { RecordCard } from "../components";
 import { useRecordsList } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
+import { useTranslate } from "../hooks";
 
 export const RecordsScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const { records, isLoading, title, handleDelete, handleCreate } =
@@ -40,9 +42,9 @@ export const RecordsScreen = () => {
     return (
       <View style={styles.emptyContainer}>
         <MaterialIcons name="inbox" size={64} color={colors.textMuted} />
-        <Text style={styles.emptyText}>Нет записей в этом разделе</Text>
+        <Text style={styles.emptyText}>{t("records.empty")}</Text>
         <TouchableOpacity style={styles.emptyButton} onPress={handleCreate}>
-          <Text style={styles.emptyButtonText}>Создать первую запись</Text>
+          <Text style={styles.emptyButtonText}>{t("records.createFirst")}</Text>
         </TouchableOpacity>
       </View>
     );

@@ -2,25 +2,27 @@ import { View, Text } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { VERSION } from "../../constants";
+import { useTranslate } from "../../hooks";
 
 import { SettingsItem } from "./settings-item.component";
 
 export const AboutSection = () => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>О приложении</Text>
+      <Text style={styles.sectionTitle}>{t("settings.about")}</Text>
       <View style={styles.card}>
         <SettingsItem
           icon="info"
-          label="Версия"
+          label={t("settings.version")}
           rightElement={<Text style={styles.valueText}>{VERSION}</Text>}
         />
         <SettingsItem
           icon="monitor-heart"
-          label="Сделано с любовью"
+          label={t("settings.madeWithLove")}
           rightElement={<Text style={styles.valueText}>❤️</Text>}
         />
       </View>

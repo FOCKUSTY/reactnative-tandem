@@ -2,6 +2,7 @@ import type { PairUser } from "../../types";
 import { View, Text } from "react-native";
 import { createStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { useTranslate } from "../../hooks";
 
 export type LinkedPartnerInfoProperties = {
   partner: PairUser | null;
@@ -9,13 +10,15 @@ export type LinkedPartnerInfoProperties = {
 
 export const LinkedPartnerInfo = ({ partner }: LinkedPartnerInfoProperties) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View style={styles.linkedContainer}>
-      <Text style={styles.linkedText}>Вы уже привязаны</Text>
+      <Text style={styles.linkedText}>{t("settings.alreadyLinked")}</Text>
       <Text style={styles.linkedSubtext}>
-        Партнёр: {partner?.name || partner?.username || "неизвестно"}
+        {t("settings.partnerLabel")}{" "}
+        {partner?.name || partner?.username || t("settings.unknown")}
       </Text>
     </View>
   );

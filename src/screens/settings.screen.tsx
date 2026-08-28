@@ -9,6 +9,7 @@ import {
   AboutSection,
   LogoutButton,
   AppFooter,
+  LanguageSection,
 } from "../components";
 
 export const SettingsScreen = () => {
@@ -22,6 +23,7 @@ export const SettingsScreen = () => {
       <ProfileSection user={user} />
       <PartnerSection isPartnerLinked={isPartnerLinked} />
       <AppearanceSection mode={mode} onToggleTheme={toggleTheme} />
+      <LanguageSection />
       <AboutSection />
       <LogoutButton onPress={handleLogout} />
       <AppFooter />
@@ -29,7 +31,7 @@ export const SettingsScreen = () => {
   );
 };
 
-const getStyles = createStyles((colors) => ({
+const getStyles = createStyles(() => ({
   content: {
     padding: 16,
     paddingBottom: 40,
