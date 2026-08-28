@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { VERSION } from "../../constants";
 
 import { SettingsItem } from "./settings-item.component";
 
@@ -15,7 +16,7 @@ export const AboutSection = () => {
         <SettingsItem
           icon="info"
           label="Версия"
-          rightElement={<Text style={styles.valueText}>0.0.1-indev</Text>}
+          rightElement={<Text style={styles.valueText}>{VERSION}</Text>}
         />
         <SettingsItem
           icon="monitor-heart"

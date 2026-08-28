@@ -1,5 +1,5 @@
 import { Alert } from "react-native";
-import { useAuth, useTheme } from "../contexts";
+import { useAuth, useTheme } from "../../contexts";
 
 export const useSettings = () => {
   const { user, me, logout } = useAuth();

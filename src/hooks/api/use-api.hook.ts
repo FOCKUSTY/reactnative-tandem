@@ -1,7 +1,7 @@
-import type { ApiError, UseApiResult } from "../types";
+import type { ApiError, UseApiResult } from "../../types";
 
 import { useState, useCallback } from "react";
-import { handleApiError } from "../utils";
+import { handleApiError } from "../../utils";
 
 export function useApi<T, P extends any[] = any[]>(
   apiCall: (...args: P) => Promise<T>,

@@ -3,12 +3,8 @@ import type { MyRecord, NavigationProperty } from "../../types";
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { Alert } from "react-native";
-import {
-  useCreateRecord,
-  useUpdateRecord,
-  useCreateSection,
-  useSections,
-} from "..";
+import { useCreateSection, useSections } from "../sections";
+import { useCreateRecord, useUpdateRecord } from "./use-records.hook";
 
 export type UseRecordFormProperties = {
   initialSectionId?: string;

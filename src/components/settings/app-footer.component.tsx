@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
-import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
+import { useTheme } from "../../contexts";
+import { NAME, VERSION } from "../../constants";
 
 export const AppFooter = () => {
   const { colors } = useTheme();
@@ -8,7 +9,9 @@ export const AppFooter = () => {
 
   return (
     <View style={styles.footer}>
-      <Text style={styles.footerText}>Тандем 0.0.1-indev</Text>
+      <Text style={styles.footerText}>
+        {NAME} {VERSION}
+      </Text>
     </View>
   );
 };
