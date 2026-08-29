@@ -3,4 +3,6 @@ export const STORAGE_KEYS = {
   AUTH_USER: ".auth_user",
   HIDE_PARTNER_BANNER: ".hide_partner_banner",
   LOGGING_ENABLED: ".logging_enabled",
+  PIN_ENABLED: ".pin_enabled",
+  PIN_CODE: ".pin_code",
 } as const;

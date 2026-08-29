@@ -13,6 +13,7 @@ export type RootStackParameters = {
   Settings: undefined;
   Logs: undefined;
   Calendar: undefined;
+  Pin: undefined;
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;

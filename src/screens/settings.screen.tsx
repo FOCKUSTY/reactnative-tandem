@@ -11,6 +11,7 @@ import {
   AppFooter,
   LanguageSection,
   LoggingSection,
+  PinSection,
 } from "../components";
 
 export const SettingsScreen = () => {
@@ -27,6 +28,7 @@ export const SettingsScreen = () => {
       <LanguageSection />
       <AboutSection />
       <LoggingSection />
+      <PinSection />
       <LogoutButton onPress={handleLogout} />
       <AppFooter />
     </ScrollView>

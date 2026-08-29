@@ -1,4 +1,25 @@
 {
+  "pin": {
+    "title": "PIN-код",
+    "subtitle": "Введите ваш PIN-код для доступа",
+    "placeholder": "Введите PIN",
+    "unlock": "Разблокировать",
+    "forgot": "Забыли PIN? Выйдите из аккаунта",
+    "errorMinLength": "PIN должен содержать не менее 4 цифр",
+    "errorInvalid": "Неверный PIN-код",
+    "errorMismatch": "PIN-коды не совпадают",
+    "setSuccess": "PIN-код установлен",
+    "enable": "Защита PIN-кодом",
+    "change": "Изменить PIN",
+    "changeTitle": "Изменить PIN-код",
+    "setTitle": "Установить PIN-код",
+    "enterNew": "Введите новый PIN",
+    "confirmNew": "Подтвердите PIN",
+    "disableTitle": "Отключить PIN?",
+    "disableMessage": "Приложение больше не будет запрашивать PIN-код при запуске.",
+    "logoutTitle": "Выйти?",
+    "logoutMessage": "Вы уверены, что хотите выйти? PIN-код останется сохранённым."
+  },
   "common": {
     "close": "Закрыть",
     "save": "Сохранить",

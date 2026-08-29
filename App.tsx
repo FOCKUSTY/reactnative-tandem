@@ -16,6 +16,8 @@ import {
   useTheme,
   AuthProvider,
   useAuth,
+  PinProvider,
+  usePin,
 } from "./src/contexts";
 
 import {
@@ -30,6 +32,7 @@ import {
   CreateRecordScreen,
   LogsScreen,
   CalendarScreen,
+  PinScreen,
 } from "./src/screens";
 import { useEffect, useState } from "react";
 
@@ -185,6 +188,7 @@ const AppNavigator = () => {
             component={RecordDetailsScreen}
             options={{ title: t("records.details") }}
           />
+          <Stack.Screen name="Pin" component={PinScreen} />
           <Stack.Screen
             name="Settings"
             component={SettingsScreen}
@@ -197,6 +201,55 @@ const AppNavigator = () => {
 };
 
 SplashScreen.preventAutoHideAsync();
+
+const AppContent = () => {
+  const { isPinEnabled, checkPin } = usePin();
+  const [isPinVerified, setIsPinVerified] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const init = async () => {
+      const enabled = await checkPin();
+      if (!enabled) {
+        setIsPinVerified(true);
+      }
+      setLoading(false);
+    };
+    init();
+  }, []);
+
+  if (loading) return null;
+
+  if (isPinEnabled && !isPinVerified) {
+    return (
+      <I18nextProvider i18n={i18n}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <AuthProvider>
+              <PinScreen onSuccess={() => setIsPinVerified(true)} />
+            </AuthProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </I18nextProvider>
+    );
+  }
+
+  return (
+    <I18nextProvider i18n={i18n}>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider>
+          <AuthProvider>
+            <FiltersProvider>
+              <NavigationContainer>
+                <AppNavigator />
+              </NavigationContainer>
+            </FiltersProvider>
+          </AuthProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </I18nextProvider>
+  );
+};
 
 const App = () => {
   const [isReady, setIsReady] = useState(false);
@@ -218,24 +271,13 @@ const App = () => {
     prepare();
   }, []);
 
-  if (!isReady) {
-    return null;
-  }
+  if (!isReady) return null;
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <AuthProvider>
-            <FiltersProvider>
-              <NavigationContainer>
-                <AppNavigator />
-              </NavigationContainer>
-            </FiltersProvider>
-          </AuthProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </I18nextProvider>
+    <PinProvider>
+      <AppContent />
+    </PinProvider>
   );
 };
+
 export default App;

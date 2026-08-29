@@ -1,4 +1,25 @@
 {
+  "pin": {
+    "title": "PIN Code",
+    "subtitle": "Enter your PIN to access",
+    "placeholder": "Enter PIN",
+    "unlock": "Unlock",
+    "forgot": "Forgot PIN? Logout",
+    "errorMinLength": "PIN must be at least 4 digits",
+    "errorInvalid": "Invalid PIN",
+    "errorMismatch": "PINs do not match",
+    "setSuccess": "PIN set successfully",
+    "enable": "Enable PIN protection",
+    "change": "Change PIN",
+    "changeTitle": "Change PIN",
+    "setTitle": "Set PIN",
+    "enterNew": "Enter new PIN",
+    "confirmNew": "Confirm PIN",
+    "disableTitle": "Disable PIN?",
+    "disableMessage": "App will no longer ask for PIN on launch.",
+    "logoutTitle": "Logout?",
+    "logoutMessage": "Are you sure you want to logout? PIN will remain saved."
+  },
   "common": {
     "close": "Close",
     "save": "Save",
