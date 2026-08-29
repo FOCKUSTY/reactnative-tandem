@@ -202,5 +202,16 @@
       "linkFailed": "Не удалось привязать партнёра"
     },
     "linkSuccessMessage": "Партнёр успешно привязан!"
+  },
+  "logs": {
+    "title": "App Logs",
+    "clearConfirm": {
+      "title": "Clear logs?",
+      "message": "This action cannot be undone."
+    },
+    "clear": "Clear",
+    "errorLoad": "Failed to load logs",
+    "sharingUnavailable": "Sharing is not supported on this device",
+    "exportError": "Failed to export logs"
   }
 }

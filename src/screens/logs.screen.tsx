@@ -28,17 +28,17 @@ export const LogsScreen = () => {
       const content = await logger.getFormattedLogs();
       setLogs(content);
     } catch (error) {
-      Alert.alert("Ошибка", "Не удалось загрузить логи");
+      Alert.alert(t("common.error"), t("logs.errorLoad"));
     } finally {
       setLoading(false);
     }
   };
 
   const clearLogs = async () => {
-    Alert.alert("Очистить логи?", "Это действие нельзя отменить.", [
-      { text: "Отмена", style: "cancel" },
+    Alert.alert(t("logs.clearConfirm.title"), t("logs.clearConfirm.message"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Очистить",
+        text: t("logs.clear"),
         style: "destructive",
         onPress: async () => {
           await logger.clearLogs();
@@ -54,14 +54,14 @@ export const LogsScreen = () => {
       if (await isAvailableAsync()) {
         await shareAsync(fileUri, {
           mimeType: "text/plain",
-          dialogTitle: "Экспорт логов",
+          dialogTitle: t("logs.title"),
           UTI: "public.plain-text",
         });
       } else {
-        Alert.alert("Ошибка", "Шаринг не поддерживается на этом устройстве");
+        Alert.alert(t("common.error"), t("logs.sharingUnavailable"));
       }
     } catch (error) {
-      Alert.alert("Ошибка", "Не удалось экспортировать логи");
+      Alert.alert(t("common.error"), t("logs.exportError"));
     }
   };
 
@@ -80,7 +80,7 @@ export const LogsScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Логи приложения</Text>
+        <Text style={styles.title}>{t("logs.title")}</Text>
         <View style={styles.headerActions}>
           <TouchableOpacity onPress={exportLogs} style={styles.iconButton}>
             <MaterialIcons name="share" size={24} color={colors.primary} />

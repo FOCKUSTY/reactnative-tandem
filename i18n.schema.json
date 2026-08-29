@@ -468,6 +468,34 @@
         "unknown": { "type": "string" }
       },
       "required": ["network", "server", "unauthorized", "notFound", "unknown"]
+    },
+    "logs": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "clearConfirm": {
+          "type": "object",
+          "properties": {
+            "title": { "type": "string" },
+            "message": { "type": "string" }
+          },
+          "required": ["title", "message"],
+          "additionalProperties": false
+        },
+        "clear": { "type": "string" },
+        "errorLoad": { "type": "string" },
+        "sharingUnavailable": { "type": "string" },
+        "exportError": { "type": "string" }
+      },
+      "required": [
+        "title",
+        "clearConfirm",
+        "clear",
+        "errorLoad",
+        "sharingUnavailable",
+        "exportError"
+      ],
+      "additionalProperties": false
     }
   },
   "required": [
@@ -481,7 +509,8 @@
     "languages",
     "filters",
     "sort",
-    "partner"
+    "partner",
+    "logs"
   ],
   "additionalProperties": false
 }

@@ -202,5 +202,16 @@
       "linkFailed": "Failed to link partner"
     },
     "linkSuccessMessage": "Partner successfully linked!"
+  },
+  "logs": {
+    "title": "Логи приложения",
+    "clearConfirm": {
+      "title": "Очистить логи?",
+      "message": "Это действие нельзя отменить."
+    },
+    "clear": "Очистить",
+    "errorLoad": "Не удалось загрузить логи",
+    "sharingUnavailable": "Шаринг не поддерживается на этом устройстве",
+    "exportError": "Не удалось экспортировать логи"
   }
 }
