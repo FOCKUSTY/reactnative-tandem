@@ -7,7 +7,7 @@ import { useLayoutEffect } from "react";
 
 import { RecordContent } from "../components";
 import { useRecordDetail } from "../hooks";
-import { createStyles } from "../utils";
+import { createStyles, formatDate, formatTime } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
 
@@ -63,15 +63,8 @@ export const RecordDetailsScreen = () => {
     );
   }
 
-  const dateLabel = record.dateEvent
-    ? new Date(record.dateEvent).toLocaleDateString()
-    : null;
-  const timeLabel = record.dateEvent
-    ? new Date(record.dateEvent).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit",
-      })
-    : null;
+  const dateLabel = record.dateEvent ? formatDate(record.dateEvent) : null;
+  const timeLabel = record.dateEvent ? formatTime(record.dateEvent) : null;
 
   return (
     <RecordContent

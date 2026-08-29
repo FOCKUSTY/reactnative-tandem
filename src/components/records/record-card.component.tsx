@@ -4,7 +4,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { createStyles } from "../../utils";
+import { createStyles, formatDate } from "../../utils";
 import { useTheme } from "../../contexts";
 import { useTranslate } from "../../hooks";
 
@@ -53,9 +53,7 @@ export const RecordCard = ({
       </View>
 
       {record.dateEvent && (
-        <Text style={styles.date}>
-          📅 {new Date(record.dateEvent).toLocaleDateString()}
-        </Text>
+        <Text style={styles.date}>📅 {formatDate(record.dateEvent)}</Text>
       )}
 
       {record.content && (

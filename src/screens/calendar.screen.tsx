@@ -3,7 +3,7 @@ import { View, FlatList, Text, TouchableOpacity } from "react-native";
 
 import { RecordCard, CalendarView } from "../components";
 import { useTranslate } from "../hooks";
-import { createStyles } from "../utils";
+import { createStyles, formatDate } from "../utils";
 import { useRecords } from "../hooks";
 import { useTheme } from "../contexts";
 
@@ -31,11 +31,7 @@ export const CalendarScreen = () => {
       {selectedDate && (
         <View style={styles.listContainer}>
           <Text style={styles.dateTitle}>
-            {new Date(selectedDate).toLocaleDateString(undefined, {
-              weekday: "long",
-              day: "numeric",
-              month: "long",
-            })}
+            {formatDate(selectedDate, "ru-RU", { weekday: "long" })}
           </Text>
           {recordsForDate.length === 0 ? (
             <Text style={styles.emptyText}>{t("records.empty")}</Text>

@@ -2,6 +2,7 @@ import * as FileSystem from "expo-file-system";
 import { NAME, VERSION } from "../constants";
 import { Platform } from "react-native";
 import pako from "pako";
+import { timestamp as dateTimestamp, formatIso, timestamp } from "./date.utils";
 
 const name = NAME.toLowerCase();
 const fileName = name + ".log";
@@ -63,7 +64,7 @@ async function rotateLogs() {
   const logFile = new FileSystem.File(LOG_FILE_PATH);
   if (logFile.exists) {
     if (logFile.size > MAX_LOG_SIZE) {
-      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const timestamp = dateTimestamp().replace(/[:.]/g, "-");
       const archiveName = `${name}-${timestamp}.log`;
       const archivePath = LOG_DIR_PATH + archiveName;
 
@@ -99,7 +100,7 @@ async function writeLog(level: LogEntry["level"], message: string, data?: any) {
     await rotateLogs();
 
     const entry: LogEntry = {
-      timestamp: new Date().toISOString(),
+      timestamp: timestamp(),
       level,
       message,
       data,
@@ -238,20 +239,19 @@ export const logger = {
 
     if (format === "json") {
       content = JSON.stringify(entries, null, 2);
-      fileName = `tandem-logs-${new Date().toISOString().replace(/[:.]/g, "-")}.json`;
+      fileName = `tandem-logs-${timestamp().replace(/[:.]/g, "-")}.json`;
     } else {
       content = entries
-        .map((e) => {
-          const date = new Date(e.timestamp);
-          const timeStr = date.toLocaleString();
-          let line = `[${timeStr}] [${e.level}] ${e.message}`;
-          if (e.data) {
-            line += `\n  └─ ${JSON.stringify(e.data, null, 2)}`;
+        .map((entry) => {
+          const timeString = formatIso(entry.timestamp);
+          let line = `[${timeString}] [${entry.level}] ${entry.message}`;
+          if (entry.data) {
+            line += `\n  └─ ${JSON.stringify(entry.data, null, 2)}`;
           }
           return line;
         })
         .join("\n");
-      fileName = `${name}-logs-${new Date().toISOString().replace(/[:.]/g, "-")}.txt`;
+      fileName = `${name}-logs-${timestamp().replace(/[:.]/g, "-")}.txt`;
     }
 
     const tempDir = FileSystem.Paths.cache.uri;

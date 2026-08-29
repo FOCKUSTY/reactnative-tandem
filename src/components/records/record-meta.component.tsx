@@ -1,6 +1,6 @@
 import { View, Text } from "react-native";
 import { useTheme } from "../../contexts";
-import { createStyles } from "../../utils";
+import { createStyles, formatDateTime } from "../../utils";
 import { useTranslate } from "../../hooks";
 
 export type RecordMetaProperties = {
@@ -38,15 +38,11 @@ export const RecordMeta = ({
       </View>
       <View style={styles.metaRow}>
         <Text style={styles.metaLabel}>{t("records.meta.createdAt")}</Text>
-        <Text style={styles.metaValue}>
-          {new Date(createdAt).toLocaleString()}
-        </Text>
+        <Text style={styles.metaValue}>{formatDateTime(createdAt)}</Text>
       </View>
       <View style={styles.metaRow}>
         <Text style={styles.metaLabel}>{t("records.meta.updatedAt")}</Text>
-        <Text style={styles.metaValue}>
-          {new Date(updatedAt).toLocaleString()}
-        </Text>
+        <Text style={styles.metaValue}>{formatDateTime(updatedAt)}</Text>
       </View>
     </View>
   );
