@@ -10,6 +10,7 @@ import {
   LogoutButton,
   AppFooter,
   LanguageSection,
+  LoggingSection,
 } from "../components";
 
 export const SettingsScreen = () => {
@@ -25,6 +26,7 @@ export const SettingsScreen = () => {
       <AppearanceSection mode={mode} onToggleTheme={toggleTheme} />
       <LanguageSection />
       <AboutSection />
+      <LoggingSection />
       <LogoutButton onPress={handleLogout} />
       <AppFooter />
     </ScrollView>

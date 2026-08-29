@@ -1,2 +1,2 @@
-export const VERSION = "0.0.1-indev";
+export const VERSION = "0.1.0-alpha";
 export const NAME = "Tandem";

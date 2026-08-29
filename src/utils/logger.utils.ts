@@ -4,6 +4,8 @@ import { Platform } from "react-native";
 import pako from "pako";
 import { timestamp as dateTimestamp, formatIso, timestamp } from "./date.utils";
 
+let loggingEnabled = true;
+
 const name = NAME.toLowerCase();
 const fileName = name + ".log";
 
@@ -21,6 +23,10 @@ export interface LogEntry {
   platform: string;
   osVersion: string;
 }
+
+export const setLoggingEnabled = (enabled: boolean) => {
+  loggingEnabled = enabled;
+};
 
 async function ensureLogDir() {
   const logDir = new FileSystem.Directory(LOG_DIR_PATH);
@@ -95,6 +101,8 @@ async function rotateLogs() {
 }
 
 async function writeLog(level: LogEntry["level"], message: string, data?: any) {
+  if (!loggingEnabled) return;
+
   try {
     await ensureLogDir();
     await rotateLogs();

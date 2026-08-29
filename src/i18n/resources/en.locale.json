@@ -125,6 +125,8 @@
     }
   },
   "settings": {
+    "logs": "Logs",
+    "logging": "Logging",
     "title": "Settings",
     "profile": "Profile",
     "partner": "Partner",

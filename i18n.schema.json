@@ -286,6 +286,8 @@
     "settings": {
       "type": "object",
       "properties": {
+        "logs": { "type": "string" },
+        "logging": { "type": "string" },
         "title": { "type": "string" },
         "profile": { "type": "string" },
         "partner": { "type": "string" },
@@ -321,6 +323,8 @@
       },
       "required": [
         "title",
+        "logs",
+        "logging",
         "profile",
         "partner",
         "appearance",

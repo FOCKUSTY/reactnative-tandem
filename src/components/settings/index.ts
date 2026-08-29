@@ -6,3 +6,4 @@ export * from "./logout-button.component";
 export * from "./app-footer.component";
 export * from "./settings-item.component";
 export * from "./language-section.component";
+export * from "./logging-section.component";

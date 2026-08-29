@@ -1,6 +1,3 @@
-import type { NavigationProperty } from "../../types";
-
-import { useNavigation } from "@react-navigation/native";
 import { View, Text } from "react-native";
 
 import { createStyles } from "../../utils";
@@ -14,7 +11,6 @@ export const AboutSection = () => {
   const { colors } = useTheme();
   const { t } = useTranslate();
   const styles = getStyles(colors);
-  const navigation = useNavigation<NavigationProperty>();
 
   return (
     <View style={styles.section}>
@@ -29,11 +25,6 @@ export const AboutSection = () => {
           icon="monitor-heart"
           label={t("settings.madeWithLove")}
           rightElement={<Text style={styles.valueText}>❤️</Text>}
-        />
-        <SettingsItem
-          icon="bug-report"
-          label="Логи"
-          onPress={() => navigation.navigate("Logs")}
         />
       </View>
     </View>

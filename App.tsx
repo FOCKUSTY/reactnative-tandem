@@ -35,7 +35,8 @@ import { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
 import { i18n, initI18n } from "./src/i18n";
 import { useTranslate } from "./src/hooks";
-import { logger } from "./src/utils";
+import { logger, setLoggingEnabled, storage } from "./src/utils";
+import { STORAGE_KEYS } from "./src/constants";
 
 const Stack = createNativeStackNavigator<RootStackParameters>();
 const Tab = createBottomTabNavigator();
@@ -198,7 +199,13 @@ const App = () => {
   const [isReady, setIsReady] = useState<boolean>(false);
 
   useEffect(() => {
-    initI18n().then(() => setIsReady(true));
+    (async () => {
+      await initI18n();
+      const value = await storage.getItem(STORAGE_KEYS.LOGGING_ENABLED);
+      const isEnabled = value !== "false";
+      setLoggingEnabled(isEnabled);
+      setIsReady(true);
+    })();
   }, []);
 
   if (!isReady) {
