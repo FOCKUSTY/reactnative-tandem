@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-import { LoginForm } from "../components";
+import { LoginForm, SkeletonLogin } from "../components";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useLogin } from "../hooks";
@@ -10,6 +10,10 @@ export const LoginScreen = () => {
   const styles = getStyles(colors);
   const { username, setUsername, password, setPassword, loading, handleLogin } =
     useLogin();
+
+  if (loading) {
+    return <SkeletonLogin />;
+  }
 
   return (
     <View style={styles.container}>

@@ -5,7 +5,11 @@ import { useNavigation } from "@react-navigation/native";
 import { View, TouchableOpacity } from "react-native";
 import { useLayoutEffect } from "react";
 
-import { SectionsList, CreateSectionModal } from "../components";
+import {
+  SectionsList,
+  CreateSectionModal,
+  SkeletonSectionsList,
+} from "../components";
 import { useSectionsList } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
@@ -62,6 +66,10 @@ export const SectionsScreen = () => {
       ),
     });
   }, [navigation, colors]);
+
+  if (isLoading) {
+    return <SkeletonSectionsList />;
+  }
 
   return (
     <View style={styles.container}>

@@ -6,3 +6,4 @@ export * from "./records";
 export * from "./sections";
 export * from "./settings";
 export * from "./calendar";
+export * from "./skeletons";

@@ -5,7 +5,7 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 
-import { RecordContent } from "../components";
+import { RecordContent, SkeletonRecordDetail } from "../components";
 import { useRecordDetail } from "../hooks";
 import { createStyles, formatDate, formatTime } from "../utils";
 import { useTheme } from "../contexts";
@@ -45,11 +45,7 @@ export const RecordDetailsScreen = () => {
   }, [record, colors, t]);
 
   if (isLoading) {
-    return (
-      <View style={[styles.container, styles.centered]}>
-        <Text style={styles.loadingText}>{t("common.loading")}</Text>
-      </View>
-    );
+    return <SkeletonRecordDetail />;
   }
 
   if (error || !record) {

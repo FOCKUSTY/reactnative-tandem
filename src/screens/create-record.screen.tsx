@@ -17,6 +17,7 @@ import {
   TagsInputComponent,
   DatePickerComponent,
   CheckboxRowComponent,
+  SkeletonCreateRecord,
 } from "../components";
 import { useTranslate } from "../hooks";
 
@@ -66,6 +67,10 @@ export const CreateRecordScreen = () => {
     handleCreateSection,
     handleSubmit,
   } = useRecordForm({ initialSectionId, record });
+
+  if (loading) {
+    return <SkeletonCreateRecord />;
+  }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>

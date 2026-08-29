@@ -8,6 +8,7 @@ import {
   MaterialIcons,
   MaterialIconsIconName,
 } from "@react-native-vector-icons/material-icons";
+import * as SplashScreen from "expo-splash-screen";
 
 import {
   FiltersProvider,
@@ -195,17 +196,26 @@ const AppNavigator = () => {
   );
 };
 
+SplashScreen.preventAutoHideAsync();
+
 const App = () => {
-  const [isReady, setIsReady] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
-    (async () => {
-      await initI18n();
-      const value = await storage.getItem(STORAGE_KEYS.LOGGING_ENABLED);
-      const isEnabled = value !== "false";
-      setLoggingEnabled(isEnabled);
-      setIsReady(true);
-    })();
+    const prepare = async () => {
+      try {
+        await initI18n();
+        const value = await storage.getItem(STORAGE_KEYS.LOGGING_ENABLED);
+        const isEnabled = value !== "false";
+        setLoggingEnabled(isEnabled);
+      } catch (e) {
+        console.warn("Ошибка при подготовке приложения", e);
+      } finally {
+        setIsReady(true);
+        await SplashScreen.hideAsync();
+      }
+    };
+    prepare();
   }, []);
 
   if (!isReady) {
@@ -228,5 +238,4 @@ const App = () => {
     </I18nextProvider>
   );
 };
-
 export default App;

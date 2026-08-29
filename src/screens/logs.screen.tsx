@@ -1,11 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  Alert,
-} from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useState, useEffect } from "react";
 
@@ -14,6 +7,7 @@ import { isAvailableAsync, shareAsync } from "expo-sharing";
 import { createStyles, logger } from "../utils";
 import { useTranslate } from "../hooks";
 import { useTheme } from "../contexts";
+import { SkeletonLogs } from "../components";
 
 export const LogsScreen = () => {
   const { colors } = useTheme();
@@ -70,11 +64,7 @@ export const LogsScreen = () => {
   }, []);
 
   if (loading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <SkeletonLogs />;
   }
 
   return (

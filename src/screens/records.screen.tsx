@@ -1,10 +1,10 @@
-import { View, TouchableOpacity, ActivityIndicator, Text } from "react-native";
+import { View, TouchableOpacity, Text } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 import { FlatList } from "react-native";
 
-import { RecordCard } from "../components";
+import { RecordCard, SkeletonRecordsList } from "../components";
 import { useRecordsList } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
@@ -31,11 +31,7 @@ export const RecordsScreen = () => {
   }, [navigation, title, colors]);
 
   if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color={colors.primary} />
-      </View>
-    );
+    return <SkeletonRecordsList />;
   }
 
   if (records.length === 0) {

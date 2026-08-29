@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, FlatList, Text, TouchableOpacity } from "react-native";
 
-import { RecordCard, CalendarView } from "../components";
+import { RecordCard, CalendarView, SkeletonCalendar } from "../components";
 import { useTranslate } from "../hooks";
 import { createStyles, DATES_LOCALES as D, formatDate } from "../utils";
 import { useRecords } from "../hooks";
@@ -11,7 +11,7 @@ export const CalendarScreen = () => {
   const { colors } = useTheme();
   const { t, l } = useTranslate();
   const styles = getStyles(colors);
-  const { data: allRecords = [] } = useRecords();
+  const { data: allRecords = [], isLoading } = useRecords();
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const recordsForDate = selectedDate
@@ -23,6 +23,10 @@ export const CalendarScreen = () => {
   const handleDayPress = (date: string) => {
     setSelectedDate(date);
   };
+
+  if (isLoading) {
+    return <SkeletonCalendar />;
+  }
 
   return (
     <View style={styles.container}>

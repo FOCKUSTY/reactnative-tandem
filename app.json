@@ -28,6 +28,16 @@
       }
     },
     "owner": "fockustys-team",
-    "plugins": ["expo-secure-store", "expo-file-system", "expo-sharing"]
+    "plugins": [
+      "expo-secure-store",
+      "expo-file-system",
+      "expo-sharing",
+      "expo-splash-screen"
+    ],
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#E6F4FE"
+    }
   }
 }

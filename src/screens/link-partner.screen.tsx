@@ -1,5 +1,9 @@
 import { View, Text } from "react-native";
-import { LinkedPartnerInfo, PartnerForm } from "../components";
+import {
+  LinkedPartnerInfo,
+  PartnerForm,
+  SkeletonLinkPartner,
+} from "../components";
 import { useLinkPartner } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
@@ -17,6 +21,10 @@ export const LinkPartnerScreen = () => {
     handleLink,
     isLinked,
   } = useLinkPartner();
+
+  if (loading) {
+    return <SkeletonLinkPartner />;
+  }
 
   return (
     <View style={styles.container}>

@@ -1,6 +1,10 @@
 import { View, Text } from "react-native";
 
-import { PartnerLinkBannerComponent, SectionPreview } from "../components";
+import {
+  PartnerLinkBannerComponent,
+  SectionPreview,
+  SkeletonHome,
+} from "../components";
 import { createStyles, getFilteredRecords } from "../utils";
 import { useAuth, useTheme } from "../contexts";
 import { useRecords, useTranslate } from "../hooks";
@@ -11,7 +15,7 @@ export const HomeScreen = () => {
   const { colors } = useTheme();
   const { user } = useAuth();
   const styles = getStyles(colors);
-  const { data: allRecords = [] } = useRecords();
+  const { data: allRecords = [], isLoading } = useRecords();
 
   const upcomingDates = getFilteredRecords(allRecords, {
     onlyFuture: true,
@@ -21,6 +25,10 @@ export const HomeScreen = () => {
     onlyFuture: true,
     hideCompleted: true,
   }).filter((r) => r.section?.slug === "plans");
+
+  if (isLoading) {
+    return <SkeletonHome />;
+  }
 
   return (
     <View style={styles.container}>
