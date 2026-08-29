@@ -28,16 +28,28 @@ import {
   FilterScreen,
   SectionsScreen,
   CreateRecordScreen,
+  LogsScreen,
 } from "./src/screens";
 import { useEffect, useState } from "react";
 
 import { I18nextProvider } from "react-i18next";
 import { i18n, initI18n } from "./src/i18n";
 import { useTranslate } from "./src/hooks";
+import { logger } from "./src/utils";
 
 const Stack = createNativeStackNavigator<RootStackParameters>();
 const Tab = createBottomTabNavigator();
 const queryClient = new QueryClient();
+
+if (!__DEV__) {
+  ErrorUtils.setGlobalHandler((error, isFatal) => {
+    logger.error("Global error", {
+      error: error.message,
+      stack: error.stack,
+      isFatal,
+    });
+  });
+}
 
 const MainTabs = () => {
   const { colors } = useTheme();
@@ -132,6 +144,11 @@ const AppNavigator = () => {
             name="Main"
             component={MainTabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Logs"
+            component={LogsScreen}
+            options={{ title: "Логи" }}
           />
           <Stack.Screen
             name="Filters"

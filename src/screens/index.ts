@@ -8,3 +8,4 @@ export * from "./record-details.screen";
 export * from "./create-record.screen";
 export * from "./filters.screen";
 export * from "./filter.screen";
+export * from "./logs.screen";

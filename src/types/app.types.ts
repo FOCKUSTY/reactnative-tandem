@@ -11,6 +11,7 @@ export type RootStackParameters = {
   CreateRecord: { sectionId: string; record?: MyRecord };
   LinkPartner: undefined;
   Settings: undefined;
+  Logs: undefined;
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;

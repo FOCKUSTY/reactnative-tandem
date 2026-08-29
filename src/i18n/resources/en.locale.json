@@ -19,6 +19,13 @@
     "viewAll": "View all",
     "confirm": "Confirm"
   },
+  "errors": {
+    "network": "Network error. Check Internet connection.",
+    "server": "Server error. Try later.",
+    "unauthorized": "Session expired. Login again.",
+    "notFound": "Not found.",
+    "unknown": "Unknown error."
+  },
   "auth": {
     "welcome": "Welcome",
     "username": "Username",

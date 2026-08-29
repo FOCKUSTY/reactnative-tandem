@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "reactnative-tandem",
+    "name": "Tandem",
     "slug": "fockusty",
     "version": "0.0.1-indev",
     "orientation": "portrait",
@@ -17,7 +17,7 @@
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.tandem.fockusty"
+      "package": "com.fockusty.tandem"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,6 +28,6 @@
       }
     },
     "owner": "fockustys-team",
-    "plugins": ["expo-secure-store"]
+    "plugins": ["expo-secure-store", "expo-file-system", "expo-sharing"]
   }
 }

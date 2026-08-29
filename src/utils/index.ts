@@ -4,3 +4,4 @@ export * from "./storage.utils";
 export * from "./get-markdown-styles.utils";
 export * from "./create-styles.utils";
 export * from "./record-filter.utils";
+export * from "./logger.utils";

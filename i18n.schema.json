@@ -457,10 +457,22 @@
       },
       "required": ["errors", "linkSuccessMessage"],
       "additionalProperties": false
+    },
+    "errors": {
+      "type": "object",
+      "properties": {
+        "network": { "type": "string" },
+        "server": { "type": "string" },
+        "unauthorized": { "type": "string" },
+        "notFound": { "type": "string" },
+        "unknown": { "type": "string" }
+      },
+      "required": ["network", "server", "unauthorized", "notFound", "unknown"]
     }
   },
   "required": [
     "common",
+    "errors",
     "auth",
     "home",
     "sections",
