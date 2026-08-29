@@ -12,6 +12,7 @@ export type RootStackParameters = {
   LinkPartner: undefined;
   Settings: undefined;
   Logs: undefined;
+  Calendar: undefined;
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;

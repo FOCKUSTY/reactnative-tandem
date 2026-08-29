@@ -1,5 +1,6 @@
 {
   "common": {
+    "close": "Закрыть",
     "save": "Сохранить",
     "cancel": "Отмена",
     "delete": "Удалить",
@@ -213,5 +214,8 @@
     "errorLoad": "Failed to load logs",
     "sharingUnavailable": "Sharing is not supported on this device",
     "exportError": "Failed to export logs"
+  },
+  "calendar": {
+    "title": "Календарь"
   }
 }

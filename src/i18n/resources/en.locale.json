@@ -1,5 +1,6 @@
 {
   "common": {
+    "close": "Close",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -213,5 +214,8 @@
     "errorLoad": "Не удалось загрузить логи",
     "sharingUnavailable": "Шаринг не поддерживается на этом устройстве",
     "exportError": "Не удалось экспортировать логи"
+  },
+  "calendar": {
+    "title": "Calendar"
   }
 }

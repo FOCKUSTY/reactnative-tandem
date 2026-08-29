@@ -24,6 +24,7 @@
     "react": "19.2.3",
     "react-i18next": "^17.0.12",
     "react-native": "0.86.2",
+    "react-native-calendars": "^1.1314.0",
     "react-native-enriched-markdown": "^1.0.2",
     "react-native-gesture-handler": "~2.32.0",
     "react-native-markdown-renderer": "^4.1.1",

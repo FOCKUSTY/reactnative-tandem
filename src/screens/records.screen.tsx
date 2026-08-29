@@ -1,8 +1,8 @@
+import { View, TouchableOpacity, ActivityIndicator, Text } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 import { FlatList } from "react-native";
-import { View, TouchableOpacity, ActivityIndicator, Text } from "react-native";
 
 import { RecordCard } from "../components";
 import { useRecordsList } from "../hooks";

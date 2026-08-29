@@ -32,11 +32,15 @@ export const SectionsScreen = () => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("Filters")}
-            style={{ marginRight: 16 }}
-          >
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            padding: 8,
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.navigate("Filters")}>
             <MaterialIcons
               name="filter-list"
               size={28}
@@ -45,6 +49,14 @@ export const SectionsScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity onPress={handleRefresh} style={styles.headerButton}>
             <MaterialIcons name="refresh" size={24} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => navigation.navigate("Calendar")}>
+            <MaterialIcons
+              name={"calendar-today"}
+              size={24}
+              style={styles.headerButton}
+              color={colors.primary}
+            />
           </TouchableOpacity>
         </View>
       ),
@@ -82,7 +94,6 @@ export const SectionsScreen = () => {
 
 const getStyles = createStyles((colors) => ({
   headerButton: {
-    marginRight: 16,
     padding: 4,
   },
   fab: {

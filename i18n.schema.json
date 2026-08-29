@@ -8,6 +8,7 @@
     "common": {
       "type": "object",
       "properties": {
+        "close": { "type": "string" },
         "save": { "type": "string" },
         "cancel": { "type": "string" },
         "delete": { "type": "string" },
@@ -28,6 +29,7 @@
         "confirm": { "type": "string" }
       },
       "required": [
+        "close",
         "save",
         "cancel",
         "delete",
@@ -496,9 +498,17 @@
         "exportError"
       ],
       "additionalProperties": false
+    },
+    "calendar": {
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" }
+      },
+      "required": ["title"]
     }
   },
   "required": [
+    "calendar",
     "common",
     "errors",
     "auth",

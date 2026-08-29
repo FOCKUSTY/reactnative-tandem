@@ -28,6 +28,7 @@ import {
   SectionsScreen,
   CreateRecordScreen,
   LogsScreen,
+  CalendarScreen,
 } from "./src/screens";
 import { useEffect, useState } from "react";
 
@@ -153,6 +154,11 @@ const AppNavigator = () => {
             name="LinkPartner"
             component={LinkPartnerScreen}
             options={{ title: t("settings.linkPartner") }}
+          />
+          <Tab.Screen
+            name="Calendar"
+            component={CalendarScreen}
+            options={{ title: t("calendar.title") }}
           />
           <Stack.Screen
             name="CreateRecord"
