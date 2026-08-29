@@ -4,6 +4,7 @@ import * as Localization from "expo-localization";
 
 import ru from "./resources/ru.locale.json";
 import en from "./resources/en.locale.json";
+
 import { storage } from "../utils";
 
 const STORAGE_KEY = ".app_language";

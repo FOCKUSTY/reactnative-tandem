@@ -12,5 +12,5 @@ export const useTranslate = () => {
     return it(input, options);
   };
 
-  return { t, it: it, i18n };
+  return { t, it: it, i18n, l: i18n.language };
 };
