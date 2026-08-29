@@ -24,7 +24,6 @@ import {
   SettingsScreen,
   RecordsScreen,
   RecordDetailsScreen,
-  FiltersScreen,
   FilterScreen,
   SectionsScreen,
   CreateRecordScreen,
@@ -149,11 +148,6 @@ const AppNavigator = () => {
             name="Logs"
             component={LogsScreen}
             options={{ title: "Логи" }}
-          />
-          <Stack.Screen
-            name="Filters"
-            component={FiltersScreen}
-            options={{ title: t("filters.title") }}
           />
           <Stack.Screen
             name="LinkPartner"

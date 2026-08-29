@@ -114,8 +114,7 @@ export const FilterScreen = () => {
 
 const getStyles = createStyles((colors) => ({
   filtersContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    margin: 16,
     borderBottomWidth: 1,
     borderBottomColor: colors.cardBorder,
     maxHeight: "40%",

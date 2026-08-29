@@ -157,10 +157,19 @@ export const CreateRecordScreen = () => {
   );
 };
 
-const getStyles = createStyles(() => ({
+const getStyles = createStyles((colors) => ({
   content: { padding: 16, paddingBottom: 40 },
   textArea: { minHeight: 120, textAlignVertical: "top" },
   saveButtonDisabled: { opacity: 0.6 },
+  saveButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  saveButtonText: {
+    color: colors.text,
+  },
 }));
 
 export default CreateRecordScreen;
