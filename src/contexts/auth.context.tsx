@@ -10,6 +10,7 @@ import { authService } from "../api/services/auth.service";
 import { usersService } from "../api/services/users.service";
 import { MeResponse, User } from "../types";
 import { handleApiError } from "../utils";
+import Toast from "react-native-toast-message";
 
 interface AuthContextType {
   user: User | null;
@@ -34,35 +35,55 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const loadStorage = async () => {
-      const storedToken = await storage.getItem(".auth_token");
-      const storedUser = await storage.getItem(".auth_user");
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
-        await fetchMe();
-      }
-      setIsLoading(false);
-    };
-    loadStorage();
-  }, []);
-
-  const fetchMe = async () => {
+  const fetchMe = async (): Promise<MeResponse | null> => {
     try {
       const response = await usersService.getMe();
-      setMe(response.data);
-      if (response.data) {
+      const meData = response.data;
+      setMe(meData);
+      if (meData) {
         setUser({
-          id: response.data.id,
-          username: response.data.username,
-          name: response.data.name,
+          id: meData.id,
+          username: meData.username,
+          name: meData.name,
         });
       }
+      return meData;
     } catch (error) {
-      console.warn("Failed to fetch user data:", error);
+      const apiError = handleApiError(error);
+      if (apiError.status === 401) {
+        await logout();
+        Toast.show({
+          type: "error",
+          text1: "Сессия истекла",
+          text2: "Пожалуйста, войдите снова.",
+          position: "bottom",
+          visibilityTime: 4000,
+        });
+      } else {
+        console.warn("Background fetchMe error:", apiError.message);
+      }
+      return null;
     }
   };
+
+  useEffect(() => {
+    const loadFromStorage = async () => {
+      const storedToken = await storage.getItem(".auth_token");
+      const storedUser = await storage.getItem(".auth_user");
+
+      if (storedToken && storedUser) {
+        setToken(storedToken);
+        const parsedUser = JSON.parse(storedUser);
+        setUser(parsedUser);
+        setIsLoading(false);
+        await fetchMe();
+      } else {
+        setIsLoading(false);
+      }
+    };
+
+    loadFromStorage();
+  }, []);
 
   const login = async (username: string, password: string) => {
     try {
@@ -88,7 +109,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setMe(null);
   };
 
-  const refreshMe = fetchMe;
+  const refreshMe = async () => {
+    await fetchMe();
+  };
 
   return (
     <AuthContext.Provider

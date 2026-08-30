@@ -8,6 +8,8 @@ export const useSections = () => {
   return useQuery<Section[]>({
     queryKey: ["sections"],
     queryFn: () => sectionsService.getSections().then((res) => res.data),
+    staleTime: 1000 * 60 * 10,
+    gcTime: 1000 * 60 * 60 * 24,
   });
 };
 

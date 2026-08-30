@@ -174,7 +174,9 @@
     "linking": "Linking...",
     "bannerDescription": "To see shared records and plan together, link your account with your partner.",
     "madeWithLove": "Made with love",
-    "user": "User"
+    "user": "User",
+    "cache": "Cache & offline",
+    "cacheStaleTime": "Cache live time"
   },
   "filters": {
     "title": "Filters",

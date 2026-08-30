@@ -6,5 +6,6 @@ export const useRecord = (id: string) => {
     queryKey: ["record", id],
     queryFn: () => recordsService.getRecordById(id).then((res) => res.data),
     enabled: !!id,
+    staleTime: 1000 * 60 * 1,
   });
 };

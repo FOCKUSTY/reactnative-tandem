@@ -1,9 +1,9 @@
 import type { MyRecord, CreateRecordDto, UpdateRecordDto } from "../../types";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { recordsService } from "../../api";
 import { RecordFilters } from "../../contexts";
-import { useCreate, useUpdate, useDelete } from "../api";
+import { useUpdate, useDelete } from "../api";
 
 export const useRecords = (filters?: RecordFilters) => {
   return useQuery<MyRecord[]>({
@@ -19,14 +19,34 @@ export const useRecordsBySlug = (slug: string) => {
     queryFn: () =>
       recordsService.getRecordsBySlug(slug).then((res) => res.data),
     enabled: !!slug,
+    staleTime: 1000 * 60 * 2,
   });
 };
 
 export const useCreateRecord = () => {
-  return useCreate<MyRecord, CreateRecordDto>(
-    (data) => recordsService.createRecord(data).then((res) => res.data),
-    ["records"],
-  );
+  const queryClient = useQueryClient();
+  return useMutation<MyRecord, Error, CreateRecordDto>({
+    mutationFn: (data) =>
+      recordsService.createRecord(data).then((res) => res.data),
+    onMutate: async (newRecord) => {
+      await queryClient.cancelQueries({ queryKey: ["records"] });
+
+      const previousRecords = queryClient.getQueryData<MyRecord[]>(["records"]);
+      queryClient.setQueryData<MyRecord[]>(["records"], (old) => {
+        if (!old) return [newRecord as MyRecord];
+        return [...old, newRecord as MyRecord];
+      });
+
+      return { previousRecords };
+    },
+    onError: (_error, _newRecord, context) => {
+      queryClient.setQueryData(["records"], (context as any)?.previousRecords);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["records"] });
+    },
+    retry: 2,
+  });
 };
 
 export const useUpdateRecord = () => {

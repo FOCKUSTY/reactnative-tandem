@@ -1,7 +1,8 @@
 import * as FileSystem from "expo-file-system";
-import { NAME, VERSION } from "../constants";
 import { Platform } from "react-native";
 import pako from "pako";
+
+import { NAME, VERSION } from "../constants";
 import { timestamp as dateTimestamp, formatIso, timestamp } from "./date.utils";
 
 let loggingEnabled = true;

@@ -6,11 +6,15 @@ export const handleApiError = (error: unknown): ApiError => {
   let apiError: ApiError;
 
   if (error instanceof AxiosError) {
-    const message =
-      error.response?.data?.message || error.message || "Ошибка сети";
+    const isTimeout = (error as any).isTimeout || error.code === "ECONNABORTED";
+    const message = isTimeout
+      ? "Сервер не отвечает. Проверьте соединение или попробуйте позже."
+      : error.response?.data?.message || error.message || "Ошибка сети";
+
     apiError = {
       message,
       status: error.response?.status,
+      isTimeout,
     };
 
     logger.error("API Error", {
@@ -19,6 +23,7 @@ export const handleApiError = (error: unknown): ApiError => {
       status: error.response?.status,
       data: error.response?.data,
       message: error.message,
+      isTimeout,
     });
   } else if (error instanceof Error) {
     apiError = { message: error.message };
