@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { Text } from "react-native";
 
 import {
   PartnerLinkBannerComponent,
@@ -7,7 +7,7 @@ import {
 } from "../components";
 import { createStyles, getFilteredRecords } from "../utils";
 import { useAuth, useTheme } from "../contexts";
-import { useRecords, useTranslate } from "../hooks";
+import { useRecords, useRefresh, useTranslate } from "../hooks";
 
 export const HomeScreen = () => {
   const { t } = useTranslate();
@@ -26,12 +26,16 @@ export const HomeScreen = () => {
     hideCompleted: true,
   }).filter((r) => r.section?.slug === "plans");
 
+  const { RefreshableScrollView } = useRefresh({
+    queryKeys: [["records"], ["sections"]],
+  });
+
   if (isLoading) {
     return <SkeletonHome />;
   }
 
   return (
-    <View style={styles.container}>
+    <RefreshableScrollView style={styles.container}>
       <Text style={styles.greeting}>
         {t("home.greeting", { name: user?.name })}
       </Text>
@@ -54,7 +58,7 @@ export const HomeScreen = () => {
         createLabel={t("common.create")}
         viewAllLabel={t("home.viewAllPlans")}
       />
-    </View>
+    </RefreshableScrollView>
   );
 };
 

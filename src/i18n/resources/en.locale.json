@@ -176,7 +176,11 @@
     "madeWithLove": "Made with love",
     "user": "User",
     "cache": "Cache & offline",
-    "cacheStaleTime": "Cache live time"
+    "cacheStaleTime": "Cache live time",
+    "clearCache": "Clear cache",
+    "clearCacheTitle": "Clear cache?",
+    "clearCacheMessage": "All saved data will be deleted. The app will download fresh data the next time it connects.",
+    "cacheCleared": "Cache cleared"
   },
   "filters": {
     "title": "Filters",

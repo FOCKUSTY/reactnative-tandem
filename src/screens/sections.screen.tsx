@@ -6,11 +6,11 @@ import { View, TouchableOpacity } from "react-native";
 import { useLayoutEffect } from "react";
 
 import {
-  SectionsList,
   CreateSectionModal,
   SkeletonSectionsList,
+  SectionCard,
 } from "../components";
-import { useSectionsList } from "../hooks";
+import { useRefresh, useSectionsList } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 
@@ -22,7 +22,6 @@ export const SectionsScreen = () => {
   const {
     sections,
     isLoading,
-    refreshing,
     modalVisible,
     setModalVisible,
     newSectionName,
@@ -32,6 +31,10 @@ export const SectionsScreen = () => {
     handleDeleteSection,
     handlePressSection,
   } = useSectionsList();
+
+  const { RefreshableFlatList } = useRefresh({
+    queryKeys: [["sections"]],
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -73,13 +76,18 @@ export const SectionsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <SectionsList
-        sections={sections}
-        isLoading={isLoading}
-        refreshing={refreshing}
-        onRefresh={handleRefresh}
-        onPress={handlePressSection}
-        onLongPress={handleDeleteSection}
+      <RefreshableFlatList
+        data={sections}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <SectionCard
+            section={item}
+            onPress={handlePressSection}
+            onLongPress={handleDeleteSection}
+          />
+        )}
+        contentContainerStyle={styles.listContent}
+        showsVerticalScrollIndicator={false}
       />
 
       <TouchableOpacity
@@ -103,6 +111,10 @@ export const SectionsScreen = () => {
 const getStyles = createStyles((colors) => ({
   headerButton: {
     padding: 4,
+  },
+  listContent: {
+    padding: 16,
+    paddingBottom: 80,
   },
   fab: {
     position: "absolute",

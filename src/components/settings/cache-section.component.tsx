@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useState } from "react";
 import { useTheme, useCacheSettings, STALE_TIME_PRESETS } from "../../contexts";
@@ -6,6 +6,10 @@ import { useTranslate } from "../../hooks";
 import { createStyles } from "../../utils";
 import { SettingsItem } from "./settings-item.component";
 import { ModalWrapper } from "../common";
+import { useQueryClient } from "@tanstack/react-query";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
+import { OFFLINE_CONFIG } from "../../constants";
 
 export const CacheSection = () => {
   const { colors } = useTheme();
@@ -23,6 +27,31 @@ export const CacheSection = () => {
     setModalVisible(false);
   };
 
+  const queryClient = useQueryClient();
+
+  const handleClearCache = async () => {
+    Alert.alert(
+      t("settings.clearCacheTitle"),
+      t("settings.clearCacheMessage"),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("settings.clearCache"),
+          style: "destructive",
+          onPress: async () => {
+            queryClient.clear();
+            await AsyncStorage.removeItem(OFFLINE_CONFIG.PERSIST_KEY);
+            Toast.show({
+              type: "success",
+              text1: t("settings.cacheCleared"),
+              position: "bottom",
+            });
+          },
+        },
+      ],
+    );
+  };
+
   return (
     <>
       <View style={styles.section}>
@@ -38,6 +67,18 @@ export const CacheSection = () => {
                   {currentStaleTimeLabel}
                 </Text>
               </View>
+            }
+          />
+          <SettingsItem
+            icon="delete-sweep"
+            label={t("settings.clearCache")}
+            onPress={handleClearCache}
+            rightElement={
+              <MaterialIcons
+                name="chevron-right"
+                size={20}
+                color={colors.textMuted}
+              />
             }
           />
         </View>

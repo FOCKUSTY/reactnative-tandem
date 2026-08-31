@@ -7,9 +7,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { usePin } from "../../contexts/pin.context";
 import { i18n } from "../../i18n";
 import { ThemeProvider, AuthProvider, FiltersProvider } from "../../contexts";
-import { OfflineBanner, ServerStatusBanner } from "..";
 import { PinScreen } from "../../screens";
 import { AppNavigator } from "./app-navigator";
+import { StatusWidget } from "../status-widget.component";
 
 interface AppContentProps {
   queryClient: QueryClient;
@@ -52,8 +52,7 @@ export const AppContent = ({ queryClient }: AppContentProps) => {
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
           <View style={{ flex: 1 }}>
-            <ServerStatusBanner />
-            <OfflineBanner />
+            <StatusWidget />
             <AuthProvider>
               <FiltersProvider>
                 <NavigationContainer>

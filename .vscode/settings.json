@@ -1,6 +1,6 @@
 {
   "cSpell.language": "en,ru",
-  "cSpell.words": ["datetimepicker"],
+  "cSpell.words": ["datetimepicker", "Refreshable"],
   "json.schemas": [
     {
       "fileMatch": ["src/i18n/resources/*.locale.json"],

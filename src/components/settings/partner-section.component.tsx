@@ -9,6 +9,8 @@ import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
 
 import { SettingsItem } from "./settings-item.component";
+import { SendMessageModal } from "../partners/send-message-modal";
+import { useState } from "react";
 
 export type PartnerSectionProps = {
   isPartnerLinked: boolean;
@@ -19,6 +21,7 @@ export const PartnerSection = ({ isPartnerLinked }: PartnerSectionProps) => {
   const { t } = useTranslate();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
 
   return (
     <View style={styles.section}>
@@ -49,6 +52,15 @@ export const PartnerSection = ({ isPartnerLinked }: PartnerSectionProps) => {
               />
             </View>
           }
+        />
+        <SettingsItem
+          icon="send"
+          label="Отправить сообщение"
+          onPress={() => setModalVisible(true)}
+        />
+        <SendMessageModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
         />
       </View>
     </View>

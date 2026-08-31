@@ -13,11 +13,25 @@ import { AppContent } from "./components/app";
 
 import { PinProvider, CacheSettingsProvider } from "./contexts";
 
+import * as Notifications from "expo-notifications";
+import { usePushNotifications } from "./hooks/use-push-notifications.hook";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
 SplashScreen.preventAutoHideAsync();
 
 const App = () => {
   const [isReady, setIsReady] = useState(false);
   const [queryClient, setQueryClient] = useState<QueryClient | null>(null);
+
+  usePushNotifications();
 
   useEffect(() => {
     (async () => {
