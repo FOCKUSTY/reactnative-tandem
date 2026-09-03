@@ -5,10 +5,12 @@ import { Animated } from "react-native";
 import { useSyncStatus } from "../hooks/use-sync-status.hook";
 import { Widget } from "./widget.component";
 import { useTheme } from "../contexts";
+import { useTranslate } from "../hooks";
 
 export const SyncStatusIndicator = () => {
   const { colors } = useTheme();
   const { isSyncing } = useSyncStatus();
+  const { t } = useTranslate();
 
   const rotateAnim = useRef(new Animated.Value(0)).current;
 
@@ -34,7 +36,7 @@ export const SyncStatusIndicator = () => {
   if (!isSyncing) return null;
 
   return (
-    <Widget label="Синхронизация">
+    <Widget label={t("sync.status")}>
       <Animated.View style={{ transform: [{ rotate: spin }] }}>
         <MaterialIcons name={"sync"} size={24} color={colors.textMuted} />
       </Animated.View>

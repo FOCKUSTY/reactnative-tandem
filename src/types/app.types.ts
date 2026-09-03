@@ -13,6 +13,7 @@ export type RootStackParameters = {
   Settings: undefined;
   Logs: undefined;
   Calendar: undefined;
+  Reminders: undefined;
   Pin: undefined;
 };
 

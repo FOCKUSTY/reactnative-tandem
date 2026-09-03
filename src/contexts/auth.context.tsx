@@ -13,6 +13,7 @@ import { handleApiError } from "../utils";
 import Toast from "react-native-toast-message";
 import { STORAGE_KEYS } from "../constants";
 import { pushService } from "../api";
+import { notificationService } from "../services/notification.service";
 
 interface AuthContextType {
   user: User | null;
@@ -104,6 +105,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const logout = async () => {
+    await notificationService.cancelAll();
     await storage.deleteItem(".auth_token");
     await storage.deleteItem(".auth_user");
     setToken(null);

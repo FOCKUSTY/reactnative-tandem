@@ -6,6 +6,7 @@ import { Alert } from "react-native";
 import { useCreateSection, useSections } from "../sections";
 import { useCreateRecord, useUpdateRecord } from "./use-records.hook";
 import { useTranslate } from "../i18n";
+import { notificationService } from "../../services/notification.service";
 
 export type UseRecordFormProperties = {
   initialSectionId?: string;
@@ -33,7 +34,6 @@ export const useRecordForm = ({
   const [dateEvent, setDateEvent] = useState<Date | null>(
     record?.dateEvent ? new Date(record.dateEvent) : null,
   );
-  const [datePickerShowed, setDatePickerShowed] = useState(false);
   const [tags, setTags] = useState<string[]>(record?.tags || []);
   const [tagInput, setTagInput] = useState("");
   const [completed, setCompleted] = useState(record?.isCompleted || false);
@@ -70,7 +70,6 @@ export const useRecordForm = ({
   };
 
   const handleDateChange = (selectedDate?: Date) => {
-    setDatePickerShowed(false);
     if (selectedDate) {
       setDateEvent(selectedDate);
     }
@@ -126,10 +125,28 @@ export const useRecordForm = ({
       if (isEditing && record) {
         await updateRecordMutation.mutateAsync({ id: record.id, data });
         Alert.alert(t("common.success"), t("records.saveSuccess"));
+        if (data.dateEvent) {
+          await notificationService.cancelScheduled(`record_${record.id}`);
+          await notificationService.scheduleForRecord(
+            record.id,
+            data.title || "Без названия",
+            data.dateEvent,
+          );
+        } else {
+          await notificationService.cancelScheduled(`record_${record.id}`);
+        }
       } else {
-        await createRecordMutation.mutateAsync(data as any);
+        const newRecord = await createRecordMutation.mutateAsync(data as any);
         Alert.alert(t("common.success"), t("records.createSuccess"));
+        if (data.dateEvent) {
+          await notificationService.scheduleForRecord(
+            newRecord.id,
+            data.title || "Без названия",
+            data.dateEvent,
+          );
+        }
       }
+
       navigation.goBack();
     } catch {
       Alert.alert(t("common.error"), t("records.errors.saveFailed"));
@@ -148,9 +165,6 @@ export const useRecordForm = ({
     content,
     setContent,
     dateEvent,
-    setDateEvent,
-    datePickerShowed,
-    setDatePickerShowed,
     tags,
     tagInput,
     setTagInput,

@@ -16,6 +16,7 @@ import {
   LogsScreen,
   CalendarScreen,
   PinScreen,
+  RemindersScreen,
 } from "../../screens";
 import { MainTabs } from "./main-tabs";
 
@@ -60,7 +61,12 @@ export const AppNavigator = () => {
           <Stack.Screen
             name="Logs"
             component={LogsScreen}
-            options={{ title: "Логи" }}
+            options={{ title: t("logs.title") }}
+          />
+          <Stack.Screen
+            name="Reminders"
+            component={RemindersScreen}
+            options={{ title: t("reminders.title") }}
           />
           <Stack.Screen
             name="LinkPartner"

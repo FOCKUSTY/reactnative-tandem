@@ -10,3 +10,4 @@ export * from "./filter.screen";
 export * from "./logs.screen";
 export * from "./calendar.screen";
 export * from "./pin.screen";
+export * from "./reminders.screen";

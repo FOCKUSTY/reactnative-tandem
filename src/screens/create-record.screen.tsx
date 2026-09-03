@@ -44,8 +44,6 @@ export const CreateRecordScreen = () => {
     content,
     setContent,
     dateEvent,
-    datePickerShowed,
-    setDatePickerShowed,
     tags,
     tagInput,
     setTagInput,
@@ -118,13 +116,7 @@ export const CreateRecordScreen = () => {
 
       <View style={styles.field}>
         <Text style={styles.label}>{t("records.field.date")}</Text>
-        <DatePickerComponent
-          date={dateEvent}
-          visible={datePickerShowed}
-          onShow={() => setDatePickerShowed(true)}
-          onHide={() => setDatePickerShowed(false)}
-          onDateChange={handleDateChange}
-        />
+        <DatePickerComponent date={dateEvent} onDateChange={handleDateChange} />
       </View>
 
       <View style={styles.field}>

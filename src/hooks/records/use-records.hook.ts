@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { recordsService } from "../../api";
 import { RecordFilters } from "../../contexts";
 import { useUpdate, useDelete } from "../api";
+import { notificationService } from "../../services/notification.service";
 
 export const useRecords = (filters?: RecordFilters) => {
   return useQuery<MyRecord[]>({
@@ -58,8 +59,14 @@ export const useUpdateRecord = () => {
 };
 
 export const useDeleteRecord = () => {
-  return useDelete<void>(
-    (id) => recordsService.deleteRecord(id).then((res) => res.data),
-    ["records"],
-  );
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) =>
+      recordsService.deleteRecord(id).then((res) => res.data),
+    onSuccess: (_, id) => {
+      notificationService.cancelScheduled(`record_${id}`);
+      queryClient.invalidateQueries({ queryKey: ["records"] });
+      queryClient.removeQueries({ queryKey: ["record", id] });
+    },
+  });
 };

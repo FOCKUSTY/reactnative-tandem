@@ -10,6 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { OFFLINE_CONFIG } from "../../constants";
+import { TranslationInput } from "../../i18n";
 
 export const CacheSection = () => {
   const { colors } = useTheme();
@@ -18,9 +19,18 @@ export const CacheSection = () => {
   const { settings, updateSettings } = useCacheSettings();
   const [modalVisible, setModalVisible] = useState(false);
 
+  const STALE_TIME_OPTIONS: { value: number; key: TranslationInput }[] = [
+    { value: 0, key: "cache.off" },
+    { value: 5 * 60 * 1000, key: "cache.5min" },
+    { value: 15 * 60 * 1000, key: "cache.15min" },
+    { value: 60 * 60 * 1000, key: "cache.1hour" },
+    { value: 24 * 60 * 60 * 1000, key: "cache.24hours" },
+    { value: -1, key: "cache.never" },
+  ];
+
   const currentStaleTimeLabel =
     STALE_TIME_PRESETS.find((p) => p.value === settings.staleTime)?.label ||
-    "5 минут";
+    t("cache.5min");
 
   const handleSelectStaleTime = async (value: number) => {
     await updateSettings({ staleTime: value as any });
@@ -90,7 +100,7 @@ export const CacheSection = () => {
         title={t("settings.cacheStaleTime")}
         showCancel={false}
       >
-        {STALE_TIME_PRESETS.map((preset) => (
+        {STALE_TIME_OPTIONS.map((preset) => (
           <TouchableOpacity
             key={preset.value}
             style={[
@@ -105,7 +115,7 @@ export const CacheSection = () => {
                 settings.staleTime === preset.value && styles.optionTextActive,
               ]}
             >
-              {preset.label}
+              {t(preset.key)}
             </Text>
             {settings.staleTime === preset.value && (
               <MaterialIcons name="check" size={20} color={colors.primary} />

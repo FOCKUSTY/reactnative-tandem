@@ -4,7 +4,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, Text, TouchableOpacity, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { createStyles, formatDate } from "../../utils";
+import { createStyles, formatDateTime } from "../../utils";
 import { useTheme } from "../../contexts";
 import { useSections, useTranslate } from "../../hooks";
 
@@ -94,7 +94,7 @@ export const SectionPreview = ({
             )}
             {record.dateEvent && (
               <Text style={styles.cardDate}>
-                {formatDate(record.dateEvent)}
+                {formatDateTime(record.dateEvent)}
               </Text>
             )}
             <Text style={styles.cardText} numberOfLines={2}>

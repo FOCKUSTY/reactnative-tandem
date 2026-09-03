@@ -24,15 +24,22 @@
     "title": "Notifications",
     "status": "Status",
     "enabled": "Enabled",
+    "reminderOffset": "Reminder offset",
     "disabled": "Disabled",
     "setup": "Set up notifications",
     "refresh": "Refresh token",
     "success": "Notifications set up successfully",
     "error": "Failed to set up notifications",
-    "permissionDenied": "Notification permission denied. You can enable it in device settings."
+    "permissionDenied": "Notification permission denied. You can enable it in device settings.",
+    "reminder": {
+      "title": "Reminder",
+      "offsetsLabel": "Reminders",
+      "body": "📅 {{title}}"
+    }
   },
   "common": {
     "close": "Close",
+    "selectTime": "Select time",
     "save": "Save",
     "cancel": "Cancel",
     "delete": "Delete",
@@ -64,6 +71,7 @@
     "network": "Network error. Check Internet connection.",
     "server": "Server error. Try later.",
     "unauthorized": "Session expired. Login again.",
+    "serverUnavailable": "Server unavailable.",
     "notFound": "Not found.",
     "unknown": "Unknown error."
   },
@@ -199,7 +207,8 @@
     "clearCache": "Clear cache",
     "clearCacheTitle": "Clear cache?",
     "clearCacheMessage": "All saved data will be deleted. The app will download fresh data the next time it connects.",
-    "cacheCleared": "Cache cleared"
+    "cacheCleared": "Cache cleared",
+    "notifications": "Notifications"
   },
   "filters": {
     "title": "Filters",
@@ -266,5 +275,41 @@
   },
   "calendar": {
     "title": "Calendar"
+  },
+  "reminders": {
+    "title": "Reminders",
+    "empty": "No upcoming events with reminders",
+    "offset": {
+      "now": "At the moment",
+      "30min": "30 min",
+      "1hour": "1 hour",
+      "2hours": "2 hours",
+      "6hours": "6 hours",
+      "12hours": "12 hours",
+      "1day": "1 day",
+      "2days": "2 days",
+      "custom": "+ Other",
+      "customLabel": "Custom:",
+      "minutes": "{{count}} min",
+      "hours_one": "{{count}} hour",
+      "hours_other": "{{count}} hours"
+    }
+  },
+  "push": {
+    "partnerMessageTitle": "Message from partner"
+  },
+  "network": {
+    "offline": "No internet"
+  },
+  "sync": {
+    "status": "Syncing"
+  },
+  "cache": {
+    "off": "No cache",
+    "5min": "5 minutes",
+    "15min": "15 minutes",
+    "1hour": "1 hour",
+    "24hours": "24 hours",
+    "never": "Never (cache only)"
   }
 }

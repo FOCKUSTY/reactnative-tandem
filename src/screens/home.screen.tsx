@@ -8,6 +8,7 @@ import {
 import { createStyles, getFilteredRecords } from "../utils";
 import { useAuth, useTheme } from "../contexts";
 import { useRecords, useRefresh, useTranslate } from "../hooks";
+import { useReminder } from "../hooks/use-reminder.hook";
 
 export const HomeScreen = () => {
   const { t } = useTranslate();
@@ -16,6 +17,8 @@ export const HomeScreen = () => {
   const { user } = useAuth();
   const styles = getStyles(colors);
   const { data: allRecords = [], isLoading } = useRecords();
+
+  useReminder();
 
   const upcomingDates = getFilteredRecords(allRecords, {
     onlyFuture: true,
