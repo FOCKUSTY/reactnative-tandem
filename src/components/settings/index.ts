@@ -9,3 +9,4 @@ export * from "./language-section.component";
 export * from "./logging-section.component";
 export * from "./pin-section.component";
 export * from "./cache-section.component";
+export * from "./notifications-section.component";

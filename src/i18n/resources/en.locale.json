@@ -20,6 +20,17 @@
     "logoutTitle": "Logout?",
     "logoutMessage": "Are you sure you want to logout? PIN will remain saved."
   },
+  "notifications": {
+    "title": "Notifications",
+    "status": "Status",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "setup": "Set up notifications",
+    "refresh": "Refresh token",
+    "success": "Notifications set up successfully",
+    "error": "Failed to set up notifications",
+    "permissionDenied": "Notification permission denied. You can enable it in device settings."
+  },
   "common": {
     "close": "Close",
     "save": "Save",
@@ -39,7 +50,15 @@
     "at": "at",
     "more": "more",
     "viewAll": "View all",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "send": "Send"
+  },
+  "sendMessage": {
+    "title": "Send to partner",
+    "messageLabel": "Message:",
+    "placeholder": "Write something nice...",
+    "enterMessage": "Please enter a message",
+    "success": "Notification sent"
   },
   "errors": {
     "network": "Network error. Check Internet connection.",
@@ -231,6 +250,7 @@
       "usernameRequired": "Enter username",
       "linkFailed": "Failed to link partner"
     },
+    "sendNotification": "Send message",
     "linkSuccessMessage": "Partner successfully linked!"
   },
   "logs": {

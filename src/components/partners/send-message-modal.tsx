@@ -4,6 +4,7 @@ import { ModalWrapper } from "../common";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useSendPartnerMessage } from "../../hooks/use-send-partner-message.hook";
+import { useTranslate } from "../../hooks";
 
 type Props = {
   visible: boolean;
@@ -12,23 +13,24 @@ type Props = {
 
 export const SendMessageModal = ({ visible, onClose }: Props) => {
   const { colors } = useTheme();
+  const { t } = useTranslate();
   const styles = getStyles(colors);
   const [message, setMessage] = useState("");
   const { mutate, isPending } = useSendPartnerMessage();
 
   const handleSend = () => {
     if (!message.trim()) {
-      Alert.alert("Ошибка", "Введите сообщение");
+      Alert.alert(t("common.error"), t("sendMessage.enterMessage"));
       return;
     }
     mutate(message, {
       onSuccess: () => {
-        Alert.alert("Успешно", "Уведомление отправлено");
+        Alert.alert(t("common.success"), t("sendMessage.success"));
         setMessage("");
         onClose();
       },
       onError: (error: any) => {
-        Alert.alert("Ошибка", error.message);
+        Alert.alert(t("common.error"), error.message);
       },
     });
   };
@@ -37,17 +39,17 @@ export const SendMessageModal = ({ visible, onClose }: Props) => {
     <ModalWrapper
       visible={visible}
       onClose={onClose}
-      title="Отправить партнёру"
-      confirmText="Отправить"
+      title={t("sendMessage.title")}
+      confirmText={t("common.send")}
       onConfirm={handleSend}
       loading={isPending}
     >
-      <Text style={styles.label}>Сообщение:</Text>
+      <Text style={styles.label}>{t("sendMessage.messageLabel")}</Text>
       <TextInput
         style={styles.input}
         multiline
         numberOfLines={4}
-        placeholder="Напишите что-то приятное..."
+        placeholder={t("sendMessage.placeholder")}
         value={message}
         onChangeText={setMessage}
       />

@@ -16,16 +16,20 @@ export const useServerStatus = () => {
         const response = await axios.get(`${baseUrl}/health`, {
           timeout: OFFLINE_CONFIG.HEALTH_CHECK_TIMEOUT,
         });
+        console.log(response.status, response.data);
         setIsServerAvailable(
           response.status === 200 && response.data?.status === "ok",
         );
-      } catch {
+      } catch (error) {
+        console.log(error);
         setIsServerAvailable(false);
       }
     };
 
     checkHealth();
-    intervalId = setInterval(checkHealth, OFFLINE_CONFIG.HEALTH_CHECK_INTERVAL);
+    intervalId = setInterval(() => {
+      checkHealth();
+    }, OFFLINE_CONFIG.HEALTH_CHECK_INTERVAL);
 
     return () => {
       if (intervalId) clearInterval(intervalId);

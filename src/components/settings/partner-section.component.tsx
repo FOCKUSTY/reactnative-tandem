@@ -55,7 +55,7 @@ export const PartnerSection = ({ isPartnerLinked }: PartnerSectionProps) => {
         />
         <SettingsItem
           icon="send"
-          label="Отправить сообщение"
+          label={t("partner.sendNotification")}
           onPress={() => setModalVisible(true)}
         />
         <SendMessageModal

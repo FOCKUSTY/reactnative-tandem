@@ -11,6 +11,8 @@ import { usersService } from "../api/services/users.service";
 import { MeResponse, User } from "../types";
 import { handleApiError } from "../utils";
 import Toast from "react-native-toast-message";
+import { STORAGE_KEYS } from "../constants";
+import { pushService } from "../api";
 
 interface AuthContextType {
   user: User | null;
@@ -107,6 +109,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setToken(null);
     setUser(null);
     setMe(null);
+
+    const pushToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
+    if (pushToken) {
+      await pushService.unregisterToken(pushToken);
+      await storage.deleteItem(STORAGE_KEYS.PUSH_TOKEN);
+    }
   };
 
   const refreshMe = async () => {

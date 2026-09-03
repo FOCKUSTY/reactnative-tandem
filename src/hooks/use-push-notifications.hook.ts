@@ -3,6 +3,8 @@ import * as Notifications from "expo-notifications";
 import { pushService } from "../api/services/push.service";
 import { Alert } from "react-native";
 import { useUser } from "./auth";
+import { CONFIG, STORAGE_KEYS } from "../constants";
+import { storage } from "../utils";
 
 export const usePushNotifications = () => {
   const { user } = useUser();
@@ -23,7 +25,7 @@ export const usePushNotifications = () => {
   useEffect(() => {
     if (!user) return;
 
-    const register = async () => {
+    (async () => {
       const { status: existingStatus } =
         await Notifications.getPermissionsAsync();
       let finalStatus = existingStatus;
@@ -36,19 +38,19 @@ export const usePushNotifications = () => {
         return;
       }
 
-      const tokenData = await Notifications.getExpoPushTokenAsync();
+      const tokenData = await Notifications.getExpoPushTokenAsync({
+        projectId: CONFIG.expo.extra.eas.projectId,
+      });
       const token = tokenData.data;
       tokenRef.current = token;
 
-      await pushService.registerToken(token);
-    };
-
-    register();
-
-    return () => {
-      if (tokenRef.current) {
-        pushService.unregisterToken(tokenRef.current).catch(console.warn);
+      const storedToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
+      if (storedToken === token) {
+        return;
       }
-    };
+
+      await pushService.registerToken(token);
+      await storage.setItem(STORAGE_KEYS.PUSH_TOKEN, token);
+    })();
   }, [user]);
 };
