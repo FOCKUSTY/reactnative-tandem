@@ -2,5 +2,5 @@ import appConfig from "../../app.config";
 
 export const CONFIG = appConfig;
 
-export const VERSION = "0.1.0-alpha";
-export const NAME = "Tandem";
+export const VERSION = CONFIG.expo.version;
+export const NAME = CONFIG.expo.name;
