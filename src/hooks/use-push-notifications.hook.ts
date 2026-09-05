@@ -1,26 +1,15 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import * as Notifications from "expo-notifications";
-import { pushService } from "../api/services/push.service";
-import { Alert } from "react-native";
-import { useUser } from "./auth";
+import * as DeviceInfo from "expo-device";
+import { Alert, Platform } from "react-native";
+
 import { CONFIG, STORAGE_KEYS } from "../constants";
-import { storage } from "../utils";
+import { storage, getDeviceId } from "../utils";
+import { pushService } from "../api/services";
+import { useUser } from "./auth";
 
 export const usePushNotifications = () => {
   const { user } = useUser();
-  const tokenRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    const subscription = Notifications.addNotificationResponseReceivedListener(
-      (response) => {
-        const data: any = response.notification.request.content.data;
-        if (data?.type === "partner_message") {
-          Alert.alert("Сообщение от партнёра", data?.body);
-        }
-      },
-    );
-    return () => subscription.remove();
-  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -38,19 +27,50 @@ export const usePushNotifications = () => {
         return;
       }
 
+      const deviceId = await getDeviceId();
+      const storedToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
+
+      const shouldRegister = await (async () => {
+        try {
+          const response = await pushService.getDevice(deviceId);
+          const { exists, belongsToCurrentUser } = response.data;
+          return !exists || !belongsToCurrentUser;
+        } catch (error) {
+          console.warn("Device check failed:", error);
+          return !storedToken;
+        }
+      })();
+
+      if (!shouldRegister) {
+        return;
+      }
+
       const tokenData = await Notifications.getExpoPushTokenAsync({
         projectId: CONFIG.expo.extra.eas.projectId,
       });
       const token = tokenData.data;
-      tokenRef.current = token;
 
-      const storedToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
-      if (storedToken === token) {
-        return;
-      }
+      await pushService.registerDevice({
+        deviceId,
+        pushToken: token,
+        platform: Platform.OS,
+        osVersion: DeviceInfo.osVersion || Platform.Version.toString(),
+        model: DeviceInfo.modelName || "undefined",
+        appVersion: CONFIG.expo.version,
+      });
 
-      await pushService.registerToken(token);
       await storage.setItem(STORAGE_KEYS.PUSH_TOKEN, token);
     })();
+
+    const subscription = Notifications.addNotificationResponseReceivedListener(
+      (response) => {
+        const data: any = response.notification.request.content.data;
+        if (data?.type === "partner_message") {
+          Alert.alert("Сообщение от партнёра", data?.body);
+        }
+      },
+    );
+
+    return () => subscription.remove();
   }, [user]);
 };

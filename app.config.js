@@ -17,8 +17,8 @@ export default {
         monochromeImage: "./assets/android-icon-monochrome.png",
       },
       predictiveBackGestureEnabled: false,
-      package: "com.fockusty.tandem",
       googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+      package: "com.fockusty.tandem",
       permissions: [
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
