@@ -4,7 +4,7 @@ import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import { createStyles, formatDateTime } from "../../utils";
+import { createStyles, formatDateTime, formatIntervalLabel } from "../../utils";
 import { useTheme } from "../../contexts";
 import { useTranslate } from "../../hooks";
 
@@ -60,6 +60,15 @@ export const RecordCard = ({
         <Text style={styles.content} numberOfLines={2}>
           {record.content}
         </Text>
+      )}
+
+      {record.isRecurring && record.recurringInterval && (
+        <View style={styles.recurringBadge}>
+          <MaterialIcons name="repeat" size={14} color={colors.primary} />
+          <Text style={styles.recurringText}>
+            {formatIntervalLabel(record.recurringInterval)}
+          </Text>
+        </View>
       )}
 
       <View style={styles.tags}>
@@ -131,6 +140,16 @@ const getStyles = createStyles((colors) => ({
     fontSize: 12,
     color: colors.textMuted,
     alignSelf: "center",
+    marginLeft: 4,
+  },
+  recurringBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  recurringText: {
+    fontSize: 12,
+    color: colors.primary,
     marginLeft: 4,
   },
 }));

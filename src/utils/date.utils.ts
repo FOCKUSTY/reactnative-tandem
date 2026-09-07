@@ -104,3 +104,21 @@ export const timestamp = (): string => {
 export const nowDate = (locale?: string): string => {
   return formatDate(new Date(), locale);
 };
+
+export const formatIntervalLabel = (interval: string): string => {
+  const map: Record<string, string> = {
+    "1h": "каждый час",
+    "6h": "каждые 6 ч",
+    "12h": "каждые 12 ч",
+    "1d": "каждый день",
+    "2d": "каждые 2 дня",
+    "7d": "каждую неделю",
+    "1m": "каждый месяц",
+    "1y": "каждый год",
+    "5y": "каждые 5 лет",
+    "10y": "каждые 10 лет",
+    "100y": "каждые 100 лет",
+  };
+
+  return map[interval] || interval;
+};

@@ -7,3 +7,4 @@ export * from "./tags-input-filter.component";
 export * from "./sort-controls.component";
 export * from "./status-switches.component";
 export * from "./modal-wrapper.component";
+export * from "./recurring-picker.component";

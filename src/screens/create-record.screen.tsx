@@ -7,6 +7,7 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Switch,
 } from "react-native";
 
 import { useRecordForm } from "../hooks";
@@ -18,6 +19,7 @@ import {
   DatePickerComponent,
   CheckboxRowComponent,
   SkeletonCreateRecord,
+  RecurringPicker,
 } from "../components";
 import { useTranslate } from "../hooks";
 
@@ -64,6 +66,10 @@ export const CreateRecordScreen = () => {
     handleDateChange,
     handleCreateSection,
     handleSubmit,
+    recurring,
+    setRecurring,
+    recurringInterval,
+    setRecurringInterval,
   } = useRecordForm({ initialSectionId, record });
 
   if (loading) {
@@ -130,6 +136,24 @@ export const CreateRecordScreen = () => {
         />
       </View>
 
+      <View style={styles.field}>
+        <View style={styles.recurringRow}>
+          <Text style={styles.label}>{t("records.repeat")}</Text>
+          <Switch
+            value={recurring}
+            onValueChange={setRecurring}
+            trackColor={{ false: colors.inputBorder, true: colors.primary }}
+            thumbColor={colors.text}
+          />
+        </View>
+        {recurring && (
+          <RecurringPicker
+            value={recurringInterval}
+            onChange={setRecurringInterval}
+          />
+        )}
+      </View>
+
       <CheckboxRowComponent
         completed={completed}
         pinned={pinned}
@@ -166,6 +190,12 @@ const getStyles = createStyles((colors) => ({
   },
   saveButtonText: {
     color: colors.text,
+  },
+  recurringRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 8,
   },
 }));
 

@@ -122,6 +122,7 @@
   },
   "records": {
     "title": "Records",
+    "repeat": "Repeat?",
     "empty": "No records in this section",
     "createFirst": "Create first record",
     "deleteConfirm": {
@@ -311,5 +312,14 @@
     "1hour": "1 hour",
     "24hours": "24 hours",
     "never": "Never (cache only)"
+  },
+  "recurring": {
+    "everyHour": "Every hour",
+    "everyDay": "Every day",
+    "everyWeek": "Every week",
+    "everyMonth": "Every month",
+    "everyYear": "Every year",
+    "ourInterval": "Our interval",
+    "example": "e.g."
   }
 }

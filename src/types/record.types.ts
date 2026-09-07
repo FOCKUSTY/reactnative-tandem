@@ -14,6 +14,8 @@ export interface MyRecord {
   createdAt: string;
   updatedAt: string;
   section?: Pick<Section, "id" | "name" | "slug">;
+  isRecurring: boolean;
+  recurringInterval?: string | null;
 }
 
 export type CreateRecordDto = Omit<
@@ -21,8 +23,13 @@ export type CreateRecordDto = Omit<
   "id" | "userId" | "createdAt" | "updatedAt" | "section"
 > & {
   sectionId: string;
+  isRecurring?: boolean;
+  recurringInterval?: string | null;
 };
 
 export type UpdateRecordDto = Partial<
   Omit<MyRecord, "id" | "userId" | "section">
->;
+> & {
+  isRecurring?: boolean;
+  recurringInterval?: string | null;
+};

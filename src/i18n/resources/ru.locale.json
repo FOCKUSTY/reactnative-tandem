@@ -122,6 +122,7 @@
   },
   "records": {
     "title": "Записи",
+    "repeat": "Повторять?",
     "empty": "Нет записей в этом разделе",
     "createFirst": "Создать первую запись",
     "deleteConfirm": {
@@ -312,5 +313,14 @@
     "1hour": "1 час",
     "24hours": "24 часа",
     "never": "Никогда (только кэш)"
+  },
+  "recurring": {
+    "everyHour": "Каждый час",
+    "everyDay": "Каждый день",
+    "everyWeek": "Каждую неделю",
+    "everyMonth": "Каждый месяц",
+    "everyYear": "Каждый год",
+    "ourInterval": "Свой интервал",
+    "example": "Например"
   }
 }

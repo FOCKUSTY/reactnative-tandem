@@ -1,4 +1,8 @@
-import type { MyRecord, NavigationProperty } from "../../types";
+import type {
+  CreateRecordDto,
+  MyRecord,
+  NavigationProperty,
+} from "../../types";
 
 import { useNavigation } from "@react-navigation/native";
 import { useState, useEffect } from "react";
@@ -43,6 +47,10 @@ export const useRecordForm = ({
     useState(false);
   const [newSectionName, setNewSectionName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [recurring, setRecurring] = useState(record?.isRecurring || false);
+  const [recurringInterval, setRecurringInterval] = useState(
+    record?.recurringInterval || "1y",
+  );
 
   useEffect(() => {
     if (!(initialSectionId && sections.length > 0 && !selectedSectionId))
@@ -111,7 +119,7 @@ export const useRecordForm = ({
 
     setLoading(true);
     try {
-      const data = {
+      const data: CreateRecordDto = {
         sectionId: selectedSectionId,
         title: title.trim() || undefined,
         content: content.trim() || undefined,
@@ -120,6 +128,8 @@ export const useRecordForm = ({
         isPinned: pinned,
         tags,
         metadata: {},
+        isRecurring: recurring,
+        recurringInterval: recurring ? recurringInterval : null,
       };
 
       if (isEditing && record) {
@@ -185,5 +195,9 @@ export const useRecordForm = ({
     handleDateChange,
     handleCreateSection,
     handleSubmit,
+    recurring,
+    setRecurring,
+    recurringInterval,
+    setRecurringInterval,
   };
 };
