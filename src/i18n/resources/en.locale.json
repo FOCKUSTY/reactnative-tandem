@@ -313,6 +313,11 @@
     "24hours": "24 hours",
     "never": "Never (cache only)"
   },
+  "starred": {
+    "title": "Starred",
+    "empty": "No starred records",
+    "goToRecords": "Go to records"
+  },
   "recurring": {
     "everyHour": "Every hour",
     "everyDay": "Every day",

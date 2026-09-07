@@ -1,23 +1,25 @@
-import type { NavigationProperty } from "../types";
+import type { NavigationProperty, Section } from "../types";
 
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation } from "@react-navigation/native";
 import { View, TouchableOpacity } from "react-native";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useMemo } from "react";
 
 import {
   CreateSectionModal,
   SkeletonSectionsList,
   SectionCard,
 } from "../components";
-import { useRefresh, useSectionsList } from "../hooks";
+import { useRefresh, useSectionsList, useTranslate } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
+import { useStarredRecords } from "../hooks/records/use-starred.hook";
 
 export const SectionsScreen = () => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
+  const { t } = useTranslate();
 
   const {
     sections,
@@ -31,6 +33,21 @@ export const SectionsScreen = () => {
     handleDeleteSection,
     handlePressSection,
   } = useSectionsList();
+
+  const { data: starredRecords = [] } = useStarredRecords();
+  const starredCount = starredRecords.length;
+
+  const sectionsWithFavorite: Section[] = useMemo(() => {
+    const favoriteSection: Section = {
+      id: "favorite",
+      isSystem: true,
+      name: t("starred.title"),
+      order: -1,
+      slug: "favorite",
+      _count: { records: starredCount },
+    };
+    return [favoriteSection, ...sections];
+  }, [sections, starredCount, t]);
 
   const { RefreshableFlatList } = useRefresh({
     queryKeys: [["sections"]],
@@ -59,7 +76,7 @@ export const SectionsScreen = () => {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.navigate("Calendar")}>
             <MaterialIcons
-              name={"calendar-today"}
+              name="calendar-today"
               size={24}
               style={styles.headerButton}
               color={colors.primary}
@@ -68,7 +85,7 @@ export const SectionsScreen = () => {
         </View>
       ),
     });
-  }, [navigation, colors]);
+  }, [navigation, colors, handleRefresh]);
 
   if (isLoading) {
     return <SkeletonSectionsList />;
@@ -77,15 +94,27 @@ export const SectionsScreen = () => {
   return (
     <View style={styles.container}>
       <RefreshableFlatList
-        data={sections}
+        data={sectionsWithFavorite}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <SectionCard
-            section={item}
-            onPress={handlePressSection}
-            onLongPress={handleDeleteSection}
-          />
-        )}
+        renderItem={({ item }) => {
+          if (item.id === "favorite") {
+            return (
+              <SectionCard
+                section={item}
+                onPress={() => navigation.navigate("Starred")}
+                onLongPress={handleDeleteSection}
+              />
+            );
+          }
+
+          return (
+            <SectionCard
+              section={item}
+              onPress={handlePressSection}
+              onLongPress={handleDeleteSection}
+            />
+          );
+        }}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />

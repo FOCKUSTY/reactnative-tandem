@@ -5,6 +5,7 @@ export type RootStackParameters = {
   Login: undefined;
   Main: undefined;
   Filters: undefined;
+  Sections: undefined;
   Filter: undefined;
   Records: { sectionId: string; title: string };
   RecordDetail: { id: string };
@@ -15,6 +16,7 @@ export type RootStackParameters = {
   Calendar: undefined;
   Reminders: undefined;
   Pin: undefined;
+  Starred: undefined;
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;

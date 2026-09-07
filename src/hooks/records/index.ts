@@ -3,3 +3,4 @@ export * from "./use-records.hook";
 export * from "./use-record-detail.hook";
 export * from "./use-record-form.hook";
 export * from "./use-records-list.hook";
+export * from "./use-starred.hook";

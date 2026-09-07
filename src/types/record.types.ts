@@ -16,6 +16,7 @@ export interface MyRecord {
   section?: Pick<Section, "id" | "name" | "slug">;
   isRecurring: boolean;
   recurringInterval?: string | null;
+  isStarred?: boolean;
 }
 
 export type CreateRecordDto = Omit<

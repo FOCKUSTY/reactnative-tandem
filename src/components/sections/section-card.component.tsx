@@ -18,6 +18,7 @@ const SECTION_ICONS: Record<string, MaterialIconsIconName> = {
   definitions: "book",
   discasses: "chat",
   fanfics: "history-edu",
+  favorite: "star-rate",
 };
 
 export type SectionCardProps = {

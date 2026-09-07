@@ -1,5 +1,5 @@
 import Markdown from "react-native-markdown-renderer";
-import { View } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 
 import { createStyles, getMarkdownStyles } from "../../utils";
 import { useTheme } from "../../contexts";
@@ -8,7 +8,9 @@ import { RecordHeader } from "./record-header.component";
 import { RecordTags } from "./record-tags.component";
 import { RecordMeta } from "./record-meta.component";
 import { MyRecord } from "../../types";
-import { useRefresh } from "../../hooks";
+import { useRefresh, useToggleStar } from "../../hooks";
+import { useState } from "react";
+import MaterialIcons from "@react-native-vector-icons/material-icons";
 
 export type RecordContentProperties = {
   record: MyRecord & {
@@ -28,16 +30,26 @@ export const RecordContent = ({
     isPinned,
     createdAt,
     updatedAt,
-    ...record
+    ...initialRecord
   },
 }: RecordContentProperties) => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const markdownStyles = getMarkdownStyles(colors);
+  const { toggleStar, isPending } = useToggleStar();
+  const [record, setRecord] = useState(initialRecord);
 
   const { RefreshableScrollView } = useRefresh({
-    queryKeys: [["record", record.id]],
+    queryKeys: [["record", initialRecord.id]],
   });
+
+  const handleStarPress = () => {
+    if (!isPending) {
+      toggleStar(record.id, !!record.isStarred).then(() => {
+        setRecord((prev) => ({ ...prev, isStarred: !prev.isStarred }));
+      });
+    }
+  };
 
   return (
     <RefreshableScrollView
@@ -50,6 +62,14 @@ export const RecordContent = ({
           date={dateLabel || undefined}
           time={timeLabel || undefined}
         />
+
+        <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
+          <MaterialIcons
+            name={record.isStarred ? "star" : "star-border"}
+            size={32}
+            color={record.isStarred ? colors.primary : colors.textMuted}
+          />
+        </TouchableOpacity>
 
         <Markdown style={markdownStyles}>{content || ""}</Markdown>
 

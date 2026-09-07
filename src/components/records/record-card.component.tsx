@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import { createStyles, formatDateTime, formatIntervalLabel } from "../../utils";
 import { useTheme } from "../../contexts";
-import { useTranslate } from "../../hooks";
+import { useToggleStar, useTranslate } from "../../hooks";
 
 export type RecordCardProps = {
   record: MyRecord;
@@ -23,9 +23,17 @@ export const RecordCard = ({
   const { t } = useTranslate();
   const styles = getStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
+  const { toggleStar, isPending } = useToggleStar();
 
   const handlePress = () => {
     navigation.navigate("RecordDetail", { id: record.id });
+  };
+
+  const handleStarPress = (e: any) => {
+    e.stopPropagation();
+    if (!isPending) {
+      toggleStar(record.id, !!record.isStarred);
+    }
   };
 
   return (
@@ -38,6 +46,13 @@ export const RecordCard = ({
         <Text style={styles.title} numberOfLines={1}>
           {record.title || t("records.untitled")}
         </Text>
+        <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
+          <MaterialIcons
+            name={record.isStarred ? "star" : "star-border"}
+            size={24}
+            color={record.isStarred ? colors.primary : colors.textMuted}
+          />
+        </TouchableOpacity>
         {showDelete && onDelete && (
           <TouchableOpacity
             onPress={() => onDelete(record.id)}

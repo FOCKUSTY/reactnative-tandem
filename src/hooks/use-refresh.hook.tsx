@@ -5,7 +5,7 @@ import { useTheme } from "../contexts";
 
 interface UseRefreshOptions {
   queryKeys?: string[][];
-  onRefresh?: () => Promise<void> | void;
+  onRefresh?: () => Promise<unknown> | unknown;
   enabled?: boolean;
 }
 
@@ -61,9 +61,14 @@ export const useRefresh = (options: UseRefreshOptions = {}) => {
     </ScrollView>
   );
 
-  const RefreshableFlatList = <T extends any>(
-    props: React.ComponentProps<typeof FlatList<T>>,
-  ) => <FlatList<T> {...props} refreshControl={refreshControl} />;
+  const RefreshableFlatList = <T extends any>({
+    children,
+    ...props
+  }: React.ComponentProps<typeof FlatList<T>>) => (
+    <FlatList<T> {...props} refreshControl={refreshControl}>
+      {children}
+    </FlatList>
+  );
 
   return {
     refreshing,

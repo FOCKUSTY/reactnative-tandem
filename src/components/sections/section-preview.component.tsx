@@ -16,6 +16,8 @@ export type SectionPreviewProperties = {
   createLabel?: string;
   viewAllLabel?: string;
   limit?: number;
+  onViewAll?: () => void;
+  onAdd?: () => void;
 };
 
 export const SectionPreview = ({
@@ -26,6 +28,8 @@ export const SectionPreview = ({
   createLabel,
   viewAllLabel,
   limit = 5,
+  onAdd,
+  onViewAll,
 }: SectionPreviewProperties) => {
   const { colors } = useTheme();
   const { t } = useTranslate();
@@ -39,12 +43,20 @@ export const SectionPreview = ({
   const hasMore = records.length > limit;
 
   const handleCreate = () => {
+    if (onAdd) {
+      return onAdd();
+    }
+
     if (section) {
       navigation.navigate("CreateRecord", { sectionId: section.id });
     }
   };
 
   const handleViewAll = () => {
+    if (onViewAll) {
+      return onViewAll();
+    }
+
     if (section) {
       navigation.navigate("Records", { sectionId: section.id, title });
     }

@@ -1,4 +1,4 @@
-import { Text } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 
 import {
   PartnerLinkBannerComponent,
@@ -9,6 +9,10 @@ import { createStyles, getFilteredRecords } from "../utils";
 import { useAuth, useTheme } from "../contexts";
 import { useRecords, useRefresh, useTranslate } from "../hooks";
 import { useReminder } from "../hooks/use-reminder.hook";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProperty } from "../types";
+import { useLayoutEffect } from "react";
+import MaterialIcons from "@react-native-vector-icons/material-icons";
 
 export const HomeScreen = () => {
   const { t } = useTranslate();
@@ -18,7 +22,28 @@ export const HomeScreen = () => {
   const styles = getStyles(colors);
   const { data: allRecords = [], isLoading } = useRecords();
 
+  const navigation = useNavigation<NavigationProperty>();
+
   useReminder();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 8,
+            padding: 8,
+          }}
+        >
+          <TouchableOpacity onPress={() => navigation.navigate("Starred")}>
+            <MaterialIcons name="star-rate" size={28} color={colors.primary} />
+          </TouchableOpacity>
+        </View>
+      ),
+    });
+  }, []);
 
   const upcomingDates = getFilteredRecords(allRecords, {
     onlyFuture: true,
@@ -30,7 +55,7 @@ export const HomeScreen = () => {
   }).filter((r) => r.section?.slug === "plans");
 
   const { RefreshableScrollView } = useRefresh({
-    queryKeys: [["records"], ["sections"]],
+    queryKeys: [["records"], ["sections"], ["starred"]],
   });
 
   if (isLoading) {
