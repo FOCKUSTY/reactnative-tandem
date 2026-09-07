@@ -1,5 +1,5 @@
 import Markdown from "react-native-markdown-renderer";
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 
 import { createStyles, getMarkdownStyles } from "../../utils";
 import { useTheme } from "../../contexts";
@@ -7,36 +7,43 @@ import { useTheme } from "../../contexts";
 import { RecordHeader } from "./record-header.component";
 import { RecordTags } from "./record-tags.component";
 import { RecordMeta } from "./record-meta.component";
+import { MyRecord } from "../../types";
+import { useRefresh } from "../../hooks";
 
 export type RecordContentProperties = {
-  title?: string;
-  dateLabel: string | null;
-  timeLabel: string | null;
-  content?: string;
-  tags: string[];
-  isCompleted: boolean;
-  isPinned: boolean;
-  createdAt: string;
-  updatedAt: string;
+  record: MyRecord & {
+    dateLabel: string | null;
+    timeLabel: string | null;
+  };
 };
 
 export const RecordContent = ({
-  title,
-  dateLabel,
-  timeLabel,
-  content,
-  tags,
-  isCompleted,
-  isPinned,
-  createdAt,
-  updatedAt,
+  record: {
+    title,
+    dateLabel,
+    timeLabel,
+    content,
+    tags,
+    isCompleted,
+    isPinned,
+    createdAt,
+    updatedAt,
+    ...record
+  },
 }: RecordContentProperties) => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const markdownStyles = getMarkdownStyles(colors);
 
+  const { RefreshableScrollView } = useRefresh({
+    queryKeys: [["record", record.id]],
+  });
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <RefreshableScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+    >
       <View style={styles.card}>
         <RecordHeader
           title={title}
@@ -55,7 +62,7 @@ export const RecordContent = ({
           updatedAt={updatedAt}
         />
       </View>
-    </ScrollView>
+    </RefreshableScrollView>
   );
 };
 

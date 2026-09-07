@@ -64,15 +64,11 @@ export const RecordDetailsScreen = () => {
 
   return (
     <RecordContent
-      title={record.title}
-      dateLabel={dateLabel}
-      timeLabel={timeLabel}
-      content={record.content}
-      tags={record.tags}
-      isCompleted={record.isCompleted}
-      isPinned={record.isPinned}
-      createdAt={record.createdAt}
-      updatedAt={record.updatedAt}
+      record={{
+        ...record,
+        dateLabel,
+        timeLabel,
+      }}
     />
   );
 };

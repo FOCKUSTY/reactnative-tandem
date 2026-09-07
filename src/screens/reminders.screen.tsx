@@ -2,7 +2,7 @@ import { View, Text, FlatList } from "react-native";
 import { useTheme } from "../contexts";
 import { useRemindersList } from "../hooks/use-reminders-list.hook";
 import { createStyles, formatDateTime } from "../utils";
-import { useTranslate } from "../hooks";
+import { useRefresh, useTranslate } from "../hooks";
 import { MyRecord } from "../types";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
@@ -13,6 +13,10 @@ export const RemindersScreen = () => {
   const styles = getStyles(colors);
   const navigation = useNavigation();
   const { records, offsets } = useRemindersList();
+
+  const { RefreshableFlatList } = useRefresh({
+    queryKeys: [["records"]],
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,7 +71,7 @@ export const RemindersScreen = () => {
           <Text style={styles.emptyText}>{t("reminders.empty")}</Text>
         </View>
       ) : (
-        <FlatList
+        <RefreshableFlatList
           data={records}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}

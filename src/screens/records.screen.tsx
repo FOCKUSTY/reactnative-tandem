@@ -2,10 +2,9 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
-import { FlatList } from "react-native";
 
 import { RecordCard, SkeletonRecordsList } from "../components";
-import { useRecordsList } from "../hooks";
+import { useRecordsList, useRefresh } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
@@ -16,6 +15,10 @@ export const RecordsScreen = () => {
   const styles = getStyles(colors);
   const { records, isLoading, title, handleDelete, handleCreate } =
     useRecordsList();
+
+  const { RefreshableFlatList } = useRefresh({
+    queryKeys: [["records"]],
+  });
 
   const navigation = useNavigation();
 
@@ -48,7 +51,7 @@ export const RecordsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <RefreshableFlatList
         data={records}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (

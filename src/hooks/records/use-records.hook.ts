@@ -3,12 +3,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { recordsService } from "../../api";
 import { RecordFilters } from "../../contexts";
-import { useUpdate, useDelete } from "../api";
+import { useUpdate } from "../api";
 import { notificationService } from "../../services/notification.service";
 
 export const useRecords = (filters?: RecordFilters) => {
+  const queryKey = filters ? ["records", filters] : ["records"];
   return useQuery<MyRecord[]>({
-    queryKey: ["records", filters],
+    queryKey,
     queryFn: () => recordsService.getRecords(filters).then((res) => res.data),
     enabled: true,
   });
