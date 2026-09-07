@@ -1,8 +1,10 @@
-name: Build Android APK
+name: Build Android APK and Release
 
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   pull_request:
     branches: [ main ]
   workflow_dispatch:
@@ -10,7 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    outputs:
+      apk-path: ${{ steps.set-apk-path.outputs.apk-path }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,3 +51,28 @@ jobs:
         with:
           name: app-release
           path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Set APK path output
+        id: set-apk-path
+        run: echo "apk-path=android/app/build/outputs/apk/release/app-release.apk" >> $GITHUB_OUTPUT
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')   # только для тегов
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-release
+          path: .
+
+      - name: Create Release and Upload APK
+        uses: softprops/action-gh-release@v2
+        with:
+          files: app-release.apk
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
