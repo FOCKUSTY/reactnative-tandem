@@ -1,6 +1,6 @@
 {
   "name": "Tandem",
-  "version": "0.1.1-alpha",
+  "version": "0.2.0-alpha",
   "main": "index.ts",
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
