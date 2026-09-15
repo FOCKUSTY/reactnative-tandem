@@ -8,7 +8,6 @@ import {
 import { createStyles, getFilteredRecords } from "../utils";
 import { useAuth, useTheme } from "../contexts";
 import { useRecords, useRefresh, useTranslate } from "../hooks";
-import { useReminder } from "../hooks/use-reminder.hook";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProperty } from "../types";
 import { useLayoutEffect } from "react";
@@ -23,8 +22,6 @@ export const HomeScreen = () => {
   const { data: allRecords = [], isLoading } = useRecords();
 
   const navigation = useNavigation<NavigationProperty>();
-
-  useReminder();
 
   useLayoutEffect(() => {
     navigation.setOptions({

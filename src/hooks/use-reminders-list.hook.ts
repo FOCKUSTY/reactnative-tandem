@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useRecords } from "./records";
-import { useReminder } from "./use-reminder.hook";
 import { MyRecord } from "../types";
+import { useReminder } from "../contexts";
 
 export const useRemindersList = () => {
   const { data: records = [] } = useRecords();

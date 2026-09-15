@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert, TextInput } from "react-native";
 import * as Notifications from "expo-notifications";
-import { useTheme } from "../../contexts";
-import { useReminder } from "../../hooks/use-reminder.hook";
+import { useReminder, useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
 import { SettingsItem } from "./settings-item.component";

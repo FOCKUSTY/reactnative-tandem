@@ -6,7 +6,12 @@ import { NavigationContainer } from "@react-navigation/native";
 
 import { usePin } from "../../contexts/pin.context";
 import { i18n } from "../../i18n";
-import { ThemeProvider, AuthProvider, FiltersProvider } from "../../contexts";
+import {
+  ThemeProvider,
+  AuthProvider,
+  FiltersProvider,
+  ReminderProvider,
+} from "../../contexts";
 import { PinScreen } from "../../screens";
 import { AppNavigator } from "./app-navigator";
 import { StatusWidget } from "../status-widget.component";
@@ -55,9 +60,11 @@ export const AppContent = ({ queryClient }: AppContentProps) => {
             <StatusWidget />
             <AuthProvider>
               <FiltersProvider>
-                <NavigationContainer>
-                  <AppNavigator />
-                </NavigationContainer>
+                <ReminderProvider>
+                  <NavigationContainer>
+                    <AppNavigator />
+                  </NavigationContainer>
+                </ReminderProvider>
               </FiltersProvider>
             </AuthProvider>
           </View>
