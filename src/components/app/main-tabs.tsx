@@ -8,8 +8,8 @@ import { useTranslate } from "../../hooks/i18n/use-translation.hook";
 import {
   HomeScreen,
   SectionsScreen,
-  FilterScreen,
   SettingsScreen,
+  TablesScreen,
 } from "../../screens";
 
 const Tab = createBottomTabNavigator();
@@ -26,6 +26,7 @@ export const MainTabs = () => {
           if (route.name === t("home.title")) iconName = "home";
           else if (route.name === t("sections.title")) iconName = "menu";
           else if (route.name === t("settings.title")) iconName = "settings";
+          else if (route.name === t("tables.title")) iconName = "table-rows";
           else if (route.name === t("filters.title"))
             iconName = "filter-list-alt";
           else iconName = "circle";
@@ -59,9 +60,9 @@ export const MainTabs = () => {
         options={{ title: t("sections.title") }}
       />
       <Tab.Screen
-        name={t("filters.title")}
-        component={FilterScreen}
-        options={{ title: t("filters.title") }}
+        name="Tables"
+        component={TablesScreen}
+        options={{ title: t("tables.title") }}
       />
       <Tab.Screen
         name={t("settings.title")}

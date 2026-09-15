@@ -12,3 +12,7 @@ export * from "./calendar.screen";
 export * from "./pin.screen";
 export * from "./reminders.screen";
 export * from "./starred.screen";
+export * from "./tables.screen";
+export * from "./table-detail.screen";
+export * from "./create-table.screen";
+export * from "./cell.screen";

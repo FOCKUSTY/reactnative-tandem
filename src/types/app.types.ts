@@ -1,5 +1,6 @@
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { MyRecord } from "./record.types";
+import { Table } from "./table.types";
 
 export type RootStackParameters = {
   Login: undefined;
@@ -17,6 +18,16 @@ export type RootStackParameters = {
   Reminders: undefined;
   Pin: undefined;
   Starred: undefined;
+  Tables: undefined;
+  TableDetail: { tableId: string; tableName: string };
+  CreateTable: { sectionId?: string; table?: Table };
+  CellScreen: {
+    tableId: string;
+    rowId: string;
+    fieldId: string;
+    tableName?: string;
+    mode?: "view" | "edit";
+  };
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;

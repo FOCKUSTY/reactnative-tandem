@@ -9,7 +9,7 @@ import { storage } from "../utils/storage.utils";
 import { authService } from "../api/services/auth.service";
 import { usersService } from "../api/services/users.service";
 import { MeResponse, User } from "../types";
-import { handleApiError } from "../utils";
+import { getDeviceId, handleApiError } from "../utils";
 import Toast from "react-native-toast-message";
 import { STORAGE_KEYS } from "../constants";
 import { pushService } from "../api";
@@ -112,11 +112,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     setUser(null);
     setMe(null);
 
-    const pushToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
-    if (pushToken) {
-      await pushService.unregisterToken(pushToken);
-      await storage.deleteItem(STORAGE_KEYS.PUSH_TOKEN);
-    }
+    const deviceId = await getDeviceId();
+    await pushService.unregisterDevice(deviceId);
   };
 
   const refreshMe = async () => {

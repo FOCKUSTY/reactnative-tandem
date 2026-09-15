@@ -5,12 +5,10 @@ import { useTheme } from "../../contexts/theme.context";
 import { useTranslate } from "../../hooks/i18n/use-translation.hook";
 import {
   LoginScreen,
-  HomeScreen,
   LinkPartnerScreen,
   SettingsScreen,
   RecordsScreen,
   RecordDetailsScreen,
-  FilterScreen,
   SectionsScreen,
   CreateRecordScreen,
   LogsScreen,
@@ -18,6 +16,10 @@ import {
   PinScreen,
   RemindersScreen,
   StarredScreen,
+  TablesScreen,
+  CreateTableScreen,
+  TableDetailScreen,
+  CellScreen,
 } from "../../screens";
 import { MainTabs } from "./main-tabs";
 
@@ -58,6 +60,32 @@ export const AppNavigator = () => {
             name="Main"
             component={MainTabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="Tables"
+            component={TablesScreen}
+            options={{ title: t("tables.title") }}
+          />
+          <Stack.Screen
+            name="CreateTable"
+            component={CreateTableScreen}
+            options={({ route }) => ({
+              title: route.params.table
+                ? t("tables.editTitle")
+                : t("tables.createTitle"),
+            })}
+          />
+          <Stack.Screen
+            name="TableDetail"
+            component={TableDetailScreen}
+            options={({ route }) => ({
+              title: route.params.tableName || t("tables.title"),
+            })}
+          />
+          <Stack.Screen
+            name="CellScreen"
+            component={CellScreen}
+            options={{ title: "" }}
           />
           <Stack.Screen
             name="Logs"

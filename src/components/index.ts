@@ -11,3 +11,4 @@ export * from "./network-status-indicator.component";
 export * from "./server-status-indicator.component";
 export * from "./sync-status-indicator.component";
 export * from "./status-widget.component";
+export * from "./tables";

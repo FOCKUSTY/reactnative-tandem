@@ -1,4 +1,89 @@
 {
+  "tables": {
+    "title": "Таблицы",
+    "create": "Создать таблицу",
+    "edit": "Редактировать",
+    "createTitle": "Новая таблица",
+    "editTitle": "Редактировать таблицу",
+    "name": "Название таблицы",
+    "namePlaceholder": "Введите название",
+    "description": "Описание",
+    "descriptionPlaceholder": "Описание (необязательно)",
+    "section": "Секция",
+    "selectSection": "Выберите секцию",
+    "sectionName": "Название секции",
+    "createSection": "Создать секцию",
+    "noTables": "Таблиц пока нет",
+    "createFirst": "Создать первую таблицу",
+    "deleteConfirm": {
+      "title": "Удалить таблицу?",
+      "message": "Это действие нельзя отменить."
+    },
+    "renameFieldTitle": "Переименовать столбец",
+    "addRow": "Добавить строку",
+    "addField": "Добавить поле",
+    "createField": "Создать поле",
+    "createFieldTitle": "Новое поле",
+    "noFields": "Добавьте поля, чтобы начать заполнять данные",
+    "emptyTable": "Таблица пуста",
+    "field": {
+      "noOptions": "Нет опций",
+      "name": "Название поля",
+      "namePlaceholder": "Введите название поля",
+      "type": "Тип",
+      "required": "Обязательное",
+      "options": "Варианты (через запятую)",
+      "optionsPlaceholder": "Например: да, нет, может",
+      "types": {
+        "text": "Текст",
+        "number": "Число",
+        "date": "Дата",
+        "boolean": "Да/Нет",
+        "select": "Список",
+        "multiline": "Многострочный"
+      }
+    },
+    "deleteFieldConfirm": {
+      "title": "Удалить поле?",
+      "message": "Все данные в этом поле будут потеряны."
+    },
+    "deleteRowConfirm": {
+      "title": "Удалить строку?",
+      "message": "Это действие нельзя отменить."
+    },
+    "createSuccess": "Таблица создана",
+    "updateSuccess": "Таблица обновлена",
+    "rowsCount": "{{count}} строк",
+    "errors": {
+      "nameRequired": "Введите название таблицы",
+      "sectionRequired": "Выберите секцию",
+      "renameFailed": "Не удалось переименовать столбец",
+      "createFailed": "Не удалось создать таблицу",
+      "updateFailed": "Не удалось обновить таблицу",
+      "saveFailed": "Не удалось сохранить значение",
+      "invalidNumber": "Введите корректное число"
+    },
+    "cell": {
+      "row": "Строка",
+      "value": "Значение",
+      "empty": "—",
+      "tabEdit": "Редактировать",
+      "tabPreview": "Превью",
+      "previewEmpty": "Нечего показывать — введите Markdown",
+      "markdownPlaceholder": "Поддерживается Markdown: **жирный**, *курсив*, `код`, [ссылка](url)",
+      "of": "{{current}} из {{total}}",
+      "swipeHint": "Свайпните влево или вправо, чтобы перейти к другой строке",
+      "unsavedHint": "Есть несохранённые изменения",
+      "unsavedTitle": "Несохранённые изменения",
+      "unsavedMessage": "Перейти к другой строке без сохранения?",
+      "rowLabel": "Строка",
+      "fieldLabel": "Столбец",
+      "swipeHint2d": "Свайп ↑ ↓ меняет строку, свайп ← → — столбец",
+      "scrollHint": "Режим чтения: содержимое можно прокручивать",
+      "enableScroll": "Включить прокрутку",
+      "enableSwipe": "Включить навигацию свайпами"
+    }
+  },
   "pin": {
     "title": "PIN-код",
     "subtitle": "Введите ваш PIN-код для доступа",
@@ -38,6 +123,10 @@
     }
   },
   "common": {
+    "discard": "Сбросить",
+    "yes": "Да",
+    "no": "Нет",
+    "clear": "Очистить",
     "send": "Отправить",
     "selectTime": "Выбрать время",
     "close": "Закрыть",

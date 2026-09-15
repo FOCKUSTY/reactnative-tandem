@@ -1,4 +1,89 @@
 {
+  "tables": {
+    "title": "Tables",
+    "create": "Create table",
+    "edit": "Edit",
+    "createTitle": "New table",
+    "editTitle": "Edit table",
+    "name": "Table name",
+    "namePlaceholder": "Enter table name",
+    "description": "Description",
+    "descriptionPlaceholder": "Description (optional)",
+    "section": "Section",
+    "selectSection": "Select section",
+    "sectionName": "Section name",
+    "createSection": "Create section",
+    "noTables": "No tables yet",
+    "createFirst": "Create first table",
+    "deleteConfirm": {
+      "title": "Delete table?",
+      "message": "This action cannot be undone."
+    },
+    "addRow": "Add row",
+    "addField": "Add field",
+    "createField": "Create field",
+    "createFieldTitle": "New field",
+    "noFields": "Add fields to start filling data",
+    "emptyTable": "Table is empty",
+    "renameFieldTitle": "Rename column",
+    "field": {
+      "noOptions": "No options",
+      "name": "Field name",
+      "namePlaceholder": "Enter field name",
+      "type": "Type",
+      "required": "Required",
+      "options": "Options (comma separated)",
+      "optionsPlaceholder": "e.g.: yes, no, maybe",
+      "types": {
+        "text": "Text",
+        "number": "Number",
+        "date": "Date",
+        "boolean": "Yes/No",
+        "select": "Select",
+        "multiline": "Multiline"
+      }
+    },
+    "deleteFieldConfirm": {
+      "title": "Delete field?",
+      "message": "All data in this field will be lost."
+    },
+    "deleteRowConfirm": {
+      "title": "Delete row?",
+      "message": "This action cannot be undone."
+    },
+    "createSuccess": "Table created",
+    "updateSuccess": "Table updated",
+    "rowsCount": "{{count}} rows",
+    "cell": {
+      "row": "Row",
+      "value": "Value",
+      "empty": "—",
+      "tabEdit": "Edit",
+      "tabPreview": "Preview",
+      "previewEmpty": "Nothing to preview — start typing Markdown",
+      "markdownPlaceholder": "Markdown supported: **bold**, *italic*, `code`, [link](url)",
+      "of": "{{current}} of {{total}}",
+      "swipeHint": "Swipe left or right to move between rows",
+      "unsavedHint": "You have unsaved changes",
+      "unsavedTitle": "Unsaved changes",
+      "unsavedMessage": "Switch to another row without saving?",
+      "rowLabel": "Row",
+      "fieldLabel": "Column",
+      "swipeHint2d": "Swipe ↑ ↓ for rows, ← → for columns",
+      "scrollHint": "Reading mode: content is scrollable",
+      "enableScroll": "Enable scrolling",
+      "enableSwipe": "Enable swipe navigation"
+    },
+    "errors": {
+      "nameRequired": "Enter table name",
+      "sectionRequired": "Select a section",
+      "renameFailed": "Failed to rename column",
+      "createFailed": "Failed to create table",
+      "updateFailed": "Failed to update table",
+      "saveFailed": "Failed to save value",
+      "invalidNumber": "Enter a valid number"
+    }
+  },
   "pin": {
     "title": "PIN Code",
     "subtitle": "Enter your PIN to access",
@@ -38,6 +123,11 @@
     }
   },
   "common": {
+    "discard": "Discard",
+    "row": "Row",
+    "value": "Value",
+    "empty": "—",
+    "clear": "Clear",
     "close": "Close",
     "selectTime": "Select time",
     "save": "Save",

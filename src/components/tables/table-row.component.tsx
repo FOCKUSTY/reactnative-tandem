@@ -1,0 +1,180 @@
+import type { Field, TableRowData } from "../../types/table.types";
+
+import { View, Text, TouchableOpacity, Switch } from "react-native";
+import { MaterialIcons } from "@react-native-vector-icons/material-icons";
+
+import { useTheme } from "../../contexts";
+import { createStyles, formatDate } from "../../utils";
+import { useTranslate } from "../../hooks";
+
+export const TABLE_COLUMN_WIDTH = 180;
+export const TABLE_ACTION_WIDTH = 48;
+
+export type TableRowProps = {
+  row: TableRowData;
+  fields: Field[];
+  onCellPress: (field: Field, row: TableRowData) => void;
+  onCellLongPress: (field: Field, row: TableRowData) => void;
+  onCellBooleanChange?: (rowId: string, fieldId: string, value: string) => void;
+  onRowLongPress?: () => void;
+  onRowDelete?: () => void;
+};
+
+export const TableRow = ({
+  row,
+  fields,
+  onCellPress,
+  onCellLongPress,
+  onCellBooleanChange,
+  onRowLongPress,
+  onRowDelete,
+}: TableRowProps) => {
+  const { colors } = useTheme();
+  const { t } = useTranslate();
+  const styles = getStyles(colors);
+
+  const renderValue = (field: Field) => {
+    const raw = row.cells[field.id] ?? "";
+
+    if (field.type === "boolean") {
+      const isTrue = raw === "true";
+      return (
+        <View style={styles.booleanCell}>
+          <Switch
+            value={isTrue}
+            onValueChange={() =>
+              onCellBooleanChange?.(row.id, field.id, isTrue ? "false" : "true")
+            }
+            trackColor={{ false: colors.inputBorder, true: colors.primary }}
+            thumbColor={colors.text}
+          />
+        </View>
+      );
+    }
+
+    if (field.type === "date") {
+      return (
+        <View style={styles.cellInner}>
+          <Text
+            style={[styles.cellText, !raw && styles.placeholderText]}
+            numberOfLines={2}
+          >
+            {raw ? formatDate(raw) : "—"}
+          </Text>
+          <MaterialIcons name="event" size={14} color={colors.textMuted} />
+        </View>
+      );
+    }
+
+    if (field.type === "select") {
+      return (
+        <View style={styles.cellInner}>
+          <Text
+            style={[styles.cellText, !raw && styles.placeholderText]}
+            numberOfLines={2}
+          >
+            {raw || "—"}
+          </Text>
+          <MaterialIcons
+            name="arrow-drop-down"
+            size={16}
+            color={colors.textMuted}
+          />
+        </View>
+      );
+    }
+
+    return (
+      <Text
+        style={[styles.cellText, !raw && styles.placeholderText]}
+        numberOfLines={2}
+      >
+        {raw || t("tables.cell.empty")}
+      </Text>
+    );
+  };
+
+  return (
+    <TouchableOpacity
+      style={styles.row}
+      onLongPress={onRowLongPress}
+      delayLongPress={600}
+      activeOpacity={1}
+    >
+      {fields.map((field) => {
+        const isBoolean = field.type === "boolean";
+        return (
+          <TouchableOpacity
+            key={field.id}
+            style={styles.cell}
+            activeOpacity={isBoolean ? 1 : 0.5}
+            disabled={isBoolean}
+            onPress={() => onCellPress(field, row)}
+            onLongPress={() => onCellLongPress(field, row)}
+            delayLongPress={400}
+          >
+            {renderValue(field)}
+          </TouchableOpacity>
+        );
+      })}
+
+      {onRowDelete && (
+        <TouchableOpacity
+          style={styles.actionCell}
+          onPress={onRowDelete}
+          hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+          accessibilityLabel={t("tables.deleteRowConfirm.title")}
+        >
+          <MaterialIcons
+            name="delete-outline"
+            size={20}
+            color={colors.danger}
+          />
+        </TouchableOpacity>
+      )}
+    </TouchableOpacity>
+  );
+};
+
+const getStyles = createStyles((colors) => ({
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.cardBorder,
+    backgroundColor: colors.card,
+  },
+  cell: {
+    width: TABLE_COLUMN_WIDTH,
+    minHeight: 52,
+    borderRightWidth: 1,
+    borderRightColor: colors.cardBorder,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    justifyContent: "center",
+  },
+  actionCell: {
+    width: TABLE_ACTION_WIDTH,
+    minHeight: 52,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.card,
+  },
+  cellInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 4,
+  },
+  cellText: {
+    fontSize: 14,
+    color: colors.text,
+    flexShrink: 1,
+  },
+  placeholderText: {
+    color: colors.textMuted,
+  },
+  booleanCell: {
+    alignItems: "flex-start",
+    justifyContent: "center",
+  },
+}));
