@@ -23,7 +23,6 @@ export function useCreate<TData, TVariables>(
       queryClient.invalidateQueries({ queryKey });
       options?.onSuccess?.(data, variables, result, context);
     },
-    retry: 2,
     ...options,
   });
 }
@@ -47,7 +46,6 @@ export function useUpdate<TData, TVariables extends { id: string }>(
       queryClient.invalidateQueries({ queryKey: [...queryKey, variables.id] });
       options?.onSuccess?.(data, variables, result, context);
     },
-    retry: 2,
     ...options,
   });
 }
@@ -71,7 +69,6 @@ export function useDelete<TData = void>(
       queryClient.removeQueries({ queryKey: [...queryKey, id] });
       options?.onSuccess?.(data, id, result, context);
     },
-    retry: 2,
     ...options,
   });
 }

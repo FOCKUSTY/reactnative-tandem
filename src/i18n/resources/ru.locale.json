@@ -185,7 +185,18 @@
     "noPlans": "Нет активных планов",
     "addDate": "Добавить дату",
     "viewAllDates": "Все даты",
-    "viewAllPlans": "Все планы"
+    "viewAllPlans": "Все планы",
+    "reportsBefore": "Скоро",
+    "reportsAfter": "Прошло",
+    "noReportsBefore": "Нет предстоящих",
+    "noReportsAfter": "Нет прошедших",
+    "daysLeft_one": "день",
+    "daysLeft_few": "дня",
+    "daysLeft_many": "дней",
+    "daysAgo_one": "день назад",
+    "daysAgo_few": "дня назад",
+    "daysAgo_many": "дней назад",
+    "today": "сегодня"
   },
   "sections": {
     "title": "Разделы",
@@ -226,6 +237,7 @@
     "untitled": "Без заголовка",
     "noContent": "Без содержания",
     "field": {
+      "isReport": "Отчёт",
       "section": "Секция",
       "title": "Заголовок",
       "content": "Содержание",

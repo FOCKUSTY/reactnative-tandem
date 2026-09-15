@@ -24,6 +24,8 @@ export const recordsService = {
     if (params?.sortOrder) queryParams.append("sortOrder", params.sortOrder);
     if (params?.limit) queryParams.append("limit", String(params.limit));
     if (params?.offset) queryParams.append("offset", String(params.offset));
+    if (params?.isReport !== undefined)
+      queryParams.append("isReport", String(params.isReport));
 
     const url = `/records${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
     return api.get<MyRecord[]>(url);

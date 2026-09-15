@@ -17,6 +17,7 @@ export interface MyRecord {
   isRecurring: boolean;
   recurringInterval?: string | null;
   isStarred?: boolean;
+  isReport?: boolean;
 }
 
 export type CreateRecordDto = Omit<

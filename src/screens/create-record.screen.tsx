@@ -70,6 +70,8 @@ export const CreateRecordScreen = () => {
     setRecurring,
     recurringInterval,
     setRecurringInterval,
+    isReport,
+    setIsReport,
   } = useRecordForm({ initialSectionId, record });
 
   if (loading) {
@@ -152,6 +154,18 @@ export const CreateRecordScreen = () => {
             onChange={setRecurringInterval}
           />
         )}
+      </View>
+
+      <View style={styles.field}>
+        <View style={styles.recurringRow}>
+          <Text style={styles.label}>{t("records.field.isReport")}</Text>
+          <Switch
+            value={isReport}
+            onValueChange={setIsReport}
+            trackColor={{ false: colors.inputBorder, true: colors.primary }}
+            thumbColor={colors.text}
+          />
+        </View>
       </View>
 
       <CheckboxRowComponent

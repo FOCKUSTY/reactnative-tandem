@@ -12,7 +12,7 @@ export const getFilteredRecords = (
   if (options?.onlyFuture) {
     const now = new Date();
     filtered = filtered.filter(
-      (r) => r.dateEvent && new Date(r.dateEvent) >= now,
+      (record) => record.dateEvent && new Date(record.dateEvent) >= now,
     );
   }
 
@@ -32,4 +32,34 @@ export const getFilteredRecords = (
 
     return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
   });
+};
+
+export type ReportTiming = "before" | "after";
+
+/**
+ * before — событие ещё в будущем (отчёт «до»)
+ * after  — событие уже прошло (отчёт «после»)
+ * null   — это не отчёт или нет валидной даты
+ */
+export const getReportTiming = (record: MyRecord): ReportTiming | null => {
+  if (!record.isReport) return null;
+  if (!record.dateEvent) return null;
+
+  const time = new Date(record.dateEvent).getTime();
+  if (Number.isNaN(time)) return null;
+
+  return time > Date.now() ? "before" : "after";
+};
+
+export const splitReportsByTiming = (records: MyRecord[]) => {
+  const before: MyRecord[] = [];
+  const after: MyRecord[] = [];
+
+  for (const record of records) {
+    const timing = getReportTiming(record);
+    if (timing === "before") before.push(record);
+    else if (timing === "after") after.push(record);
+  }
+
+  return { before, after };
 };

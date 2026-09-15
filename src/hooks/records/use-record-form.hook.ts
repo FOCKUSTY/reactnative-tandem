@@ -51,6 +51,7 @@ export const useRecordForm = ({
   const [recurringInterval, setRecurringInterval] = useState(
     record?.recurringInterval || "1y",
   );
+  const [isReport, setIsReport] = useState(record?.isReport ?? false);
 
   useEffect(() => {
     if (!(initialSectionId && sections.length > 0 && !selectedSectionId))
@@ -105,6 +106,14 @@ export const useRecordForm = ({
   };
 
   const handleSubmit = async () => {
+    if (
+      loading ||
+      createRecordMutation.isPending ||
+      updateRecordMutation.isPending
+    ) {
+      return;
+    }
+
     if (!selectedSectionId) {
       Alert.alert(t("common.error"), t("records.errors.selectSection"));
       return;
@@ -130,6 +139,7 @@ export const useRecordForm = ({
         metadata: {},
         isRecurring: recurring,
         recurringInterval: recurring ? recurringInterval : null,
+        isReport: isReport,
       };
 
       if (isEditing && record) {
@@ -199,5 +209,7 @@ export const useRecordForm = ({
     setRecurring,
     recurringInterval,
     setRecurringInterval,
+    isReport,
+    setIsReport,
   };
 };

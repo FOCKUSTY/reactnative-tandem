@@ -60,7 +60,7 @@ export const MainTabs = () => {
         options={{ title: t("sections.title") }}
       />
       <Tab.Screen
-        name="Tables"
+        name={t("tables.title")}
         component={TablesScreen}
         options={{ title: t("tables.title") }}
       />

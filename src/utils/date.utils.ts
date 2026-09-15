@@ -9,6 +9,21 @@ export const DATES_LOCALES: Record<string, string> = {
 } satisfies Record<SupportedLanguage, string>;
 
 /**
+ * Разница между датой и сегодня в календарных днях.
+ * > 0 — дата в будущем, < 0 — в прошлом, 0 — сегодня.
+ * null — если дату не удалось распарсить.
+ */
+export const getDaysDiff = (value: DateInput): number | null => {
+  const date = parseDate(value);
+  if (!date) return null;
+  const now = new Date();
+  const MS_PER_DAY = 24 * 60 * 60 * 1000;
+  const a = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+  const b = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.round((a.getTime() - b.getTime()) / MS_PER_DAY);
+};
+
+/**
  * Безопасно парсит входное значение в объект Date.
  * Возвращает null, если парсинг не удался.
  */

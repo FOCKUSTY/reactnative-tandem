@@ -186,7 +186,16 @@
     "noPlans": "No active plans",
     "addDate": "Add date",
     "viewAllDates": "All dates",
-    "viewAllPlans": "All plans"
+    "viewAllPlans": "All plans",
+    "reportsBefore": "Upcoming",
+    "reportsAfter": "Past",
+    "noReportsBefore": "No upcoming",
+    "noReportsAfter": "No past",
+    "daysLeft_one": "day left",
+    "daysLeft_other": "days left",
+    "daysAgo_one": "day ago",
+    "daysAgo_other": "days ago",
+    "today": "today"
   },
   "sections": {
     "title": "Sections",
@@ -227,6 +236,7 @@
     "untitled": "Untitled",
     "noContent": "No content",
     "field": {
+      "isReport": "Report",
       "section": "Section",
       "title": "Title",
       "content": "Content",

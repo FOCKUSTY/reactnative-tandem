@@ -3,7 +3,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { recordsService } from "../../api";
 import { RecordFilters } from "../../contexts";
-import { useUpdate } from "../api";
 import { notificationService } from "../../services/notification.service";
 
 export const useRecords = (filters?: RecordFilters) => {
@@ -25,38 +24,36 @@ export const useRecordsBySlug = (slug: string) => {
   });
 };
 
+const invalidateRecordDependents = (
+  queryClient: ReturnType<typeof useQueryClient>,
+  id?: string,
+) => {
+  queryClient.invalidateQueries({ queryKey: ["records"] });
+  queryClient.invalidateQueries({ queryKey: ["sections"] });
+  queryClient.invalidateQueries({ queryKey: ["reminders"] });
+  if (id) queryClient.invalidateQueries({ queryKey: ["record", id] });
+};
+
 export const useCreateRecord = () => {
   const queryClient = useQueryClient();
   return useMutation<MyRecord, Error, CreateRecordDto>({
     mutationFn: (data) =>
       recordsService.createRecord(data).then((res) => res.data),
-    onMutate: async (newRecord) => {
-      await queryClient.cancelQueries({ queryKey: ["records"] });
-
-      const previousRecords = queryClient.getQueryData<MyRecord[]>(["records"]);
-      queryClient.setQueryData<MyRecord[]>(["records"], (old) => {
-        if (!old) return [newRecord as MyRecord];
-        return [...old, newRecord as MyRecord];
-      });
-
-      return { previousRecords };
+    onSuccess: () => {
+      invalidateRecordDependents(queryClient);
     },
-    onError: (_error, _newRecord, context) => {
-      queryClient.setQueryData(["records"], (context as any)?.previousRecords);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["records"] });
-    },
-    retry: 2,
   });
 };
 
 export const useUpdateRecord = () => {
-  return useUpdate<MyRecord, { id: string; data: UpdateRecordDto }>(
-    ({ id, data }) =>
+  const queryClient = useQueryClient();
+  return useMutation<MyRecord, Error, { id: string; data: UpdateRecordDto }>({
+    mutationFn: ({ id, data }) =>
       recordsService.updateRecord(id, data).then((res) => res.data),
-    ["records"],
-  );
+    onSuccess: (_, { id }) => {
+      invalidateRecordDependents(queryClient, id);
+    },
+  });
 };
 
 export const useDeleteRecord = () => {
@@ -66,7 +63,7 @@ export const useDeleteRecord = () => {
       recordsService.deleteRecord(id).then((res) => res.data),
     onSuccess: (_, id) => {
       notificationService.cancelScheduled(`record_${id}`);
-      queryClient.invalidateQueries({ queryKey: ["records"] });
+      invalidateRecordDependents(queryClient, id);
       queryClient.removeQueries({ queryKey: ["record", id] });
     },
   });

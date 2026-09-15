@@ -15,5 +15,6 @@ export interface GetRecordsParams {
   sortBy?: "dateEvent" | "createdAt" | "updatedAt" | "title";
   sortOrder?: "asc" | "desc";
   limit?: number;
+  isReport?: boolean;
   offset?: number;
 }
