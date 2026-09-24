@@ -23,12 +23,11 @@ export const MainTabs = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName: MaterialIconsIconName;
-          if (route.name === t("home.title")) iconName = "home";
-          else if (route.name === t("sections.title")) iconName = "menu";
-          else if (route.name === t("settings.title")) iconName = "settings";
-          else if (route.name === t("tables.title")) iconName = "table-rows";
-          else if (route.name === t("filters.title"))
-            iconName = "filter-list-alt";
+          if (route.name === "HOME") iconName = "home";
+          else if (route.name === "SECTIONS") iconName = "menu";
+          else if (route.name === "SETTINGS") iconName = "settings";
+          else if (route.name === "TABLES") iconName = "table-rows";
+          else if (route.name === "FILTERS") iconName = "filter-list-alt";
           else iconName = "circle";
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
@@ -50,22 +49,22 @@ export const MainTabs = () => {
       })}
     >
       <Tab.Screen
-        name={t("home.title")}
+        name={"HOME"}
         component={HomeScreen}
         options={{ title: t("home.title") }}
       />
       <Tab.Screen
-        name={t("sections.title")}
+        name={"SECTIONS"}
         component={SectionsScreen}
         options={{ title: t("sections.title") }}
       />
       <Tab.Screen
-        name={t("tables.title")}
+        name={"TABLES"}
         component={TablesScreen}
         options={{ title: t("tables.title") }}
       />
       <Tab.Screen
-        name={t("settings.title")}
+        name={"SETTINGS"}
         component={SettingsScreen}
         options={{ title: t("settings.title") }}
       />

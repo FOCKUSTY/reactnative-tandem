@@ -6,6 +6,7 @@ import { NAME, VERSION } from "../constants";
 import { timestamp as dateTimestamp, formatIso, timestamp } from "./date.utils";
 
 let loggingEnabled = true;
+let currentLogSize = 0;
 
 const name = NAME.toLowerCase();
 const fileName = name + ".log";
@@ -29,11 +30,31 @@ export const setLoggingEnabled = (enabled: boolean) => {
   loggingEnabled = enabled;
 };
 
+const safeStringify = (value: unknown): string => {
+  const seen = new WeakSet<object>();
+  return JSON.stringify(value, (_key, val) => {
+    if (typeof val === "bigint") return val.toString();
+    if (typeof val === "function") return "[Function]";
+    if (typeof val === "symbol") return val.toString();
+    if (typeof val === "object" && val !== null) {
+      if (seen.has(val)) return "[Circular]";
+      seen.add(val);
+    }
+    return val;
+  });
+};
+
 async function ensureLogDir() {
   const logDir = new FileSystem.Directory(LOG_DIR_PATH);
   if (!logDir.exists) {
     logDir.create();
   }
+}
+
+async function ensureCurrentLogSize() {
+  if (currentLogSize > 0) return;
+  const logFile = new FileSystem.File(LOG_FILE_PATH);
+  currentLogSize = logFile.exists ? logFile.size : 0;
 }
 
 /**
@@ -69,34 +90,38 @@ async function decompressFile(gzPath: string): Promise<string> {
 
 async function rotateLogs() {
   const logFile = new FileSystem.File(LOG_FILE_PATH);
-  if (logFile.exists) {
-    if (logFile.size > MAX_LOG_SIZE) {
-      const timestamp = dateTimestamp().replace(/[:.]/g, "-");
-      const archiveName = `${name}-${timestamp}.log`;
-      const archivePath = LOG_DIR_PATH + archiveName;
+  if (!logFile.exists) {
+    currentLogSize = 0;
+    return;
+  }
 
-      await logFile.move(new FileSystem.File(archivePath));
+  if (logFile.size <= MAX_LOG_SIZE) return;
 
-      await compressFile(archivePath);
+  const ts = dateTimestamp().replace(/[:.]/g, "-");
+  const archiveName = `${name}-${ts}.log`;
+  const archivePath = LOG_DIR_PATH + archiveName;
 
-      const logDir = new FileSystem.Directory(LOG_DIR_PATH);
-      const files = logDir.list();
-      const logFiles = files
-        .filter(
-          (f) =>
-            (f.name.startsWith(`${name}-`) && f.name.endsWith(".log")) ||
-            (f.name.startsWith(`${name}-`) && f.name.endsWith(".log.gz")),
-        )
-        .map((f) => f.name)
-        .sort();
+  await logFile.move(new FileSystem.File(archivePath));
+  currentLogSize = 0;
 
-      while (logFiles.length > MAX_LOG_FILES - 1) {
-        const oldest = logFiles.shift();
-        if (oldest) {
-          const fileToDelete = new FileSystem.File(LOG_DIR_PATH + oldest);
-          fileToDelete.delete();
-        }
-      }
+  await compressFile(archivePath);
+
+  const logDir = new FileSystem.Directory(LOG_DIR_PATH);
+  const files = logDir.list();
+  const logFiles = files
+    .filter(
+      (f) =>
+        (f.name.startsWith(`${name}-`) && f.name.endsWith(".log")) ||
+        (f.name.startsWith(`${name}-`) && f.name.endsWith(".log.gz")),
+    )
+    .map((f) => f.name)
+    .sort();
+
+  while (logFiles.length > MAX_LOG_FILES - 1) {
+    const oldest = logFiles.shift();
+    if (oldest) {
+      const fileToDelete = new FileSystem.File(LOG_DIR_PATH + oldest);
+      fileToDelete.delete();
     }
   }
 }
@@ -106,7 +131,7 @@ async function writeLog(level: LogEntry["level"], message: string, data?: any) {
 
   try {
     await ensureLogDir();
-    await rotateLogs();
+    await ensureCurrentLogSize();
 
     const entry: LogEntry = {
       timestamp: timestamp(),
@@ -118,9 +143,14 @@ async function writeLog(level: LogEntry["level"], message: string, data?: any) {
       osVersion: Platform.Version as string,
     };
 
-    const jsonLine = JSON.stringify(entry) + "\n";
+    const jsonLine = safeStringify(entry) + "\n";
+    if (currentLogSize + jsonLine.length > MAX_LOG_SIZE) {
+      await rotateLogs();
+    }
+
     const logFile = new FileSystem.File(LOG_FILE_PATH);
     logFile.write(jsonLine, { append: true });
+    currentLogSize += jsonLine.length;
   } catch (error) {
     console.error("Logger failed:", error);
   }
@@ -208,7 +238,7 @@ export const logger = {
         const timeStr = date.toLocaleString();
         let line = `[${timeStr}] [${e.level}] ${e.message}`;
         if (e.data) {
-          line += `\n  └─ ${JSON.stringify(e.data, null, 2)}`;
+          line += `\n  └─ ${safeStringify(e.data)}`;
         }
         return line;
       })
@@ -220,6 +250,7 @@ export const logger = {
     if (logFile.exists) {
       logFile.delete();
     }
+    currentLogSize = 0;
     const logDir = new FileSystem.Directory(LOG_DIR_PATH);
     const files = logDir.list();
     for (const file of files) {
@@ -255,7 +286,7 @@ export const logger = {
           const timeString = formatIso(entry.timestamp);
           let line = `[${timeString}] [${entry.level}] ${entry.message}`;
           if (entry.data) {
-            line += `\n  └─ ${JSON.stringify(entry.data, null, 2)}`;
+            line += `\n  └─ ${safeStringify(entry.data)}`;
           }
           return line;
         })

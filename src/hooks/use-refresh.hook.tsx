@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { RefreshControl, ScrollView, FlatList } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTheme } from "../contexts";
+import { logger } from "../utils";
 
 interface UseRefreshOptions {
   queryKeys?: string[][];
@@ -24,7 +25,9 @@ export const useRefresh = (options: UseRefreshOptions = {}) => {
         await queryClient.invalidateQueries({ queryKey: keys });
       }
     } catch (error) {
-      console.warn("Refresh error:", error);
+      void logger.warn("Refresh error", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     } finally {
       setRefreshing(false);
     }

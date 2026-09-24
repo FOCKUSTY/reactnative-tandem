@@ -87,6 +87,23 @@ export const notificationService = {
     await Notifications.cancelScheduledNotificationAsync(notificationId);
   },
 
+  /**
+   * Отменяет все напоминания, запланированные для записи.
+   * ID формируется как `record_${recordId}_offset_${minutes}`,
+   * поэтому фильтруем по префиксу.
+   */
+  cancelForRecord: async (recordId: string): Promise<number> => {
+    const prefix = `record_${recordId}_`;
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+    const toCancel = scheduled.filter((n) => n.identifier.startsWith(prefix));
+    await Promise.all(
+      toCancel.map((n) =>
+        Notifications.cancelScheduledNotificationAsync(n.identifier),
+      ),
+    );
+    return toCancel.length;
+  },
+
   cancelAll: async () => {
     await Notifications.cancelAllScheduledNotificationsAsync();
   },

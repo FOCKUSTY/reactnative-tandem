@@ -95,12 +95,12 @@ export const AppNavigator = () => {
           <Stack.Screen
             name="Sections"
             component={SectionsScreen}
-            options={{ title: t("logs.title") }}
+            options={{ title: t("sections.title") }}
           />
           <Stack.Screen
             name="Starred"
             component={StarredScreen}
-            options={{ title: t("logs.title") }}
+            options={{ title: t("starred.title") }}
           />
           <Stack.Screen
             name="Reminders"

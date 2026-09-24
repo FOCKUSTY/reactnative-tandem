@@ -62,7 +62,7 @@ export const useDeleteRecord = () => {
     mutationFn: (id: string) =>
       recordsService.deleteRecord(id).then((res) => res.data),
     onSuccess: (_, id) => {
-      notificationService.cancelScheduled(`record_${id}`);
+      notificationService.cancelForRecord(id);
       invalidateRecordDependents(queryClient, id);
       queryClient.removeQueries({ queryKey: ["record", id] });
     },

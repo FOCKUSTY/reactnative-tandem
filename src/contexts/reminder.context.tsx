@@ -12,6 +12,7 @@ import {
 import { notificationService } from "../services/notification.service";
 import { useRecords } from "../hooks/records/use-records.hook";
 import { useAuth } from "./auth.context";
+import { logger } from "../utils";
 
 type ReminderContextType = {
   offsets: number[];
@@ -47,7 +48,9 @@ export const ReminderProvider: FC<{ children: ReactNode }> = ({ children }) => {
             ),
           )
           .catch((e) => {
-            console.warn("Reschedule failed:", e);
+            void logger.warn("Reschedule failed", {
+              error: e instanceof Error ? e.message : String(e),
+            });
           });
       }, 500);
     },

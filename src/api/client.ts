@@ -11,7 +11,12 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(async (config) => {
-  console.log("Request URL:", `${config.baseURL}${config.url}`);
+  if (__DEV__) {
+    void logger.debug("API Request", {
+      url: config.url,
+      method: config.method,
+    });
+  }
   const token = await storage.getItem(".auth_token");
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -22,7 +27,7 @@ api.interceptors.request.use(async (config) => {
 api.interceptors.response.use(
   (response) => {
     if (__DEV__) {
-      logger.debug("API Response", {
+      void logger.debug("API Response", {
         url: response.config.url,
         status: response.status,
         data: response.data,
@@ -44,9 +49,11 @@ api.interceptors.response.use(
       });
     }
 
-    logger.error("Axios Interceptor Error", {
+    void logger.error("Axios Interceptor Error", {
       message: error.message,
-      config: error.config,
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
       response: error.response?.data,
       isTimeout: error.isTimeout,
     });

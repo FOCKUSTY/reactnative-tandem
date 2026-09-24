@@ -7,7 +7,7 @@ import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persi
 import { persistQueryClient } from "@tanstack/query-persist-client-core";
 
 import { initI18n } from "./i18n";
-import { setLoggingEnabled, storage } from "./utils";
+import { logger, setLoggingEnabled, storage } from "./utils";
 import { OFFLINE_CONFIG, STORAGE_KEYS } from "./constants";
 import { AppContent } from "./components/app";
 
@@ -15,6 +15,16 @@ import { PinProvider, CacheSettingsProvider } from "./contexts";
 
 import * as Notifications from "expo-notifications";
 import { usePushNotifications } from "./hooks/use-push-notifications.hook";
+
+const previousErrorHandler = ErrorUtils.getGlobalHandler();
+ErrorUtils.setGlobalHandler((error, isFatal) => {
+  void logger.error("Unhandled JS error", {
+    message: error?.message,
+    stack: error?.stack,
+    isFatal,
+  });
+  previousErrorHandler?.(error, isFatal);
+});
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -79,7 +89,10 @@ const App = () => {
         const isEnabled = value !== "false";
         setLoggingEnabled(isEnabled);
       } catch (e) {
-        console.warn("Ошибка при подготовке приложения", e);
+        await logger.error("Bootstrap failed", {
+          error: e instanceof Error ? e.message : String(e),
+          stack: e instanceof Error ? e.stack : undefined,
+        });
       } finally {
         setIsReady(true);
         await SplashScreen.hideAsync();

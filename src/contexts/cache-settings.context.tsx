@@ -7,8 +7,9 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { OFFLINE_CONFIG } from "../constants/offline.constants";
+import { logger } from "../utils";
 
-export type StaleTimeOption = number | -1; // -1 = Infinity
+export type StaleTimeOption = number | -1;
 
 export const STALE_TIME_PRESETS: { label: string; value: StaleTimeOption }[] = [
   { label: "Без кэша", value: 0 },
@@ -57,7 +58,9 @@ export const CacheSettingsProvider: React.FC<{ children: ReactNode }> = ({
         setSettings(parsed);
       }
     } catch (error) {
-      console.warn("Failed to load cache settings", error);
+      void logger.warn("Failed to load cache settings", {
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
   };
 

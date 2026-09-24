@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { storage } from "../../utils/storage.utils";
 import { usersService } from "../../api/services/users.service";
 import { User, MeResponse } from "../../types";
-import { handleApiError } from "../../utils";
+import { handleApiError, logger } from "../../utils";
 import Toast from "react-native-toast-message";
 
 export const useUser = () => {
@@ -40,7 +40,10 @@ export const useUser = () => {
           visibilityTime: 4000,
         });
       } else {
-        console.warn("Background refreshMe error:", apiError.message);
+        void logger.warn("Background refreshMe error", {
+          message: apiError.message,
+          status: apiError.status,
+        });
       }
       return null;
     }

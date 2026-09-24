@@ -146,14 +146,14 @@ export const useRecordForm = ({
         await updateRecordMutation.mutateAsync({ id: record.id, data });
         Alert.alert(t("common.success"), t("records.saveSuccess"));
         if (data.dateEvent) {
-          await notificationService.cancelScheduled(`record_${record.id}`);
+          await notificationService.cancelForRecord(record.id);
           await notificationService.scheduleForRecord(
             record.id,
             data.title || "Без названия",
             data.dateEvent,
           );
         } else {
-          await notificationService.cancelScheduled(`record_${record.id}`);
+          await notificationService.cancelForRecord(record.id);
         }
       } else {
         const newRecord = await createRecordMutation.mutateAsync(data as any);

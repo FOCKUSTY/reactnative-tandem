@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { API_BASE, OFFLINE_CONFIG } from "../constants";
+import { logger } from "../utils";
 
 export const useServerStatus = () => {
   const queryClient = useQueryClient();
@@ -16,13 +17,14 @@ export const useServerStatus = () => {
         const response = await axios.get(`${baseUrl}/health`, {
           timeout: OFFLINE_CONFIG.HEALTH_CHECK_TIMEOUT,
         });
-        console.log(response.status, response.data);
-        setIsServerAvailable(
-          response.status === 200 && response.data?.status === "ok",
-        );
+        const ok = response.status === 200 && response.data?.status === "ok";
+        setIsServerAvailable(ok);
+        void logger.debug("Health check", { ok, status: response.status });
       } catch (error) {
-        console.log(error);
         setIsServerAvailable(false);
+        void logger.warn("Health check failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
     };
 

@@ -5,13 +5,11 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { storage } from "../utils/storage.utils";
+import { storage, getDeviceId, handleApiError, logger } from "../utils";
 import { authService } from "../api/services/auth.service";
 import { usersService } from "../api/services/users.service";
 import { MeResponse, User } from "../types";
-import { getDeviceId, handleApiError } from "../utils";
 import Toast from "react-native-toast-message";
-import { STORAGE_KEYS } from "../constants";
 import { pushService } from "../api";
 import { notificationService } from "../services/notification.service";
 
@@ -63,7 +61,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
           visibilityTime: 4000,
         });
       } else {
-        console.warn("Background fetchMe error:", apiError.message);
+        void logger.warn("Background fetchMe error", {
+          message: apiError.message,
+          status: apiError.status,
+        });
       }
       return null;
     }

@@ -4,7 +4,7 @@ import * as DeviceInfo from "expo-device";
 import { Alert, Platform } from "react-native";
 
 import { CONFIG, STORAGE_KEYS } from "../constants";
-import { storage, getDeviceId } from "../utils";
+import { storage, getDeviceId, logger } from "../utils";
 import { pushService } from "../api/services";
 import { useUser } from "./auth";
 
@@ -23,7 +23,9 @@ export const usePushNotifications = () => {
         finalStatus = status;
       }
       if (finalStatus !== "granted") {
-        console.warn("Push notifications permission denied");
+        void logger.warn("Push notifications permission denied", {
+          status: finalStatus,
+        });
         return;
       }
 
@@ -36,7 +38,9 @@ export const usePushNotifications = () => {
           const { exists, belongsToCurrentUser } = response.data;
           return !exists || !belongsToCurrentUser;
         } catch (error) {
-          console.warn("Device check failed:", error);
+          void logger.warn("Device check failed", {
+            error: error instanceof Error ? error.message : String(error),
+          });
           return !storedToken;
         }
       })();
