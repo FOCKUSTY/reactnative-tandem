@@ -165,16 +165,44 @@
     "notFound": "Not found.",
     "unknown": "Unknown error."
   },
+  "profile": {
+    "title": "Edit profile",
+    "profileSection": "Profile",
+    "passwordSection": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "changePassword": "Change password",
+    "updateSuccess": "Profile updated",
+    "updateFailed": "Failed to update profile",
+    "noChanges": "No changes",
+    "passwordChanged": "Password changed",
+    "errors": {
+      "currentPasswordRequired": "Enter current password",
+      "changeFailed": "Failed to change password"
+    }
+  },
   "auth": {
     "welcome": "Welcome",
+    "registerTitle": "Create account",
     "username": "Username",
+    "name": "Your name",
     "password": "Password",
+    "confirmPassword": "Confirm password",
     "login": "Sign in",
     "loginLoading": "Signing in...",
+    "register": "Sign up",
+    "registerLoading": "Signing up...",
+    "noAccount": "No account yet?",
+    "haveAccount": "Already have an account?",
     "errors": {
       "usernameRequired": "Enter username",
+      "nameRequired": "Enter your name",
       "passwordRequired": "Enter password",
-      "invalidCredentials": "Invalid credentials"
+      "passwordTooShort": "Password must be at least 6 characters",
+      "passwordMismatch": "Passwords do not match",
+      "invalidCredentials": "Invalid credentials",
+      "registerFailed": "Failed to register",
+      "usernameTaken": "This username is already taken"
     }
   },
   "home": {

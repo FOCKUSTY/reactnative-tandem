@@ -1,30 +1,52 @@
+import { useState } from "react";
 import { View } from "react-native";
 
-import { LoginForm, SkeletonLogin } from "../components";
+import { LoginForm, RegisterForm, SkeletonLogin } from "../components";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
-import { useLogin } from "../hooks";
+import { useLogin, useRegister } from "../hooks";
+
+type Mode = "login" | "register";
 
 export const LoginScreen = () => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
-  const { username, setUsername, password, setPassword, loading, handleLogin } =
-    useLogin();
+  const [mode, setMode] = useState<Mode>("login");
 
-  if (loading) {
+  const login = useLogin();
+  const register = useRegister();
+
+  if (login.loading || register.loading) {
     return <SkeletonLogin />;
   }
 
   return (
     <View style={styles.container}>
-      <LoginForm
-        username={username}
-        setUsername={setUsername}
-        password={password}
-        setPassword={setPassword}
-        loading={loading}
-        onSubmit={handleLogin}
-      />
+      {mode === "login" ? (
+        <LoginForm
+          username={login.username}
+          setUsername={login.setUsername}
+          password={login.password}
+          setPassword={login.setPassword}
+          loading={login.loading}
+          onSubmit={login.handleLogin}
+          onSwitchToRegister={() => setMode("register")}
+        />
+      ) : (
+        <RegisterForm
+          username={register.username}
+          setUsername={register.setUsername}
+          name={register.name}
+          setName={register.setName}
+          password={register.password}
+          setPassword={register.setPassword}
+          confirmPassword={register.confirmPassword}
+          setConfirmPassword={register.setConfirmPassword}
+          loading={register.loading}
+          onSubmit={register.handleRegister}
+          onSwitchToLogin={() => setMode("login")}
+        />
+      )}
     </View>
   );
 };

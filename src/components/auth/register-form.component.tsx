@@ -3,32 +3,41 @@ import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
 
-export type LoginFormProperties = {
+export type RegisterFormProperties = {
   username: string;
   setUsername: (text: string) => void;
+  name: string;
+  setName: (text: string) => void;
   password: string;
   setPassword: (text: string) => void;
+  confirmPassword: string;
+  setConfirmPassword: (text: string) => void;
   loading: boolean;
   onSubmit: () => void;
-  onSwitchToRegister?: () => void;
+  onSwitchToLogin?: () => void;
 };
 
-export const LoginForm = ({
+export const RegisterForm = ({
   username,
   setUsername,
+  name,
+  setName,
   password,
   setPassword,
+  confirmPassword,
+  setConfirmPassword,
   loading,
   onSubmit,
-  onSwitchToRegister,
-}: LoginFormProperties) => {
+  onSwitchToLogin,
+}: RegisterFormProperties) => {
   const { colors } = useTheme();
   const { t } = useTranslate();
   const styles = getStyles(colors);
 
   return (
     <View>
-      <Text style={styles.title}>{t("auth.welcome")}</Text>
+      <Text style={styles.title}>{t("auth.registerTitle")}</Text>
+
       <TextInput
         style={styles.input}
         placeholder={t("auth.username")}
@@ -39,30 +48,43 @@ export const LoginForm = ({
       />
       <TextInput
         style={styles.input}
+        placeholder={t("auth.name")}
+        placeholderTextColor={colors.textMuted}
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={styles.input}
         placeholder={t("auth.password")}
         placeholderTextColor={colors.textMuted}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
+      <TextInput
+        style={styles.input}
+        placeholder={t("auth.confirmPassword")}
+        placeholderTextColor={colors.textMuted}
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+        secureTextEntry
+      />
+
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={onSubmit}
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? t("auth.loginLoading") : t("auth.login")}
+          {loading ? t("auth.registerLoading") : t("auth.register")}
         </Text>
       </TouchableOpacity>
 
-      {onSwitchToRegister && (
-        <TouchableOpacity
-          style={styles.switchButton}
-          onPress={onSwitchToRegister}
-        >
+      {onSwitchToLogin && (
+        <TouchableOpacity style={styles.switchButton} onPress={onSwitchToLogin}>
           <Text style={styles.switchText}>
-            {t("auth.noAccount")}{" "}
-            <Text style={styles.switchLink}>{t("auth.register")}</Text>
+            {t("auth.haveAccount")}{" "}
+            <Text style={styles.switchLink}>{t("auth.login")}</Text>
           </Text>
         </TouchableOpacity>
       )}

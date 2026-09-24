@@ -20,6 +20,7 @@ import {
   CreateTableScreen,
   TableDetailScreen,
   CellScreen,
+  EditProfileScreen,
 } from "../../screens";
 import { MainTabs } from "./main-tabs";
 
@@ -60,6 +61,11 @@ export const AppNavigator = () => {
             name="Main"
             component={MainTabs}
             options={{ headerShown: false }}
+          />
+          <Stack.Screen
+            name="EditProfile"
+            component={EditProfileScreen}
+            options={{ title: t("profile.title") }}
           />
           <Stack.Screen
             name="Tables"

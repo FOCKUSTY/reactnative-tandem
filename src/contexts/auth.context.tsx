@@ -22,8 +22,17 @@ interface AuthContextType {
     username: string,
     password: string,
   ) => Promise<{ success: boolean; message?: string }>;
+  register: (
+    username: string,
+    password: string,
+    name: string,
+  ) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
+  updateProfile: (data: {
+    name?: string;
+    username?: string;
+  }) => Promise<{ success: boolean; message?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -117,13 +126,64 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     await pushService.unregisterDevice(deviceId);
   };
 
+  const updateProfile = async (data: { name?: string; username?: string }) => {
+    try {
+      const response = await usersService.updateMe(data);
+      const meData = response.data;
+      setMe(meData);
+      setUser({
+        id: meData.id,
+        username: meData.username,
+        name: meData.name,
+      });
+      await storage.setItem(
+        ".auth_user",
+        JSON.stringify({
+          id: meData.id,
+          username: meData.username,
+          name: meData.name,
+        }),
+      );
+      return { success: true };
+    } catch (error) {
+      const apiError = handleApiError(error);
+      return { success: false, message: apiError.message };
+    }
+  };
+
+  const register = async (username: string, password: string, name: string) => {
+    try {
+      const response = await authService.register(username, password, name);
+      const { token, user } = response.data;
+      await storage.setItem(".auth_token", token);
+      await storage.setItem(".auth_user", JSON.stringify(user));
+      setToken(token);
+      setUser(user);
+      await fetchMe();
+      return { success: true };
+    } catch (error) {
+      const apiError = handleApiError(error);
+      return { success: false, message: apiError.message };
+    }
+  };
+
   const refreshMe = async () => {
     await fetchMe();
   };
 
   return (
     <AuthContext.Provider
-      value={{ user, me, token, isLoading, login, logout, refreshMe }}
+      value={{
+        user,
+        me,
+        token,
+        isLoading,
+        login,
+        logout,
+        refreshMe,
+        register,
+        updateProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

@@ -1,5 +1,5 @@
-import type { User } from "../../types";
-
+import type { NavigationProperty, User } from "../../types";
+import { useNavigation } from "@react-navigation/native";
 import { View, Text } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
@@ -15,6 +15,7 @@ export const ProfileSection = ({ user }: ProfileSectionProps) => {
   const { colors } = useTheme();
   const { t } = useTranslate();
   const styles = getStyles(colors);
+  const navigation = useNavigation<NavigationProperty>();
 
   return (
     <View style={styles.section}>
@@ -23,6 +24,7 @@ export const ProfileSection = ({ user }: ProfileSectionProps) => {
         <SettingsItem
           icon="verified-user"
           label={user?.name || user?.username || t("settings.user")}
+          onPress={() => navigation.navigate("EditProfile")}
           rightElement={<Text style={styles.valueText}>{user?.username}</Text>}
         />
       </View>

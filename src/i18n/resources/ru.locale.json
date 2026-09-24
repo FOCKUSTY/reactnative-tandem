@@ -166,14 +166,26 @@
   },
   "auth": {
     "welcome": "Добро пожаловать",
+    "registerTitle": "Создать аккаунт",
     "username": "Имя пользователя",
+    "name": "Ваше имя",
     "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
     "login": "Войти",
     "loginLoading": "Вход...",
+    "register": "Зарегистрироваться",
+    "registerLoading": "Регистрация...",
+    "noAccount": "Нет аккаунта?",
+    "haveAccount": "Уже есть аккаунт?",
     "errors": {
-      "usernameRequired": "Введите имя",
+      "usernameRequired": "Введите имя пользователя",
+      "nameRequired": "Введите ваше имя",
       "passwordRequired": "Введите пароль",
-      "invalidCredentials": "Неверные данные"
+      "passwordTooShort": "Пароль должен содержать минимум 6 символов",
+      "passwordMismatch": "Пароли не совпадают",
+      "invalidCredentials": "Неверные данные",
+      "registerFailed": "Не удалось зарегистрироваться",
+      "usernameTaken": "Такое имя пользователя уже занято"
     }
   },
   "home": {
@@ -272,6 +284,22 @@
       "selectSection": "Выберите секцию",
       "titleOrContentRequired": "Введите заголовок или содержание",
       "saveFailed": "Не удалось сохранить запись"
+    }
+  },
+  "profile": {
+    "title": "Редактировать профиль",
+    "profileSection": "Профиль",
+    "passwordSection": "Смена пароля",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "changePassword": "Сменить пароль",
+    "updateSuccess": "Профиль обновлён",
+    "updateFailed": "Не удалось обновить профиль",
+    "noChanges": "Изменений нет",
+    "passwordChanged": "Пароль изменён",
+    "errors": {
+      "currentPasswordRequired": "Введите текущий пароль",
+      "changeFailed": "Не удалось сменить пароль"
     }
   },
   "settings": {
