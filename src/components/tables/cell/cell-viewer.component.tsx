@@ -15,7 +15,7 @@ import { CellContextBox } from "./cell-context-box.component";
 import { CellValueDisplay } from "./cell-value-display.component";
 import type { CellBaseProps } from "./cell.types";
 import { useTheme } from "../../../contexts";
-import { useTranslate } from "../../../hooks";
+import { useShare, useTranslate } from "../../../hooks";
 import { createStyles, storage } from "../../../utils";
 import type { NavigationProperty } from "../../../types";
 
@@ -51,6 +51,18 @@ export const CellViewer = (props: CellBaseProps) => {
 
   const [swipeEnabled, setSwipeEnabled] = useState(false);
 
+  const { shareCell } = useShare();
+  const handleShare = () => {
+    void shareCell({
+      tableId: table.id,
+      rowId,
+      fieldId: field.id,
+      tableName: table.name,
+      fieldName: field.name,
+      value: initialValue,
+    });
+  };
+
   useEffect(() => {
     storage.getItem(SWIPE_PREF_KEY).then((v) => {
       if (v === "false") setSwipeEnabled(false);
@@ -67,24 +79,33 @@ export const CellViewer = (props: CellBaseProps) => {
     navigation.setOptions({
       title: field.name,
       headerRight: () => (
-        <TouchableOpacity
-          onPress={toggleSwipe}
-          style={styles.headerButton}
-          accessibilityLabel={
-            swipeEnabled
-              ? t("tables.cell.enableScroll")
-              : t("tables.cell.enableSwipe")
-          }
-        >
-          <MaterialIcons
-            name={swipeEnabled ? "swipe" : "unfold-more"}
-            size={24}
-            color={colors.primary}
-          />
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity
+            onPress={handleShare}
+            style={styles.headerButton}
+            accessibilityLabel={t("records.share")}
+          >
+            <MaterialIcons name="share" size={24} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={toggleSwipe}
+            style={[styles.headerButton, { marginLeft: 12 }]}
+            accessibilityLabel={
+              swipeEnabled
+                ? t("tables.cell.enableScroll")
+                : t("tables.cell.enableSwipe")
+            }
+          >
+            <MaterialIcons
+              name={swipeEnabled ? "swipe" : "unfold-more"}
+              size={24}
+              color={colors.primary}
+            />
+          </TouchableOpacity>
+        </View>
       ),
     });
-  }, [navigation, field.name, swipeEnabled, colors.primary, t]);
+  }, [navigation, field.name, field.id, swipeEnabled, colors.primary, t]);
 
   const goToEdit = () => {
     navigation.replace("CellScreen", {
@@ -350,5 +371,9 @@ const getStyles = createStyles((colors) => ({
   secondaryButtonText: {
     color: colors.textSecondary,
     fontSize: 16,
+  },
+  headerButtons: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 }));

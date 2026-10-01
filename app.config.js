@@ -3,13 +3,34 @@ export default {
     name: "Tandem",
     slug: "tandem",
     version: "1.0.0-beta",
+    scheme: "tandem",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     ios: {
-      supportsTablet: true,
+      bundleIdentifier: "app.tandem",
+      associatedDomains: ["applinks:tandem-links.vercel.app"],
     },
     android: {
+      intentFilters: [
+        {
+          action: "VIEW",
+          autoVerify: true,
+          data: [
+            {
+              scheme: "https",
+              host: "tandem-links.vercel.app",
+              pathPrefix: "/record",
+            },
+            {
+              scheme: "https",
+              host: "tandem-links.vercel.app",
+              pathPrefix: "/table",
+            },
+          ],
+          category: ["BROWSABLE", "DEFAULT"],
+        },
+      ],
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
         foregroundImage: "./assets/android-icon-foreground.png",

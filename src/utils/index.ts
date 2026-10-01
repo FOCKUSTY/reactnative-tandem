@@ -8,3 +8,4 @@ export * from "./logger.utils";
 export * from "./date.utils";
 export * from "./get-device-id.utils";
 export * from "./plural.utils";
+export * from "./deep-link.utils";

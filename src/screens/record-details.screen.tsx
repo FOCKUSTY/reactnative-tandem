@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 
 import { RecordContent, SkeletonRecordDetail } from "../components";
-import { useRecordDetail } from "../hooks";
+import { useRecordDetail, useShare } from "../hooks";
 import { createStyles, formatDate, formatTime } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
@@ -19,13 +19,22 @@ export const RecordDetailsScreen = () => {
     useRecordDetail();
   const navigation = useNavigation<NavigationProperty>();
 
+  const { shareRecord } = useShare();
+  const handleShare = () => record && shareRecord(record);
+
   useLayoutEffect(() => {
     if (record) {
       navigation.setOptions({
         title: record.title || t("records.details"),
         headerRight: () => (
           <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={handleEdit} style={styles.headerButton}>
+            <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
+              <MaterialIcons name="share" size={24} color={colors.primary} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={handleEdit}
+              style={[styles.headerButton, { marginLeft: 16 }]}
+            >
               <MaterialIcons name="edit" size={24} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity

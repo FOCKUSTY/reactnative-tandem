@@ -248,6 +248,7 @@
     }
   },
   "records": {
+    "share": "Share",
     "title": "Records",
     "repeat": "Repeat?",
     "empty": "No records in this section",

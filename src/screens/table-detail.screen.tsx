@@ -24,6 +24,7 @@ import {
   useDeleteTable,
   useTranslate,
   useUpdateField,
+  useShare,
 } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
@@ -56,6 +57,17 @@ export const TableDetailScreen = () => {
 
   const updateField = useUpdateField();
   const [renameField, setRenameField] = useState<Field | null>(null);
+
+  const { shareTable } = useShare();
+
+  const handleShareTable = () => {
+    if (!table) return;
+    void shareTable({
+      id: table.id,
+      name: table.name,
+      description: table.description,
+    });
+  };
 
   const handleRenameField = (id: string, name: string) => {
     updateField.mutate(
@@ -95,8 +107,15 @@ export const TableDetailScreen = () => {
       headerRight: () => (
         <View style={styles.headerButtons}>
           <TouchableOpacity
-            onPress={() => setFieldModalVisible(true)}
+            onPress={handleShareTable}
             style={styles.headerButton}
+            disabled={!table}
+          >
+            <MaterialIcons name="share" size={24} color={colors.primary} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setFieldModalVisible(true)}
+            style={[styles.headerButton, { marginLeft: 12 }]}
           >
             <MaterialIcons
               name="playlist-add"

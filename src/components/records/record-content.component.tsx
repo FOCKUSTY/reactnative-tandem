@@ -57,19 +57,21 @@ export const RecordContent = ({
       contentContainerStyle={styles.content}
     >
       <View style={styles.card}>
-        <RecordHeader
-          title={title}
-          date={dateLabel || undefined}
-          time={timeLabel || undefined}
-        />
-
-        <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
-          <MaterialIcons
-            name={record.isStarred ? "star" : "star-border"}
-            size={32}
-            color={record.isStarred ? colors.primary : colors.textMuted}
+        <View style={styles.card_header}>
+          <RecordHeader
+            title={title}
+            date={dateLabel || undefined}
+            time={timeLabel || undefined}
           />
-        </TouchableOpacity>
+
+          <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
+            <MaterialIcons
+              name={record.isStarred ? "star" : "star-border"}
+              size={32}
+              color={record.isStarred ? colors.primary : colors.textMuted}
+            />
+          </TouchableOpacity>
+        </View>
 
         <Markdown style={markdownStyles}>{content || ""}</Markdown>
 
@@ -101,5 +103,11 @@ const getStyles = createStyles((colors) => ({
     padding: 16,
     borderWidth: 1,
     borderColor: colors.cardBorder,
+  },
+  card_header: {
+    display: "flex",
+    flexDirection: "row",
+    gap: 8,
+    justifyContent: "space-between",
   },
 }));

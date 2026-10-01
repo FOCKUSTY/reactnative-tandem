@@ -16,6 +16,8 @@ import { PinScreen } from "../../screens";
 import { AppNavigator } from "./app-navigator";
 import { StatusWidget } from "../status-widget.component";
 import { usePushNotifications } from "../../hooks/use-push-notifications.hook";
+import { linking } from "../../navigation";
+import { DeepLinkHandler } from "./deep-link-handler.component";
 
 interface AppContentProps {
   queryClient: QueryClient;
@@ -68,7 +70,8 @@ export const AppContent = ({ queryClient }: AppContentProps) => {
               <PushNotificationsGate />
               <FiltersProvider>
                 <ReminderProvider>
-                  <NavigationContainer>
+                  <NavigationContainer linking={linking} fallback={<View />}>
+                    <DeepLinkHandler />
                     <AppNavigator />
                   </NavigationContainer>
                 </ReminderProvider>
