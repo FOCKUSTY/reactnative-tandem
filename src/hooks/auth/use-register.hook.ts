@@ -53,6 +53,7 @@ export const useRegister = () => {
     confirmPassword: form.values.confirmPassword,
     setConfirmPassword: (text: string) =>
       form.setFieldValue("confirmPassword", text),
+    errors: form.errors,
     loading: form.isSubmitting,
     handleRegister: form.handleSubmit,
   };

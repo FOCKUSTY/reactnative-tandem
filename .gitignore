@@ -35,6 +35,7 @@ yarn-error.*
 .env*.local
 google-services.json
 keystore_base64.txt
+service-key.json
 
 # typescript
 *.tsbuildinfo

@@ -6,64 +6,111 @@ import { Alert, Platform } from "react-native";
 import { CONFIG, STORAGE_KEYS } from "../constants";
 import { storage, getDeviceId, logger } from "../utils";
 import { pushService } from "../api/services";
-import { useUser } from "./auth";
+import { useAuth } from "../contexts";
+
+export const registerForPushNotifications = async (userId: string) => {
+  try {
+    const { status } = await Notifications.getPermissionsAsync();
+    let finalStatus = status;
+    if (status !== "granted") {
+      const req = await Notifications.requestPermissionsAsync();
+      finalStatus = req.status;
+    }
+    if (finalStatus !== "granted") {
+      await logger.warn("Push permission denied", { status: finalStatus });
+      return { success: false, reason: "permission" as const };
+    }
+
+    const deviceId = await getDeviceId();
+    const tokenData = await Notifications.getExpoPushTokenAsync({
+      projectId: CONFIG.expo.extra.eas.projectId,
+    });
+    const pushToken = tokenData.data;
+
+    await pushService.registerDevice({
+      deviceId,
+      pushToken,
+      platform: Platform.OS,
+      osVersion: DeviceInfo.osVersion || Platform.Version.toString(),
+      model: DeviceInfo.modelName || "undefined",
+      appVersion: CONFIG.expo.version,
+    });
+
+    await storage.setItem(STORAGE_KEYS.PUSH_TOKEN, pushToken);
+    await logger.info("Device registered for push", { deviceId, userId });
+    return { success: true as const };
+  } catch (error) {
+    await logger.error("Push registration failed", {
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return { success: false, reason: "error" as const };
+  }
+};
 
 export const usePushNotifications = () => {
-  const { user } = useUser();
+  const { user, token } = useAuth();
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !token) return;
+
+    let cancelled = false;
 
     (async () => {
-      const { status: existingStatus } =
-        await Notifications.getPermissionsAsync();
-      let finalStatus = existingStatus;
-      if (existingStatus !== "granted") {
-        const { status } = await Notifications.requestPermissionsAsync();
-        finalStatus = status;
-      }
-      if (finalStatus !== "granted") {
-        void logger.warn("Push notifications permission denied", {
-          status: finalStatus,
-        });
-        return;
-      }
-
-      const deviceId = await getDeviceId();
-      const storedToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
-
-      const shouldRegister = await (async () => {
-        try {
-          const response = await pushService.getDevice(deviceId);
-          const { exists, belongsToCurrentUser } = response.data;
-          return !exists || !belongsToCurrentUser;
-        } catch (error) {
-          void logger.warn("Device check failed", {
-            error: error instanceof Error ? error.message : String(error),
-          });
-          return !storedToken;
+      try {
+        const { status: existingStatus } =
+          await Notifications.getPermissionsAsync();
+        let finalStatus = existingStatus;
+        if (existingStatus !== "granted") {
+          const { status } = await Notifications.requestPermissionsAsync();
+          finalStatus = status;
         }
-      })();
+        if (finalStatus !== "granted") {
+          void logger.warn("Push notifications permission denied", {
+            status: finalStatus,
+          });
+          return;
+        }
 
-      if (!shouldRegister) {
-        return;
+        const deviceId = await getDeviceId();
+        const storedToken = await storage.getItem(STORAGE_KEYS.PUSH_TOKEN);
+
+        const shouldRegister = await (async () => {
+          try {
+            const response = await pushService.getDevice(deviceId);
+            const { exists, belongsToCurrentUser } = response.data;
+            return !exists || !belongsToCurrentUser;
+          } catch (error) {
+            void logger.warn("Device check failed", {
+              error: error instanceof Error ? error.message : String(error),
+            });
+            return !storedToken;
+          }
+        })();
+
+        if (!shouldRegister || cancelled) return;
+
+        const tokenData = await Notifications.getExpoPushTokenAsync({
+          projectId: CONFIG.expo.extra.eas.projectId,
+        });
+        const pushToken = tokenData.data;
+
+        await pushService.registerDevice({
+          deviceId,
+          pushToken,
+          platform: Platform.OS,
+          osVersion: DeviceInfo.osVersion || Platform.Version.toString(),
+          model: DeviceInfo.modelName || "undefined",
+          appVersion: CONFIG.expo.version,
+        });
+
+        await storage.setItem(STORAGE_KEYS.PUSH_TOKEN, pushToken);
+
+        void logger.info("Device registered for push", { deviceId });
+      } catch (error) {
+        void logger.error("Push registration failed", {
+          error: error instanceof Error ? error.message : String(error),
+        });
       }
-
-      const tokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: CONFIG.expo.extra.eas.projectId,
-      });
-      const token = tokenData.data;
-
-      await pushService.registerDevice({
-        deviceId,
-        pushToken: token,
-        platform: Platform.OS,
-        osVersion: DeviceInfo.osVersion || Platform.Version.toString(),
-        model: DeviceInfo.modelName || "undefined",
-        appVersion: CONFIG.expo.version,
-      });
-
-      await storage.setItem(STORAGE_KEYS.PUSH_TOKEN, token);
     })();
 
     const subscription = Notifications.addNotificationResponseReceivedListener(
@@ -75,6 +122,9 @@ export const usePushNotifications = () => {
       },
     );
 
-    return () => subscription.remove();
-  }, [user]);
+    return () => {
+      cancelled = true;
+      subscription.remove();
+    };
+  }, [user?.id, token]); // 👈 зависим от id и токена — сработает и на login, и на register
 };

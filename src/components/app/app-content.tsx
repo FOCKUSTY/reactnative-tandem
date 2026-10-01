@@ -15,10 +15,16 @@ import {
 import { PinScreen } from "../../screens";
 import { AppNavigator } from "./app-navigator";
 import { StatusWidget } from "../status-widget.component";
+import { usePushNotifications } from "../../hooks/use-push-notifications.hook";
 
 interface AppContentProps {
   queryClient: QueryClient;
 }
+
+const PushNotificationsGate = () => {
+  usePushNotifications();
+  return null;
+};
 
 export const AppContent = ({ queryClient }: AppContentProps) => {
   const { isPinEnabled, checkPin } = usePin();
@@ -59,6 +65,7 @@ export const AppContent = ({ queryClient }: AppContentProps) => {
           <View style={{ flex: 1 }}>
             <StatusWidget />
             <AuthProvider>
+              <PushNotificationsGate />
               <FiltersProvider>
                 <ReminderProvider>
                   <NavigationContainer>

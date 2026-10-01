@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Alert, TextInput } from "react-native";
 import * as Notifications from "expo-notifications";
-import { useReminder, useTheme } from "../../contexts";
+import { useAuth, useReminder, useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
 import { SettingsItem } from "./settings-item.component";
@@ -9,8 +9,10 @@ import { ModalWrapper } from "../common";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProperty } from "../../types";
 import { TranslationInput } from "../../i18n";
+import { registerForPushNotifications } from "../../hooks/use-push-notifications.hook";
 
 export const NotificationsSection = () => {
+  const { user } = useAuth();
   const { colors } = useTheme();
   const { t } = useTranslate();
   const styles = getStyles(colors);
@@ -47,20 +49,22 @@ export const NotificationsSection = () => {
   const handleRequestPermissions = async () => {
     setLoading(true);
     try {
-      let status = await Notifications.getPermissionsAsync();
-      if (!status.granted) {
-        status = await Notifications.requestPermissionsAsync();
-      }
-
+      const status = await Notifications.requestPermissionsAsync();
       setPermissionStatus(status);
+
       if (!status.granted) {
         Alert.alert(t("common.error"), t("notifications.permissionDenied"));
-      } else {
-        Alert.alert(t("common.success"), t("notifications.success"));
+        return;
       }
-    } catch (error) {
-      console.error("Error requesting permissions:", error);
-      Alert.alert(t("common.error"), t("notifications.error"));
+
+      if (!user?.id) return;
+
+      const result = await registerForPushNotifications(user.id);
+      if (result.success) {
+        Alert.alert(t("common.success"), t("notifications.success"));
+      } else {
+        Alert.alert(t("common.error"), t("notifications.error"));
+      }
     } finally {
       setLoading(false);
     }

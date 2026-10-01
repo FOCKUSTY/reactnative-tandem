@@ -12,6 +12,7 @@ import { MeResponse, User } from "../types";
 import Toast from "react-native-toast-message";
 import { pushService } from "../api";
 import { notificationService } from "../services/notification.service";
+import { STORAGE_KEYS } from "../constants";
 
 interface AuthContextType {
   user: User | null;
@@ -118,6 +119,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     await notificationService.cancelAll();
     await storage.deleteItem(".auth_token");
     await storage.deleteItem(".auth_user");
+    await storage.deleteItem(STORAGE_KEYS.PUSH_TOKEN);
     setToken(null);
     setUser(null);
     setMe(null);

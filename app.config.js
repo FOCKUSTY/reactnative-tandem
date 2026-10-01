@@ -2,7 +2,7 @@ export default {
   expo: {
     name: "Tandem",
     slug: "tandem",
-    version: "0.2.0-alpha",
+    version: "1.0.0-beta",
     orientation: "portrait",
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",

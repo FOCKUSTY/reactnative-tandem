@@ -34,6 +34,7 @@ export const useLogin = () => {
     setUsername: (text: string) => form.setFieldValue("username", text),
     password: form.values.password,
     setPassword: (text: string) => form.setFieldValue("password", text),
+    errors: form.errors,
     loading: form.isSubmitting,
     handleLogin: form.handleSubmit,
   };

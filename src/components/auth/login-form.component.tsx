@@ -8,6 +8,7 @@ export type LoginFormProperties = {
   setUsername: (text: string) => void;
   password: string;
   setPassword: (text: string) => void;
+  errors?: Partial<Record<"username" | "password", string>>;
   loading: boolean;
   onSubmit: () => void;
   onSwitchToRegister?: () => void;
@@ -21,6 +22,7 @@ export const LoginForm = ({
   loading,
   onSubmit,
   onSwitchToRegister,
+  errors,
 }: LoginFormProperties) => {
   const { colors } = useTheme();
   const { t } = useTranslate();
@@ -30,21 +32,28 @@ export const LoginForm = ({
     <View>
       <Text style={styles.title}>{t("auth.welcome")}</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors?.username && styles.inputError]}
         placeholder={t("auth.username")}
         placeholderTextColor={colors.textMuted}
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
+      {errors?.username && (
+        <Text style={styles.errorText}>{errors.username}</Text>
+      )}
+
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors?.password && styles.inputError]}
         placeholder={t("auth.password")}
         placeholderTextColor={colors.textMuted}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
+      {errors?.password && (
+        <Text style={styles.errorText}>{errors.password}</Text>
+      )}
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={onSubmit}
@@ -71,6 +80,16 @@ export const LoginForm = ({
 };
 
 const getStyles = createStyles((colors) => ({
+  inputError: {
+    borderColor: colors.danger,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 4,
+  },
   title: {
     fontSize: 28,
     fontWeight: "bold",

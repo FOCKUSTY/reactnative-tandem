@@ -13,6 +13,7 @@ export type RegisterFormProperties = {
   confirmPassword: string;
   setConfirmPassword: (text: string) => void;
   loading: boolean;
+  errors?: Partial<Record<"username" | "name" | "password", string>>;
   onSubmit: () => void;
   onSwitchToLogin?: () => void;
 };
@@ -27,6 +28,7 @@ export const RegisterForm = ({
   confirmPassword,
   setConfirmPassword,
   loading,
+  errors,
   onSubmit,
   onSwitchToLogin,
 }: RegisterFormProperties) => {
@@ -39,28 +41,35 @@ export const RegisterForm = ({
       <Text style={styles.title}>{t("auth.registerTitle")}</Text>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors?.username && styles.inputError]}
         placeholder={t("auth.username")}
         placeholderTextColor={colors.textMuted}
         value={username}
         onChangeText={setUsername}
         autoCapitalize="none"
       />
+      {errors?.username && (
+        <Text style={styles.errorText}>{errors.username}</Text>
+      )}
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors?.name && styles.inputError]}
         placeholder={t("auth.name")}
         placeholderTextColor={colors.textMuted}
         value={name}
         onChangeText={setName}
       />
+      {errors?.name && <Text style={styles.errorText}>{errors.name}</Text>}
       <TextInput
-        style={styles.input}
+        style={[styles.input, errors?.password && styles.inputError]}
         placeholder={t("auth.password")}
         placeholderTextColor={colors.textMuted}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
+      {errors?.password && (
+        <Text style={styles.errorText}>{errors.password}</Text>
+      )}
       <TextInput
         style={styles.input}
         placeholder={t("auth.confirmPassword")}
@@ -72,7 +81,9 @@ export const RegisterForm = ({
 
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={onSubmit}
+        onPress={() => {
+          onSubmit();
+        }}
         disabled={loading}
       >
         <Text style={styles.buttonText}>
@@ -93,6 +104,16 @@ export const RegisterForm = ({
 };
 
 const getStyles = createStyles((colors) => ({
+  inputError: {
+    borderColor: colors.danger,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 10,
+    marginLeft: 4,
+  },
   title: {
     fontSize: 28,
     fontWeight: "bold",

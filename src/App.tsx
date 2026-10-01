@@ -14,7 +14,6 @@ import { AppContent } from "./components/app";
 import { PinProvider, CacheSettingsProvider } from "./contexts";
 
 import * as Notifications from "expo-notifications";
-import { usePushNotifications } from "./hooks/use-push-notifications.hook";
 
 const previousErrorHandler = ErrorUtils.getGlobalHandler();
 ErrorUtils.setGlobalHandler((error, isFatal) => {
@@ -40,8 +39,6 @@ SplashScreen.preventAutoHideAsync();
 const App = () => {
   const [isReady, setIsReady] = useState(false);
   const [queryClient, setQueryClient] = useState<QueryClient | null>(null);
-
-  usePushNotifications();
 
   useEffect(() => {
     (async () => {
