@@ -460,12 +460,61 @@
     "goToRecords": "Go to records"
   },
   "recurring": {
+    "mode": {
+      "simple": "Simple",
+      "advanced": "Advanced"
+    },
+    "freq": {
+      "label": "Frequency",
+      "daily": "Daily",
+      "weekly": "Weekly",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "monthly": {
+      "byMonthDay": "Days of month",
+      "byWeekOfMonth": "Weeks of month",
+      "byWeekdayOfMonth": "Weekdays of month"
+    },
+    "week": {
+      "1": "1st week",
+      "2": "2nd week",
+      "3": "3rd week",
+      "4": "4th week",
+      "5": "Last"
+    },
+    "weekdays": {
+      "mo": "Mo",
+      "tu": "Tu",
+      "we": "We",
+      "th": "Th",
+      "fr": "Fr",
+      "sa": "Sa",
+      "su": "Su"
+    },
+    "monthsShort": {
+      "1": "Jan",
+      "2": "Feb",
+      "3": "Mar",
+      "4": "Apr",
+      "5": "May",
+      "6": "Jun",
+      "7": "Jul",
+      "8": "Aug",
+      "9": "Sep",
+      "10": "Oct",
+      "11": "Nov",
+      "12": "Dec"
+    },
+    "limitMonths": "Only in months",
+    "until": "Ends on",
+    "untilNever": "Never",
     "everyHour": "Every hour",
     "everyDay": "Every day",
     "everyWeek": "Every week",
     "everyMonth": "Every month",
     "everyYear": "Every year",
-    "ourInterval": "Our interval",
+    "ourInterval": "Custom interval",
     "example": "e.g."
   }
 }
