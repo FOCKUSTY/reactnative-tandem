@@ -4,3 +4,4 @@ export * from "./table-row.component";
 export * from "./create-field-modal.component";
 export * from "./rename-field-modal.component";
 export * from "./cell";
+export * from "./rename-table-modal.component";

@@ -61,4 +61,7 @@ export const tablesService = {
   }) => api.post<Cell>("/tables/cells", data),
   getCellsForTable: (tableId: string) =>
     api.get<Row[]>(`/tables/${tableId}/cells`),
+
+  duplicateTable: (id: string, data?: { name?: string; sectionId?: string }) =>
+    api.post<Table>(`/tables/${id}/duplicate`, data ?? {}),
 };

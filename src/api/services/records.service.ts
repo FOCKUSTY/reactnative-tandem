@@ -45,4 +45,7 @@ export const recordsService = {
     api.patch<MyRecord>(`/records/${id}`, data),
 
   deleteRecord: (id: string) => api.delete<void>(`/records/${id}`),
+
+  duplicateRecord: (id: string, data?: { title?: string }) =>
+    api.post<MyRecord>(`/records/${id}/duplicate`, data ?? {}),
 };

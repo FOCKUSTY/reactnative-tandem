@@ -1,10 +1,10 @@
-import { View, TouchableOpacity, Text } from "react-native";
+import { View, TouchableOpacity, Text, Alert } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 
 import { RecordCard, SkeletonRecordsList } from "../components";
-import { useRecordsList, useRefresh } from "../hooks";
+import { useDuplicateRecord, useRecordsList, useRefresh } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
@@ -20,6 +20,7 @@ export const RecordsScreen = () => {
     queryKeys: [["records"]],
   });
 
+  const duplicateRecord = useDuplicateRecord();
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
@@ -55,7 +56,30 @@ export const RecordsScreen = () => {
         data={records}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <RecordCard record={item} onDelete={handleDelete} showDelete />
+          <RecordCard
+            record={item}
+            onDelete={handleDelete}
+            onDuplicate={(record) => {
+              duplicateRecord.mutate(
+                { id: record.id },
+                {
+                  onSuccess: () => {
+                    Alert.alert(
+                      t("common.success"),
+                      t("records.duplicateSuccess"),
+                    );
+                  },
+                  onError: () => {
+                    Alert.alert(
+                      t("common.error"),
+                      t("records.errors.duplicateFailed"),
+                    );
+                  },
+                },
+              );
+            }}
+            showDelete
+          />
         )}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}

@@ -68,3 +68,14 @@ export const useDeleteRecord = () => {
     },
   });
 };
+
+export const useDuplicateRecord = () => {
+  const queryClient = useQueryClient();
+  return useMutation<MyRecord, Error, { id: string; title?: string }>({
+    mutationFn: ({ id, title }) =>
+      recordsService.duplicateRecord(id, { title }).then((res) => res.data),
+    onSuccess: () => {
+      invalidateRecordDependents(queryClient);
+    },
+  });
+};

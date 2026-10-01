@@ -1,5 +1,12 @@
 {
   "tables": {
+    "renameTableTitle": "Rename table",
+    "tapToRename": "tap to rename",
+    "fieldLabelShort": "fields",
+    "duplicateConfirm": {
+      "title": "Duplicate table?",
+      "message": "A full copy of the table «{{name}}» will be created, including all fields, rows, and values."
+    },
     "title": "Tables",
     "create": "Create table",
     "edit": "Edit",
@@ -75,8 +82,10 @@
       "enableSwipe": "Enable swipe navigation"
     },
     "errors": {
+      "duplicateFailed": "Failed to duplicate the table.",
       "nameRequired": "Enter table name",
       "sectionRequired": "Select a section",
+      "renameTableFailed": "Failed to rename table",
       "renameFailed": "Failed to rename column",
       "createFailed": "Failed to create table",
       "updateFailed": "Failed to update table",
@@ -248,6 +257,8 @@
     }
   },
   "records": {
+    "duplicate": "Duplicate",
+    "duplicateSuccess": "Record duplicated",
     "share": "Share",
     "title": "Records",
     "repeat": "Repeat?",
@@ -297,6 +308,7 @@
       "updatedAt": "Updated at:"
     },
     "errors": {
+      "duplicateFailed": "Failed to duplicate the record.",
       "selectSection": "Select section",
       "titleOrContentRequired": "Enter title or content",
       "saveFailed": "Failed to save record"

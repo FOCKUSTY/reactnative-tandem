@@ -1,13 +1,18 @@
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 
 import { TableCard, SkeletonRecordsList } from "../components";
-import { useTables, useRefresh, useTranslate } from "../hooks";
+import {
+  useTables,
+  useRefresh,
+  useTranslate,
+  useDuplicateTable,
+} from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
-import { NavigationProperty } from "../types";
+import { NavigationProperty, Table } from "../types";
 
 export const TablesScreen = () => {
   const { t } = useTranslate();
@@ -19,6 +24,40 @@ export const TablesScreen = () => {
   const { RefreshableFlatList } = useRefresh({
     queryKeys: [["tables"], ["table-sections"]],
   });
+
+  const duplicateTable = useDuplicateTable();
+
+  const handleDuplicate = (table: Table) => {
+    Alert.alert(
+      t("tables.duplicateConfirm.title"),
+      t("tables.duplicateConfirm.message", { name: table.name }),
+      [
+        { text: t("common.cancel"), style: "cancel" },
+        {
+          text: t("common.create"),
+          onPress: () => {
+            duplicateTable.mutate(
+              { id: table.id },
+              {
+                onSuccess: (newTable) => {
+                  navigation.navigate("TableDetail", {
+                    tableId: newTable.id,
+                    tableName: newTable.name,
+                  });
+                },
+                onError: () => {
+                  Alert.alert(
+                    t("common.error"),
+                    t("tables.errors.duplicateFailed"),
+                  );
+                },
+              },
+            );
+          },
+        },
+      ],
+    );
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -67,6 +106,7 @@ export const TablesScreen = () => {
                 tableName: table.name,
               })
             }
+            onLongPress={handleDuplicate}
           />
         )}
         contentContainerStyle={styles.listContent}

@@ -1,7 +1,7 @@
 import type { MyRecord, NavigationProperty } from "../../types";
 
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { createStyles, formatDateTime, formatIntervalLabel } from "../../utils";
@@ -11,12 +11,14 @@ import { useToggleStar, useTranslate } from "../../hooks";
 export type RecordCardProps = {
   record: MyRecord;
   onDelete?: (id: string) => void;
+  onDuplicate?: (record: MyRecord) => void;
   showDelete?: boolean;
 };
 
 export const RecordCard = ({
   record,
   onDelete,
+  onDuplicate,
   showDelete = false,
 }: RecordCardProps) => {
   const { colors } = useTheme();
@@ -36,10 +38,32 @@ export const RecordCard = ({
     }
   };
 
+  const handleLongPress = () => {
+    const buttons: any[] = [];
+    if (onDuplicate) {
+      buttons.push({
+        text: t("records.duplicate"),
+        onPress: () => onDuplicate(record),
+      });
+    }
+    if (showDelete && onDelete) {
+      buttons.push({
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: () => onDelete(record.id),
+      });
+    }
+    if (buttons.length === 0) return;
+    buttons.push({ text: t("common.cancel"), style: "cancel" });
+    Alert.alert(record.title || t("records.untitled"), undefined, buttons);
+  };
+
   return (
     <TouchableOpacity
       style={styles.card}
       onPress={handlePress}
+      onLongPress={() => handleLongPress()}
+      delayLongPress={400}
       activeOpacity={0.7}
     >
       <View style={styles.header}>

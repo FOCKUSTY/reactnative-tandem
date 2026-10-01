@@ -222,3 +222,24 @@ export const useCreateOrUpdateCell = () => {
     },
   });
 };
+
+export const useDuplicateTable = () => {
+  const queryClient = useQueryClient();
+  return useMutation<
+    Table,
+    Error,
+    { id: string; name?: string; sectionId?: string }
+  >({
+    mutationFn: ({ id, name, sectionId }) =>
+      tablesService
+        .duplicateTable(id, { name, sectionId })
+        .then((res) => res.data),
+    onSuccess: (_, { sectionId }) => {
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
+      queryClient.invalidateQueries({ queryKey: ["table-sections"] });
+      if (sectionId) {
+        queryClient.invalidateQueries({ queryKey: ["table-sections"] });
+      }
+    },
+  });
+};

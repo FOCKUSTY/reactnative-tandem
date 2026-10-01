@@ -1,5 +1,12 @@
 {
   "tables": {
+    "renameTableTitle": "Переименовать таблицу",
+    "tapToRename": "нажмите, чтобы переименовать",
+    "fieldLabelShort": "полей",
+    "duplicateConfirm": {
+      "title": "Дублировать таблицу?",
+      "message": "Будет создана полная копия таблицы «{{name}}» со всеми полями, строками и значениями."
+    },
     "title": "Таблицы",
     "create": "Создать таблицу",
     "edit": "Редактировать",
@@ -55,8 +62,10 @@
     "updateSuccess": "Таблица обновлена",
     "rowsCount": "{{count}} строк",
     "errors": {
+      "duplicateFailed": "Не удалось продублировать таблицу",
       "nameRequired": "Введите название таблицы",
       "sectionRequired": "Выберите секцию",
+      "renameTableFailed": "Не удалось переименовать таблицу",
       "renameFailed": "Не удалось переименовать столбец",
       "createFailed": "Не удалось создать таблицу",
       "updateFailed": "Не удалось обновить таблицу",
@@ -233,6 +242,8 @@
     }
   },
   "records": {
+    "duplicate": "Дублировать",
+    "duplicateSuccess": "Запись продублирована",
     "share": "Поделиться",
     "title": "Записи",
     "repeat": "Повторять?",
@@ -282,6 +293,7 @@
       "updatedAt": "Обновлено:"
     },
     "errors": {
+      "duplicateFailed": "Не удалось продублировать запись",
       "selectSection": "Выберите секцию",
       "titleOrContentRequired": "Введите заголовок или содержание",
       "saveFailed": "Не удалось сохранить запись"

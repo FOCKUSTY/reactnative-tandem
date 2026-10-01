@@ -13,6 +13,7 @@ import {
   SkeletonRecordDetail,
   TABLE_ACTION_WIDTH,
   RenameFieldModal,
+  RenameTableModal,
 } from "../components";
 import {
   useTable,
@@ -25,6 +26,7 @@ import {
   useTranslate,
   useUpdateField,
   useShare,
+  useUpdateTable,
 } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
@@ -57,8 +59,25 @@ export const TableDetailScreen = () => {
 
   const updateField = useUpdateField();
   const [renameField, setRenameField] = useState<Field | null>(null);
+  const [renameTableVisible, setRenameTableVisible] = useState(false);
+  const updateTable = useUpdateTable();
 
   const { shareTable } = useShare();
+
+  const handleRenameTable = (id: string, name: string) => {
+    updateTable.mutate(
+      { id, data: { name } },
+      {
+        onSuccess: () => setRenameTableVisible(false),
+        onError: (err: any) => {
+          const message =
+            err?.response?.data?.message ||
+            t("tables.errors.renameTableFailed");
+          Alert.alert(t("common.error"), message);
+        },
+      },
+    );
+  };
 
   const handleShareTable = () => {
     if (!table) return;
@@ -134,6 +153,21 @@ export const TableDetailScreen = () => {
             />
           </TouchableOpacity>
         </View>
+      ),
+      headerTitle: () => (
+        <TouchableOpacity onPress={() => setRenameTableVisible(true)}>
+          <View style={{ alignItems: "center" }}>
+            <Text
+              style={{ color: colors.text, fontSize: 17, fontWeight: "600" }}
+              numberOfLines={1}
+            >
+              {table?.name || tableName}
+            </Text>
+            <Text style={{ color: colors.textMuted, fontSize: 11 }}>
+              {t("tables.tapToRename")}
+            </Text>
+          </View>
+        </TouchableOpacity>
       ),
     });
   }, [navigation, table, colors, t]);
@@ -325,6 +359,14 @@ export const TableDetailScreen = () => {
         onClose={() => setRenameField(null)}
         onRename={handleRenameField}
         loading={updateField.isPending}
+      />
+
+      <RenameTableModal
+        visible={renameTableVisible}
+        table={table ?? null}
+        onClose={() => setRenameTableVisible(false)}
+        onRename={handleRenameTable}
+        loading={updateTable.isPending}
       />
     </View>
   );
