@@ -19,6 +19,8 @@ yarn.lock
 .idea/
 .vscode/
 
+backup/
+
 # Результаты сборки
 dist/
 build/

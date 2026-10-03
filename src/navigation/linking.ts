@@ -22,6 +22,14 @@ export const linking: LinkingOptions<RootStackParameters> = {
       Login: "login",
       LinkPartner: "link-partner",
 
+      ForgotPassword: "forgot-password",
+      ResetPassword: {
+        path: "reset-password",
+        parse: {
+          token: String,
+        },
+      },
+
       RecordDetail: "record/:id",
       CreateRecord: {
         path: "record/new/:sectionId?",

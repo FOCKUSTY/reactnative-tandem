@@ -16,11 +16,14 @@ import {
   PinScreen,
   RemindersScreen,
   StarredScreen,
+  FilterScreen,
   TablesScreen,
   CreateTableScreen,
   TableDetailScreen,
   CellScreen,
   EditProfileScreen,
+  ForgotPasswordScreen,
+  ResetPasswordScreen,
 } from "../../screens";
 import { MainTabs } from "./main-tabs";
 
@@ -104,6 +107,11 @@ export const AppNavigator = () => {
             options={{ title: t("sections.title") }}
           />
           <Stack.Screen
+            name="Filters"
+            component={FilterScreen}
+            options={{ title: t("filters.title") }}
+          />
+          <Stack.Screen
             name="Starred"
             component={StarredScreen}
             options={{ title: t("starred.title") }}
@@ -154,6 +162,16 @@ export const AppNavigator = () => {
           />
         </>
       )}
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPasswordScreen}
+        options={{ title: t("auth.forgotTitle") }}
+      />
+      <Stack.Screen
+        name="ResetPassword"
+        component={ResetPasswordScreen}
+        options={{ title: t("auth.resetTitle") }}
+      />
     </Stack.Navigator>
   );
 };

@@ -12,6 +12,7 @@ export type LoginFormProperties = {
   loading: boolean;
   onSubmit: () => void;
   onSwitchToRegister?: () => void;
+  onForgotPassword?: () => void;
 };
 
 export const LoginForm = ({
@@ -22,6 +23,7 @@ export const LoginForm = ({
   loading,
   onSubmit,
   onSwitchToRegister,
+  onForgotPassword,
   errors,
 }: LoginFormProperties) => {
   const { colors } = useTheme();
@@ -63,6 +65,15 @@ export const LoginForm = ({
           {loading ? t("auth.loginLoading") : t("auth.login")}
         </Text>
       </TouchableOpacity>
+
+      {onForgotPassword && (
+        <TouchableOpacity
+          style={styles.switchButton}
+          onPress={onForgotPassword}
+        >
+          <Text style={styles.switchLink}>{t("auth.forgotPassword")}</Text>
+        </TouchableOpacity>
+      )}
 
       {onSwitchToRegister && (
         <TouchableOpacity

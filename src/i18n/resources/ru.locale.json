@@ -178,6 +178,7 @@
     "registerTitle": "Создать аккаунт",
     "username": "Имя пользователя",
     "name": "Ваше имя",
+    "email": "Email",
     "password": "Пароль",
     "confirmPassword": "Подтвердите пароль",
     "login": "Войти",
@@ -186,6 +187,17 @@
     "registerLoading": "Регистрация...",
     "noAccount": "Нет аккаунта?",
     "haveAccount": "Уже есть аккаунт?",
+    "forgotPassword": "Забыли пароль?",
+    "forgotTitle": "Восстановление пароля",
+    "forgotDescription": "Введите email, указанный при регистрации, и мы отправим ссылку для сброса пароля.",
+    "forgotSubmit": "Отправить письмо",
+    "forgotSuccess": "Если такой email зарегистрирован, письмо отправлено",
+    "resetTitle": "Новый пароль",
+    "resetNewPassword": "Новый пароль",
+    "resetConfirmPassword": "Подтвердите пароль",
+    "resetSubmit": "Сохранить пароль",
+    "resetSuccess": "Пароль успешно сброшен",
+    "resetTokenMissing": "Отсутствует токен сброса пароля",
     "errors": {
       "usernameRequired": "Введите имя пользователя",
       "nameRequired": "Введите ваше имя",
@@ -194,7 +206,13 @@
       "passwordMismatch": "Пароли не совпадают",
       "invalidCredentials": "Неверные данные",
       "registerFailed": "Не удалось зарегистрироваться",
-      "usernameTaken": "Такое имя пользователя уже занято"
+      "usernameTaken": "Такое имя пользователя уже занято",
+      "emailRequired": "Введите email",
+      "emailInvalid": "Некорректный email",
+      "emailTaken": "Этот email уже используется",
+      "forgotFailed": "Не удалось отправить письмо",
+      "resetFailed": "Не удалось сбросить пароль",
+      "resetTokenInvalid": "Неверный или просроченный токен"
     }
   },
   "home": {

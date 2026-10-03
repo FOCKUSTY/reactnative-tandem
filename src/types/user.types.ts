@@ -2,6 +2,7 @@ export interface User {
   id: string;
   username: string;
   name: string;
+  email?: string | null;
 }
 
 export interface AuthResponse {
@@ -22,4 +23,13 @@ export interface MeResponse extends User {
     userB: PairUser;
   };
   partner?: PairUser;
+}
+
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface ResetPasswordDto {
+  token: string;
+  newPassword: string;
 }

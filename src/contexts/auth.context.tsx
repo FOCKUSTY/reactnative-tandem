@@ -27,12 +27,14 @@ interface AuthContextType {
     username: string,
     password: string,
     name: string,
+    email: string,
   ) => Promise<{ success: boolean; message?: string }>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
   updateProfile: (data: {
     name?: string;
     username?: string;
+    email?: string;
   }) => Promise<{ success: boolean; message?: string }>;
 }
 
@@ -82,13 +84,19 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const loadFromStorage = async () => {
-      const storedToken = await storage.getItem(".auth_token");
-      const storedUser = await storage.getItem(".auth_user");
+      const storedToken = await storage.getItem(STORAGE_KEYS.AUTH_TOKEN);
+      const storedUser = await storage.getItem(STORAGE_KEYS.AUTH_USER);
+      const storedMe = await storage.getItem(STORAGE_KEYS.AUTH_ME);
 
       if (storedToken && storedUser) {
         setToken(storedToken);
         const parsedUser = JSON.parse(storedUser);
         setUser(parsedUser);
+        if (storedMe) {
+          try {
+            setMe(JSON.parse(storedMe));
+          } catch {}
+        }
         setIsLoading(false);
         await fetchMe();
       } else {
@@ -99,12 +107,21 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     loadFromStorage();
   }, []);
 
+  useEffect(() => {
+    if (!me) return;
+    storage.setItem(STORAGE_KEYS.AUTH_ME, JSON.stringify(me)).catch((e) => {
+      void logger.warn("Failed to persist me", {
+        error: e instanceof Error ? e.message : String(e),
+      });
+    });
+  }, [me]);
+
   const login = async (username: string, password: string) => {
     try {
       const response = await authService.login(username, password);
       const { token, user } = response.data;
-      await storage.setItem(".auth_token", token);
-      await storage.setItem(".auth_user", JSON.stringify(user));
+      await storage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+      await storage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
       setToken(token);
       setUser(user);
       await fetchMe();
@@ -117,8 +134,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   const logout = async () => {
     await notificationService.cancelAll();
-    await storage.deleteItem(".auth_token");
-    await storage.deleteItem(".auth_user");
+    await storage.deleteItem(STORAGE_KEYS.AUTH_TOKEN);
+    await storage.deleteItem(STORAGE_KEYS.AUTH_USER);
+    await storage.deleteItem(STORAGE_KEYS.AUTH_ME);
     await storage.deleteItem(STORAGE_KEYS.PUSH_TOKEN);
     setToken(null);
     setUser(null);
@@ -128,7 +146,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     await pushService.unregisterDevice(deviceId);
   };
 
-  const updateProfile = async (data: { name?: string; username?: string }) => {
+  const updateProfile = async (data: {
+    name?: string;
+    username?: string;
+    email?: string;
+  }) => {
     try {
       const response = await usersService.updateMe(data);
       const meData = response.data;
@@ -137,13 +159,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         id: meData.id,
         username: meData.username,
         name: meData.name,
+        email: meData.email,
       });
       await storage.setItem(
-        ".auth_user",
+        STORAGE_KEYS.AUTH_USER,
         JSON.stringify({
           id: meData.id,
           username: meData.username,
           name: meData.name,
+          email: meData.email,
         }),
       );
       return { success: true };
@@ -153,12 +177,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const register = async (username: string, password: string, name: string) => {
+  const register = async (
+    username: string,
+    password: string,
+    name: string,
+    email: string,
+  ) => {
     try {
-      const response = await authService.register(username, password, name);
+      const response = await authService.register(
+        username,
+        password,
+        name,
+        email,
+      );
       const { token, user } = response.data;
-      await storage.setItem(".auth_token", token);
-      await storage.setItem(".auth_user", JSON.stringify(user));
+      await storage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
+      await storage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
       setToken(token);
       setUser(user);
       await fetchMe();

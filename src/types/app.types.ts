@@ -4,6 +4,8 @@ import { Table } from "./table.types";
 
 export type RootStackParameters = {
   Login: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { token?: string };
   Main: undefined;
   Filters: undefined;
   Sections: undefined;

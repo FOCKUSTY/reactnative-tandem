@@ -33,7 +33,6 @@ yarn-error.*
 # local env files
 .env
 .env*.local
-google-services.json
 keystore_base64.txt
 service-key.json
 
@@ -45,3 +44,4 @@ service-key.json
 /android
 backup/
 
+!google-services.json

@@ -18,6 +18,8 @@ export const EditProfileScreen = () => {
     setName,
     username,
     setUsername,
+    email,
+    setEmail,
     loading,
     handleSaveProfile,
     currentPassword,
@@ -53,6 +55,19 @@ export const EditProfileScreen = () => {
             value={username}
             onChangeText={setUsername}
             autoCapitalize="none"
+          />
+        </View>
+        <View style={styles.field}>
+          <Text style={styles.label}>{t("auth.email")}</Text>
+          <TextInput
+            style={styles.input}
+            placeholder={t("auth.email")}
+            placeholderTextColor={colors.textMuted}
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+            autoCapitalize="none"
+            autoCorrect={false}
           />
         </View>
         <TouchableOpacity

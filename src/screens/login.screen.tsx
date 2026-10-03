@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { LoginForm, RegisterForm, SkeletonLogin } from "../components";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useLogin, useRegister } from "../hooks";
+import type { NavigationProperty } from "../types";
 
 type Mode = "login" | "register";
 
@@ -12,6 +14,7 @@ export const LoginScreen = () => {
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const [mode, setMode] = useState<Mode>("login");
+  const navigation = useNavigation<NavigationProperty>();
 
   const login = useLogin();
   const register = useRegister();
@@ -31,6 +34,7 @@ export const LoginScreen = () => {
           loading={login.loading}
           onSubmit={login.handleLogin}
           onSwitchToRegister={() => setMode("register")}
+          onForgotPassword={() => navigation.navigate("ForgotPassword")}
         />
       ) : (
         <RegisterForm
@@ -38,6 +42,8 @@ export const LoginScreen = () => {
           setUsername={register.setUsername}
           name={register.name}
           setName={register.setName}
+          email={register.email}
+          setEmail={register.setEmail}
           password={register.password}
           setPassword={register.setPassword}
           confirmPassword={register.confirmPassword}

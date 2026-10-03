@@ -195,6 +195,7 @@
     "registerTitle": "Create account",
     "username": "Username",
     "name": "Your name",
+    "email": "Email",
     "password": "Password",
     "confirmPassword": "Confirm password",
     "login": "Sign in",
@@ -203,6 +204,17 @@
     "registerLoading": "Signing up...",
     "noAccount": "No account yet?",
     "haveAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?",
+    "forgotTitle": "Reset password",
+    "forgotDescription": "Enter the email you used to sign up and we'll send you a reset link.",
+    "forgotSubmit": "Send email",
+    "forgotSuccess": "If this email is registered, a reset email has been sent",
+    "resetTitle": "New password",
+    "resetNewPassword": "New password",
+    "resetConfirmPassword": "Confirm password",
+    "resetSubmit": "Save password",
+    "resetSuccess": "Password successfully reset",
+    "resetTokenMissing": "Reset token is missing",
     "errors": {
       "usernameRequired": "Enter username",
       "nameRequired": "Enter your name",
@@ -211,7 +223,13 @@
       "passwordMismatch": "Passwords do not match",
       "invalidCredentials": "Invalid credentials",
       "registerFailed": "Failed to register",
-      "usernameTaken": "This username is already taken"
+      "usernameTaken": "This username is already taken",
+      "emailRequired": "Enter email",
+      "emailInvalid": "Invalid email",
+      "emailTaken": "This email is already in use",
+      "forgotFailed": "Failed to send email",
+      "resetFailed": "Failed to reset password",
+      "resetTokenInvalid": "Invalid or expired token"
     }
   },
   "home": {

@@ -11,6 +11,7 @@ export const useRegister = () => {
     initialValues: {
       username: "",
       name: "",
+      email: "",
       password: "",
       confirmPassword: "",
     },
@@ -19,6 +20,9 @@ export const useRegister = () => {
       if (!values.username.trim())
         errors.username = t("auth.errors.usernameRequired");
       if (!values.name.trim()) errors.name = t("auth.errors.nameRequired");
+      if (!values.email.trim()) errors.email = t("auth.errors.emailRequired");
+      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(values.email.trim()))
+        errors.email = t("auth.errors.emailInvalid");
       if (!values.password.trim())
         errors.password = t("auth.errors.passwordRequired");
       else if (values.password.length < 6)
@@ -32,6 +36,7 @@ export const useRegister = () => {
         values.username.trim(),
         values.password,
         values.name.trim(),
+        values.email.trim().toLowerCase(),
       );
       if (!result.success) {
         Alert.alert(
@@ -48,6 +53,8 @@ export const useRegister = () => {
     setUsername: (text: string) => form.setFieldValue("username", text),
     name: form.values.name,
     setName: (text: string) => form.setFieldValue("name", text),
+    email: form.values.email,
+    setEmail: (text: string) => form.setFieldValue("email", text),
     password: form.values.password,
     setPassword: (text: string) => form.setFieldValue("password", text),
     confirmPassword: form.values.confirmPassword,

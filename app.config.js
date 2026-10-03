@@ -27,6 +27,16 @@ export default {
               host: "tandem-links.vercel.app",
               pathPrefix: "/table",
             },
+            {
+              scheme: "https",
+              host: "tandem-links.vercel.app",
+              pathPrefix: "/section",
+            },
+            {
+              scheme: "https",
+              host: "tandem-links.vercel.app",
+              pathPrefix: "/reset-password",
+            },
           ],
           category: ["BROWSABLE", "DEFAULT"],
         },
@@ -38,7 +48,7 @@ export default {
         monochromeImage: "./assets/android-icon-monochrome.png",
       },
       predictiveBackGestureEnabled: false,
-      googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
+      googleServicesFile: "./google-services.json",
       package: "com.fockusty.tandem",
       permissions: [
         "android.permission.READ_EXTERNAL_STORAGE",

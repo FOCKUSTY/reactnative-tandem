@@ -12,6 +12,7 @@ export const useEditProfile = () => {
 
   const [name, setName] = useState(user?.name ?? "");
   const [username, setUsername] = useState(user?.username ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [loading, setLoading] = useState(false);
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -22,6 +23,7 @@ export const useEditProfile = () => {
   const handleSaveProfile = async () => {
     const trimmedName = name.trim();
     const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim().toLowerCase();
 
     if (!trimmedName) {
       Alert.alert(t("common.error"), t("auth.errors.nameRequired"));
@@ -31,18 +33,29 @@ export const useEditProfile = () => {
       Alert.alert(t("common.error"), t("auth.errors.usernameRequired"));
       return;
     }
+    if (!trimmedEmail) {
+      Alert.alert(t("common.error"), t("auth.errors.emailRequired"));
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      Alert.alert(t("common.error"), t("auth.errors.emailInvalid"));
+      return;
+    }
 
     const hasChanges =
-      trimmedName !== user?.name || trimmedUsername !== user?.username;
+      trimmedName !== user?.name ||
+      trimmedUsername !== user?.username ||
+      trimmedEmail !== user?.email;
     if (!hasChanges) {
       Alert.alert(t("common.error"), t("profile.noChanges"));
       return;
     }
 
     setLoading(true);
-    const payload: { name?: string; username?: string } = {};
+    const payload: { name?: string; username?: string; email?: string } = {};
     if (trimmedName !== user?.name) payload.name = trimmedName;
     if (trimmedUsername !== user?.username) payload.username = trimmedUsername;
+    if (trimmedEmail !== user?.email) payload.email = trimmedEmail;
 
     const result = await updateProfile(payload);
     setLoading(false);
@@ -97,6 +110,8 @@ export const useEditProfile = () => {
     setName,
     username,
     setUsername,
+    email,
+    setEmail,
     loading,
     handleSaveProfile,
 

@@ -46,9 +46,9 @@ export const HomeScreen = () => {
         >
           <TouchableOpacity
             onPress={() => {
-              queryClient.invalidateQueries({
-                queryKey: [["records"], ["sections"], ["starred"]],
-              });
+              queryClient.invalidateQueries({ queryKey: ["records"] });
+              queryClient.invalidateQueries({ queryKey: ["sections"] });
+              queryClient.invalidateQueries({ queryKey: ["starred"] });
             }}
           >
             <MaterialIcons name="refresh" size={24} color={colors.primary} />
@@ -60,7 +60,7 @@ export const HomeScreen = () => {
         </View>
       ),
     });
-  }, []);
+  }, [navigation, colors.primary, queryClient]);
 
   const upcomingDates = getFilteredRecords(allRecords, {
     onlyFuture: true,

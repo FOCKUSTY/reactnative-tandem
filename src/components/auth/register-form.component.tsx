@@ -8,12 +8,14 @@ export type RegisterFormProperties = {
   setUsername: (text: string) => void;
   name: string;
   setName: (text: string) => void;
+  email: string;
+  setEmail: (text: string) => void;
   password: string;
   setPassword: (text: string) => void;
   confirmPassword: string;
   setConfirmPassword: (text: string) => void;
   loading: boolean;
-  errors?: Partial<Record<"username" | "name" | "password", string>>;
+  errors?: Partial<Record<"username" | "name" | "email" | "password", string>>;
   onSubmit: () => void;
   onSwitchToLogin?: () => void;
 };
@@ -23,6 +25,8 @@ export const RegisterForm = ({
   setUsername,
   name,
   setName,
+  email,
+  setEmail,
   password,
   setPassword,
   confirmPassword,
@@ -59,6 +63,17 @@ export const RegisterForm = ({
         onChangeText={setName}
       />
       {errors?.name && <Text style={styles.errorText}>{errors.name}</Text>}
+      <TextInput
+        style={[styles.input, errors?.email && styles.inputError]}
+        placeholder={t("auth.email")}
+        placeholderTextColor={colors.textMuted}
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+      {errors?.email && <Text style={styles.errorText}>{errors.email}</Text>}
       <TextInput
         style={[styles.input, errors?.password && styles.inputError]}
         placeholder={t("auth.password")}

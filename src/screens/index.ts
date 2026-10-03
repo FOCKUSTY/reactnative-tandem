@@ -17,3 +17,5 @@ export * from "./table-detail.screen";
 export * from "./create-table.screen";
 export * from "./cell.screen";
 export * from "./edit-profile.screen";
+export * from "./forgot-password.screen";
+export * from "./reset-password.screen";
