@@ -215,6 +215,20 @@
     "resetSubmit": "Save password",
     "resetSuccess": "Password successfully reset",
     "resetTokenMissing": "Reset token is missing",
+    "remember": {
+      "title": "Remember this device",
+      "days30": "30 days",
+      "days60": "60 days",
+      "days90": "90 days",
+      "days120": "120 days",
+      "forever": "Forever"
+    },
+    "sessionExpired": {
+      "title": "Session expired",
+      "message": "Please sign in again.",
+      "reusedTitle": "Session revoked",
+      "reusedMessage": "The refresh token was reused. All sessions were revoked for security — please sign in again."
+    },
     "errors": {
       "usernameRequired": "Enter username",
       "nameRequired": "Enter your name",
@@ -230,6 +244,25 @@
       "forgotFailed": "Failed to send email",
       "resetFailed": "Failed to reset password",
       "resetTokenInvalid": "Invalid or expired token"
+    }
+  },
+  "sessions": {
+    "title": "Active sessions",
+    "current": "This device",
+    "lastUsed": "Last active",
+    "expires": "Expires",
+    "forever": "never",
+    "revoke": "Revoke",
+    "logoutAll": "Log out everywhere",
+    "empty": "No other active sessions",
+    "unknownDevice": "Unknown device",
+    "revokeConfirm": {
+      "title": "Revoke session?",
+      "message": "This device will have to sign in again."
+    },
+    "logoutAllConfirm": {
+      "title": "Log out everywhere?",
+      "message": "All sessions, including this one, will be revoked."
     }
   },
   "home": {

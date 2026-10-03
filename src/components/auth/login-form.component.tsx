@@ -2,12 +2,20 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
+import {
+  REMEMBER_LABEL_KEYS,
+  REMEMBER_OPTIONS,
+  type RememberOption,
+} from "../../constants";
+import { RadioGroup } from "../common";
 
 export type LoginFormProperties = {
   username: string;
   setUsername: (text: string) => void;
   password: string;
   setPassword: (text: string) => void;
+  remember: RememberOption;
+  setRemember: (value: RememberOption) => void;
   errors?: Partial<Record<"username" | "password", string>>;
   loading: boolean;
   onSubmit: () => void;
@@ -20,6 +28,8 @@ export const LoginForm = ({
   setUsername,
   password,
   setPassword,
+  remember,
+  setRemember,
   loading,
   onSubmit,
   onSwitchToRegister,
@@ -56,6 +66,17 @@ export const LoginForm = ({
       {errors?.password && (
         <Text style={styles.errorText}>{errors.password}</Text>
       )}
+
+      <RadioGroup
+        title={t("auth.remember.title")}
+        options={REMEMBER_OPTIONS.map((value) => ({
+          value,
+          label: t(REMEMBER_LABEL_KEYS[value]),
+        }))}
+        selected={remember}
+        onSelect={setRemember}
+      />
+
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={onSubmit}

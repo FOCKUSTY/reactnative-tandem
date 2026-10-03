@@ -27,6 +27,11 @@ export const ProfileSection = ({ user }: ProfileSectionProps) => {
           onPress={() => navigation.navigate("EditProfile")}
           rightElement={<Text style={styles.valueText}>{user?.username}</Text>}
         />
+        <SettingsItem
+          icon="devices"
+          label={t("sessions.title")}
+          onPress={() => navigation.navigate("Sessions")}
+        />
       </View>
     </View>
   );

@@ -2,6 +2,11 @@ import { useForm } from "../use-form.hook";
 import { useAuth } from "../../contexts";
 import { Alert } from "react-native";
 import { useTranslate } from "../i18n";
+import {
+  DEFAULT_REMEMBER_OPTION,
+  toRememberChoice,
+  type RememberOption,
+} from "../../constants";
 
 export const useRegister = () => {
   const { t } = useTranslate();
@@ -14,6 +19,7 @@ export const useRegister = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      remember: DEFAULT_REMEMBER_OPTION as RememberOption,
     },
     validate: (values) => {
       const errors: any = {};
@@ -37,6 +43,7 @@ export const useRegister = () => {
         values.password,
         values.name.trim(),
         values.email.trim().toLowerCase(),
+        toRememberChoice(values.remember),
       );
       if (!result.success) {
         Alert.alert(
@@ -60,6 +67,9 @@ export const useRegister = () => {
     confirmPassword: form.values.confirmPassword,
     setConfirmPassword: (text: string) =>
       form.setFieldValue("confirmPassword", text),
+    remember: form.values.remember,
+    setRemember: (value: RememberOption) =>
+      form.setFieldValue("remember", value),
     errors: form.errors,
     loading: form.isSubmitting,
     handleRegister: form.handleSubmit,

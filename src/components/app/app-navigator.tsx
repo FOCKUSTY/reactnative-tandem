@@ -22,6 +22,7 @@ import {
   TableDetailScreen,
   CellScreen,
   EditProfileScreen,
+  SessionsScreen,
   ForgotPasswordScreen,
   ResetPasswordScreen,
 } from "../../screens";
@@ -69,6 +70,11 @@ export const AppNavigator = () => {
             name="EditProfile"
             component={EditProfileScreen}
             options={{ title: t("profile.title") }}
+          />
+          <Stack.Screen
+            name="Sessions"
+            component={SessionsScreen}
+            options={{ title: t("sessions.title") }}
           />
           <Stack.Screen
             name="Tables"

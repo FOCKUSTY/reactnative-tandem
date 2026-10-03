@@ -1,14 +1,158 @@
-import axios from "axios";
-import { storage } from "../utils";
-import { API_BASE, OFFLINE_CONFIG } from "../constants";
-import { logger } from "../utils/logger.utils";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Toast from "react-native-toast-message";
+
+import type { AuthResponse } from "../types";
+import { API_BASE, OFFLINE_CONFIG } from "../constants";
+import { authEvents, getDeviceMetadata, logger, tokenManager } from "../utils";
+import type { AuthEventReason } from "../utils/auth-events.utils";
+
+/**
+ * Обновление токенов.
+ *
+ * Access-токен живёт час, поэтому 401 с `code: "INVALID_ACCESS_TOKEN"` — это не
+ * «выйди из аккаунта», а «сходи за новой парой на `/auth/refresh`». Refresh-токен
+ * при этом одноразовый: два параллельных обновления одним и тем же токеном
+ * бэкенд считает переиспользованием и отзывает сессию целиком. Отсюда
+ * single-flight ниже — на всё приложение одновременно живёт ровно один запрос
+ * обновления, остальные ждут его результат.
+ */
+
+const REFRESH_MARGIN_MS = 60_000;
+
+/** Код, которым сервер помечает именно протухший access-токен. */
+const ACCESS_TOKEN_INVALID = "INVALID_ACCESS_TOKEN";
+
+/** Эндпоинты, для которых 401 означает «неверные данные», а не «протух токен». */
+const NO_REFRESH_ENDPOINTS = new Set([
+  "/auth/login",
+  "/auth/register",
+  "/auth/refresh",
+  "/auth/logout",
+]);
+
+type RetriableRequestConfig = InternalAxiosRequestConfig & {
+  _retry?: boolean;
+};
+
+type TimeoutAwareError = AxiosError & { isTimeout?: boolean };
 
 const api = axios.create({
   baseURL: API_BASE,
   headers: { "Content-Type": "application/json" },
   timeout: OFFLINE_CONFIG.API_TIMEOUT,
 });
+
+/** Путь запроса без origin и query: `/auth/login`, `/auth/sessions/42` и т.п. */
+const endpointOf = (url?: string): string => {
+  if (!url) return "";
+  const withoutOrigin = url.startsWith(API_BASE)
+    ? url.slice(API_BASE.length)
+    : url;
+  return withoutOrigin.split("?")[0];
+};
+
+const isNoRefreshEndpoint = (url?: string): boolean =>
+  NO_REFRESH_ENDPOINTS.has(endpointOf(url));
+
+/** Код ошибки из тела ответа — по нему различаем «протух access» и всё прочее. */
+const errorCodeOf = (error: AxiosError): string | undefined =>
+  (error.response?.data as { code?: string } | undefined)?.code;
+
+/**
+ * Почему сервер не принял refresh-токен. `null` — это не отказ по токену
+ * (сеть, 5xx), и разлогинивать в таком случае нельзя.
+ */
+const refreshFailureReason = (error: unknown): AuthEventReason | null => {
+  if (!axios.isAxiosError(error)) return null;
+  if (error.response?.status !== 401) return null;
+
+  return errorCodeOf(error) === "REFRESH_TOKEN_REUSED"
+    ? "refreshTokenReused"
+    : "invalidRefreshToken";
+};
+
+let refreshPromise: Promise<string> | null = null;
+
+/**
+ * Обновление не удалось по вине токена: сессия мертва, событие `expired` уже
+ * отправлено. Такую ошибку нельзя «замаскировать» повторным запросом со старым
+ * access-токеном — иначе сервер ответит ещё одним 401 и пользователь получит
+ * второй такой же тост.
+ */
+class SessionExpiredError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "SessionExpiredError";
+  }
+}
+
+/**
+ * Меняет refresh-токен на новую пару и сохраняет её. Один вызов на всех
+ * ожидающих: параллельные обращения получают тот же промис.
+ */
+const refreshAccessToken = async (): Promise<string> => {
+  if (refreshPromise) return refreshPromise;
+
+  refreshPromise = (async () => {
+    const session = await tokenManager.getSession();
+    const refreshToken = session?.refreshToken;
+    if (!refreshToken) {
+      authEvents.emit("expired", { reason: "noRefreshToken" });
+      throw new SessionExpiredError("Нет сохранённого refresh-токена");
+    }
+
+    const metadata = await getDeviceMetadata();
+
+    let response;
+    try {
+      // Отдельный запрос в обход этого инстанса: иначе интерцепторы
+      // рекурсивно пытались бы обновить токен для самого обновления.
+      response = await axios.post<AuthResponse>(
+        `${API_BASE}/auth/refresh`,
+        { refreshToken, ...metadata },
+        {
+          headers: { "Content-Type": "application/json" },
+          timeout: OFFLINE_CONFIG.API_TIMEOUT,
+        },
+      );
+    } catch (error) {
+      const reason = refreshFailureReason(error);
+      if (reason) {
+        // Сервер отверг refresh-токен: локально сессии тоже больше нет.
+        await tokenManager.clear();
+        authEvents.emit("expired", { reason });
+        throw new SessionExpiredError("Сервер отверг refresh-токен");
+      }
+      // Сеть или 5xx — не повод разлогинивать.
+      throw error;
+    }
+
+    // Ротация: старый refresh-токен уже недействителен, хранить нужно новый.
+    // Но пока запрос шёл, сессия могла смениться — выход, повторный вход или
+    // смена пароля. Тогда в хранилище лежит пара новее нашей, и затирать её
+    // нельзя: иначе пользователь останется с токенами уже отозванной сессии
+    // и вылетит при первом же запросе.
+    const current = await tokenManager.getSession();
+    if (!current) {
+      throw new SessionExpiredError("Сессия завершилась во время обновления");
+    }
+    if (current.refreshToken !== refreshToken) {
+      return current.accessToken;
+    }
+
+    const next = await tokenManager.persist(response.data);
+    // Пара токенов сменилась не по инициативе контекста — сообщаем ему, чтобы
+    // состояние в приложении не разъехалось с хранилищем.
+    authEvents.emit("refreshed");
+    return next.accessToken;
+  })();
+
+  try {
+    return await refreshPromise;
+  } finally {
+    refreshPromise = null;
+  }
+};
 
 api.interceptors.request.use(async (config) => {
   if (__DEV__) {
@@ -17,10 +161,29 @@ api.interceptors.request.use(async (config) => {
       method: config.method,
     });
   }
-  const token = await storage.getItem(".auth_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+
+  if (isNoRefreshEndpoint(config.url)) return config;
+
+  const session = await tokenManager.getSession();
+  if (!session) return config;
+
+  const timeLeft = tokenManager.accessTokenTimeLeft(session);
+  if (timeLeft !== null && timeLeft < REFRESH_MARGIN_MS) {
+    try {
+      const accessToken = await refreshAccessToken();
+      config.headers.Authorization = `Bearer ${accessToken}`;
+      return config;
+    } catch (error) {
+      if (error instanceof SessionExpiredError) {
+        // Сессия умерла: отправлять запрос со старым токеном бессмысленно.
+        return Promise.reject(error);
+      }
+      // Сеть или 5xx — отправляем как есть, дальше разберётся
+      // response-интерцептор (или пользователь увидит ошибку сети).
+    }
   }
+
+  config.headers.Authorization = `Bearer ${session.accessToken}`;
   return config;
 });
 
@@ -36,9 +199,47 @@ api.interceptors.response.use(
 
     return response;
   },
-  (error) => {
-    if (error.code === "ECONNABORTED" && error.message.includes("timeout")) {
-      error.isTimeout = true;
+  async (error: AxiosError) => {
+    const apiError = error as TimeoutAwareError;
+    const config = error.config as RetriableRequestConfig | undefined;
+
+    const code = errorCodeOf(error);
+    const shouldRefresh =
+      error.response?.status === 401 &&
+      !!config &&
+      !config._retry &&
+      !isNoRefreshEndpoint(config.url) &&
+      // Обновляемся только по «протух access-токен». Если сервер назвал другую
+      // причину (например, проблемы с самим refresh-токеном), обновление лишь
+      // добьёт сессию reuse-детекцией. 401 без кода — это запрос без заголовка
+      // Authorization; такой случай отсекает проверка ниже.
+      (code === undefined || code === ACCESS_TOKEN_INVALID);
+
+    if (shouldRefresh && config) {
+      const session = await tokenManager.getSession();
+      if (session?.refreshToken) {
+        config._retry = true; // повторяем такой запрос только один раз
+        try {
+          const accessToken = await refreshAccessToken();
+          config.headers.Authorization = `Bearer ${accessToken}`;
+          return await api.request(config);
+        } catch {
+          // Не получилось — падаем ниже, к обычной обработке ошибки: сессия
+          // могла умереть, а мог просто пропасть интернет.
+        }
+      } else if (config.headers?.Authorization) {
+        // Запрос уходил с заголовком, а refresh-токена в хранилище нет —
+        // сессию восстанавливать нечем. Без заголовка 401 означает просто
+        // «запрос без авторизации», и пугать пользователя тут нечем.
+        authEvents.emit("expired", { reason: "noRefreshToken" });
+      }
+    }
+
+    if (
+      apiError.code === "ECONNABORTED" &&
+      apiError.message.includes("timeout")
+    ) {
+      apiError.isTimeout = true;
 
       Toast.show({
         type: "error",
@@ -50,12 +251,12 @@ api.interceptors.response.use(
     }
 
     void logger.error("Axios Interceptor Error", {
-      message: error.message,
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      response: error.response?.data,
-      isTimeout: error.isTimeout,
+      message: apiError.message,
+      url: config?.url,
+      method: config?.method,
+      status: apiError.response?.status,
+      response: apiError.response?.data,
+      isTimeout: apiError.isTimeout,
     });
 
     return Promise.reject(error);

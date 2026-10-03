@@ -21,6 +21,7 @@ export type RootStackParameters = {
   Pin: undefined;
   Starred: undefined;
   EditProfile: undefined;
+  Sessions: undefined;
   Tables: undefined;
   TableDetail: { tableId: string; tableName: string };
   CreateTable: { sectionId?: string; table?: Table };

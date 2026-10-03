@@ -48,10 +48,10 @@ export const registerForPushNotifications = async (userId: string) => {
 };
 
 export const usePushNotifications = () => {
-  const { user, token } = useAuth();
+  const { user, isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!user || !token) return;
+    if (!user || !isAuthenticated) return;
 
     let cancelled = false;
 
@@ -126,5 +126,5 @@ export const usePushNotifications = () => {
       cancelled = true;
       subscription.remove();
     };
-  }, [user?.id, token]); // 👈 зависим от id и токена — сработает и на login, и на register
+  }, [user?.id, isAuthenticated]); // 👈 зависим от id и наличия сессии — сработает и на login, и на register
 };

@@ -3,12 +3,12 @@ import { Alert } from "react-native";
 
 import { useAuth } from "../../contexts";
 import { usersService } from "../../api";
-import { handleApiError } from "../../utils";
+import { getDeviceMetadata, handleApiError } from "../../utils";
 import { useTranslate } from "../i18n";
 
 export const useEditProfile = () => {
   const { t } = useTranslate();
-  const { user, updateProfile } = useAuth();
+  const { user, updateProfile, replaceSession } = useAuth();
 
   const [name, setName] = useState(user?.name ?? "");
   const [username, setUsername] = useState(user?.username ?? "");
@@ -89,7 +89,15 @@ export const useEditProfile = () => {
 
     setPasswordLoading(true);
     try {
-      await usersService.changePassword({ currentPassword, newPassword });
+      const response = await usersService.changePassword({
+        currentPassword,
+        newPassword,
+        ...(await getDeviceMetadata()),
+      });
+      // Смена пароля отзывает все сессии и выдаёт новую пару для текущего
+      // устройства: без сохранения здесь мы остались бы со старым (уже
+      // отозванным) refresh-токеном и вылетели при первом обновлении.
+      await replaceSession(response.data);
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");

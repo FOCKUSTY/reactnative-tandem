@@ -31,6 +31,8 @@ export const LoginScreen = () => {
           setUsername={login.setUsername}
           password={login.password}
           setPassword={login.setPassword}
+          remember={login.remember}
+          setRemember={login.setRemember}
           loading={login.loading}
           onSubmit={login.handleLogin}
           onSwitchToRegister={() => setMode("register")}
@@ -48,6 +50,8 @@ export const LoginScreen = () => {
           setPassword={register.setPassword}
           confirmPassword={register.confirmPassword}
           setConfirmPassword={register.setConfirmPassword}
+          remember={register.remember}
+          setRemember={register.setRemember}
           loading={register.loading}
           onSubmit={register.handleRegister}
           onSwitchToLogin={() => setMode("login")}

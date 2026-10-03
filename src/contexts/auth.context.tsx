@@ -1,41 +1,69 @@
 import React, {
   createContext,
-  useState,
+  useCallback,
   useContext,
   useEffect,
+  useRef,
+  useState,
   ReactNode,
 } from "react";
-import { storage, getDeviceId, handleApiError, logger } from "../utils";
+import Toast from "react-native-toast-message";
+
 import { authService } from "../api/services/auth.service";
 import { usersService } from "../api/services/users.service";
-import { MeResponse, User } from "../types";
-import Toast from "react-native-toast-message";
 import { pushService } from "../api";
 import { notificationService } from "../services/notification.service";
 import { STORAGE_KEYS } from "../constants";
+import {
+  authEvents,
+  getDeviceId,
+  getDeviceMetadata,
+  handleApiError,
+  logger,
+  storage,
+  tokenManager,
+} from "../utils";
+import type {
+  AuthResponse,
+  AuthSession,
+  MeResponse,
+  RememberChoice,
+  User,
+} from "../types";
+import { useTranslate } from "../hooks/i18n/use-translation.hook";
+
+type AuthResult = { success: boolean; message?: string };
 
 interface AuthContextType {
   user: User | null;
   me: MeResponse | null;
-  token: string | null;
+  session: AuthSession | null;
+  accessToken: string | null;
+  refreshToken: string | null;
+  sessionId: string | null;
+  isAuthenticated: boolean;
   isLoading: boolean;
   login: (
     username: string,
     password: string,
-  ) => Promise<{ success: boolean; message?: string }>;
+    remember?: RememberChoice,
+  ) => Promise<AuthResult>;
   register: (
     username: string,
     password: string,
     name: string,
     email: string,
-  ) => Promise<{ success: boolean; message?: string }>;
+    remember?: RememberChoice,
+  ) => Promise<AuthResult>;
   logout: () => Promise<void>;
   refreshMe: () => Promise<void>;
+  /** Сохранить пару токенов, выданную вне login/register (смена пароля). */
+  replaceSession: (auth: AuthResponse) => Promise<void>;
   updateProfile: (data: {
     name?: string;
     username?: string;
     email?: string;
-  }) => Promise<{ success: boolean; message?: string }>;
+  }) => Promise<AuthResult>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -43,10 +71,18 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const { t } = useTranslate();
   const [user, setUser] = useState<User | null>(null);
   const [me, setMe] = useState<MeResponse | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Слушатель событий подписывается один раз, а перевод нужен ему всегда
+  // актуальный — держим последний `t` в ref.
+  const translateRef = useRef(t);
+  useEffect(() => {
+    translateRef.current = t;
+  }, [t]);
 
   const fetchMe = async (): Promise<MeResponse | null> => {
     try {
@@ -63,45 +99,112 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       return meData;
     } catch (error) {
       const apiError = handleApiError(error);
-      if (apiError.status === 401) {
-        await logout();
-        Toast.show({
-          type: "error",
-          text1: "Сессия истекла",
-          text2: "Пожалуйста, войдите снова.",
-          position: "bottom",
-          visibilityTime: 4000,
-        });
-      } else {
-        void logger.warn("Background fetchMe error", {
-          message: apiError.message,
-          status: apiError.status,
-        });
-      }
+      // 401 (протух access или мёртвый refresh) разбирает интерцептор, а
+      // разлогином занимается подписка на authEvents — второй раз здесь
+      // вызывать logout() нельзя.
+      void logger.warn("Background fetchMe error", {
+        message: apiError.message,
+        status: apiError.status,
+      });
       return null;
     }
   };
 
+  /** Стирает сессию и локальные данные пользователя, не трогая сервер. */
+  const clearLocalSession = useCallback(async () => {
+    await tokenManager.clear();
+    await tokenManager.clearLegacyKeys();
+    await Promise.all([
+      storage.deleteItem(STORAGE_KEYS.AUTH_USER),
+      storage.deleteItem(STORAGE_KEYS.AUTH_ME),
+      storage.deleteItem(STORAGE_KEYS.PUSH_TOKEN),
+    ]);
+    setSession(null);
+    setUser(null);
+    setMe(null);
+  }, []);
+
+  /** Сохраняет выданную пару токенов и подтягивает профиль. */
+  const applyAuthResponse = async (auth: AuthResponse) => {
+    const next = await tokenManager.persist(auth);
+    await storage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(auth.user));
+    setSession(next);
+    setUser(auth.user);
+    await fetchMe();
+  };
+
+  /** Держит состояние контекста в согласии с хранилищем после ротации токенов. */
+  const syncSessionFromStorage = useCallback(async () => {
+    const stored = await tokenManager.getSession();
+    if (stored) setSession(stored);
+  }, []);
+
+  // Подписка объявлена раньше бутстрапа: событие «сессия истекла» может
+  // прилететь уже во время первого fetchMe().
+  useEffect(() => {
+    return authEvents.subscribe((event, payload) => {
+      // Токены обновились сами по себе (например, истёк access) — пользователя
+      // это не касается, но sessionId и токены в контексте надо освежить.
+      if (event === "refreshed") {
+        void syncSessionFromStorage();
+        return;
+      }
+
+      void clearLocalSession();
+
+      if (event !== "expired") return;
+
+      const reused = payload.reason === "refreshTokenReused";
+      Toast.show({
+        type: "error",
+        text1: translateRef.current(
+          reused
+            ? "auth.sessionExpired.reusedTitle"
+            : "auth.sessionExpired.title",
+        ),
+        text2: translateRef.current(
+          reused
+            ? "auth.sessionExpired.reusedMessage"
+            : "auth.sessionExpired.message",
+        ),
+        position: "bottom",
+        visibilityTime: 4000,
+      });
+    });
+  }, [clearLocalSession, syncSessionFromStorage]);
+
   useEffect(() => {
     const loadFromStorage = async () => {
-      const storedToken = await storage.getItem(STORAGE_KEYS.AUTH_TOKEN);
-      const storedUser = await storage.getItem(STORAGE_KEYS.AUTH_USER);
-      const storedMe = await storage.getItem(STORAGE_KEYS.AUTH_ME);
+      // Ключ `.auth_token` от версий с одним токеном больше не используется.
+      await tokenManager.clearLegacyKeys();
 
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        const parsedUser = JSON.parse(storedUser);
-        setUser(parsedUser);
-        if (storedMe) {
-          try {
-            setMe(JSON.parse(storedMe));
-          } catch {}
-        }
+      const storedSession = await tokenManager.getSession();
+      if (!storedSession) {
         setIsLoading(false);
-        await fetchMe();
-      } else {
-        setIsLoading(false);
+        return;
       }
+
+      setSession(storedSession);
+
+      const storedUser = await storage.getItem(STORAGE_KEYS.AUTH_USER);
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch {}
+      }
+
+      const storedMe = await storage.getItem(STORAGE_KEYS.AUTH_ME);
+      if (storedMe) {
+        try {
+          setMe(JSON.parse(storedMe));
+        } catch {}
+      }
+
+      // Показываем приложение сразу, не дожидаясь сети: сохранённый access
+      // почти наверняка просрочен, но обновление делает request-интерцептор,
+      // и первый же запрос уходит уже с новой парой.
+      setIsLoading(false);
+      await fetchMe();
     };
 
     loadFromStorage();
@@ -116,15 +219,45 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     });
   }, [me]);
 
-  const login = async (username: string, password: string) => {
+  const login = async (
+    username: string,
+    password: string,
+    remember?: RememberChoice,
+  ): Promise<AuthResult> => {
     try {
-      const response = await authService.login(username, password);
-      const { token, user } = response.data;
-      await storage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-      await storage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
-      setToken(token);
-      setUser(user);
-      await fetchMe();
+      const device = await getDeviceMetadata();
+      const response = await authService.login(
+        username,
+        password,
+        remember,
+        device,
+      );
+      await applyAuthResponse(response.data);
+      return { success: true };
+    } catch (error) {
+      const apiError = handleApiError(error);
+      return { success: false, message: apiError.message };
+    }
+  };
+
+  const register = async (
+    username: string,
+    password: string,
+    name: string,
+    email: string,
+    remember?: RememberChoice,
+  ): Promise<AuthResult> => {
+    try {
+      const device = await getDeviceMetadata();
+      const response = await authService.register(
+        username,
+        password,
+        name,
+        email,
+        remember,
+        device,
+      );
+      await applyAuthResponse(response.data);
       return { success: true };
     } catch (error) {
       const apiError = handleApiError(error);
@@ -133,24 +266,48 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const logout = async () => {
-    await notificationService.cancelAll();
-    await storage.deleteItem(STORAGE_KEYS.AUTH_TOKEN);
-    await storage.deleteItem(STORAGE_KEYS.AUTH_USER);
-    await storage.deleteItem(STORAGE_KEYS.AUTH_ME);
-    await storage.deleteItem(STORAGE_KEYS.PUSH_TOKEN);
-    setToken(null);
-    setUser(null);
-    setMe(null);
+    // Отмена локальных напоминаний не должна мешать выходу.
+    try {
+      await notificationService.cancelAll();
+    } catch (error) {
+      void logger.warn("Failed to cancel notifications on logout", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
 
-    const deviceId = await getDeviceId();
-    await pushService.unregisterDevice(deviceId);
+    // Отвязываем push-токен, пока сессия ещё жива: после очистки хранилища
+    // запрос ушёл бы без заголовка Authorization и молча не сработал (это и
+    // был прежний баг порядка).
+    try {
+      const deviceId = await getDeviceId();
+      await pushService.unregisterDevice(deviceId);
+    } catch (error) {
+      void logger.warn("Failed to unregister device on logout", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    // Сессию на сервере отзываем последней: пока она жива, запрос мог
+    // обновить access-токен, а после отзыва это уже невозможно. Токен мог
+    // истечь сам — для пользователя это не ошибка, локально всё равно выходим.
+    try {
+      const refreshToken = await tokenManager.getRefreshToken();
+      if (refreshToken) await authService.logout(refreshToken);
+    } catch (error) {
+      void logger.warn("Failed to revoke session on logout", {
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    await clearLocalSession();
+    authEvents.emit("logout");
   };
 
   const updateProfile = async (data: {
     name?: string;
     username?: string;
     email?: string;
-  }) => {
+  }): Promise<AuthResult> => {
     try {
       const response = await usersService.updateMe(data);
       const meData = response.data;
@@ -177,34 +334,17 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     }
   };
 
-  const register = async (
-    username: string,
-    password: string,
-    name: string,
-    email: string,
-  ) => {
-    try {
-      const response = await authService.register(
-        username,
-        password,
-        name,
-        email,
-      );
-      const { token, user } = response.data;
-      await storage.setItem(STORAGE_KEYS.AUTH_TOKEN, token);
-      await storage.setItem(STORAGE_KEYS.AUTH_USER, JSON.stringify(user));
-      setToken(token);
-      setUser(user);
-      await fetchMe();
-      return { success: true };
-    } catch (error) {
-      const apiError = handleApiError(error);
-      return { success: false, message: apiError.message };
-    }
-  };
-
   const refreshMe = async () => {
     await fetchMe();
+  };
+
+  /**
+   * То же, что сохраняет login/register, но без похода за профилем: смена
+   * пароля профиль не меняет, а старые токены и sessionId в контексте держать
+   * нельзя — сервер их уже отозвал.
+   */
+  const replaceSession = async (auth: AuthResponse) => {
+    setSession(await tokenManager.persist(auth));
   };
 
   return (
@@ -212,11 +352,16 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       value={{
         user,
         me,
-        token,
+        session,
+        accessToken: session?.accessToken ?? null,
+        refreshToken: session?.refreshToken ?? null,
+        sessionId: session?.sessionId ?? null,
+        isAuthenticated: !!session,
         isLoading,
         login,
         logout,
         refreshMe,
+        replaceSession,
         register,
         updateProfile,
       }}

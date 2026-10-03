@@ -1,4 +1,8 @@
-import type { MeResponse } from "../../types";
+import type {
+  ChangePasswordResponse,
+  DeviceMetadata,
+  MeResponse,
+} from "../../types";
 import api from "../client";
 
 export const usersService = {
@@ -7,6 +11,13 @@ export const usersService = {
     api.post("/users/link", { partnerUsername }),
   updateMe: (data: { name?: string; username?: string; email?: string }) =>
     api.patch<MeResponse>("/users/me", data),
-  changePassword: (data: { currentPassword: string; newPassword: string }) =>
-    api.post("/users/me/password", data),
+
+  /**
+   * Смена пароля отзывает все сессии и возвращает новую пару токенов для
+   * текущего устройства — её обязательно нужно сохранить вместо старой.
+   * `remember` бэкенд здесь игнорирует: новая сессия всегда на 90 дней.
+   */
+  changePassword: (
+    data: { currentPassword: string; newPassword: string } & DeviceMetadata,
+  ) => api.post<ChangePasswordResponse>("/users/me/password", data),
 };
