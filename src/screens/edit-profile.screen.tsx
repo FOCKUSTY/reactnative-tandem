@@ -4,10 +4,12 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useEditProfile, useTranslate } from "../hooks";
+import { ModalWrapper } from "../components";
 
 export const EditProfileScreen = () => {
   const { colors } = useTheme();
@@ -30,6 +32,12 @@ export const EditProfileScreen = () => {
     setConfirmPassword,
     passwordLoading,
     handleChangePassword,
+    deleteModalVisible,
+    setDeleteModalVisible,
+    deletePassword,
+    setDeletePassword,
+    deleteLoading,
+    handleDeleteAccount,
   } = useEditProfile();
 
   return (
@@ -128,6 +136,61 @@ export const EditProfileScreen = () => {
           </Text>
         </TouchableOpacity>
       </View>
+
+      <Text style={[styles.sectionTitle, styles.mt24, styles.dangerTitle]}>
+        {t("settings.dangerZone")}
+      </Text>
+      <View style={[styles.card, styles.dangerCard]}>
+        <Text style={styles.dangerHint}>
+          {t("settings.deleteAccountMessage")}
+        </Text>
+        <TouchableOpacity
+          style={[styles.saveButton, styles.dangerButton]}
+          onPress={() => {
+            Alert.alert(
+              t("settings.deleteAccountTitle"),
+              t("settings.deleteAccountMessage"),
+              [
+                { text: t("common.cancel"), style: "cancel" },
+                {
+                  text: t("settings.deleteAccountConfirm"),
+                  style: "destructive",
+                  onPress: () => setDeleteModalVisible(true),
+                },
+              ],
+            );
+          }}
+        >
+          <Text style={styles.saveButtonText}>
+            {t("settings.deleteAccount")}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <ModalWrapper
+        visible={deleteModalVisible}
+        onClose={() => {
+          setDeleteModalVisible(false);
+          setDeletePassword("");
+        }}
+        title={t("settings.deleteAccountTitle")}
+        confirmText={t("settings.deleteAccountConfirm")}
+        onConfirm={handleDeleteAccount}
+        loading={deleteLoading}
+      >
+        <Text style={styles.label}>
+          {t("settings.deleteAccountPasswordPlaceholder")}
+        </Text>
+        <TextInput
+          style={styles.input}
+          placeholder={t("auth.password")}
+          placeholderTextColor={colors.textMuted}
+          value={deletePassword}
+          onChangeText={setDeletePassword}
+          secureTextEntry
+          autoFocus
+        />
+      </ModalWrapper>
     </ScrollView>
   );
 };
@@ -151,6 +214,21 @@ const getStyles = createStyles((colors) => ({
   },
   mt24: {
     marginTop: 24,
+  },
+  dangerTitle: {
+    color: colors.danger,
+  },
+  dangerCard: {
+    borderColor: colors.danger,
+  },
+  dangerHint: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 19,
+    marginBottom: 14,
+  },
+  dangerButton: {
+    backgroundColor: colors.danger,
   },
   card: {
     backgroundColor: colors.card,

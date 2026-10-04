@@ -20,6 +20,7 @@ export const useRegister = () => {
       password: "",
       confirmPassword: "",
       remember: DEFAULT_REMEMBER_OPTION as RememberOption,
+      terms: false,
     },
     validate: (values) => {
       const errors: any = {};
@@ -35,6 +36,7 @@ export const useRegister = () => {
         errors.password = t("auth.errors.passwordTooShort");
       if (values.confirmPassword !== values.password)
         errors.confirmPassword = t("auth.errors.passwordMismatch");
+      if (!values.terms) errors.terms = t("auth.terms.required");
       return errors;
     },
     onSubmit: async (values) => {
@@ -70,6 +72,8 @@ export const useRegister = () => {
     remember: form.values.remember,
     setRemember: (value: RememberOption) =>
       form.setFieldValue("remember", value),
+    terms: form.values.terms,
+    setTerms: (value: boolean) => form.setFieldValue("terms", value),
     errors: form.errors,
     loading: form.isSubmitting,
     handleRegister: form.handleSubmit,

@@ -193,7 +193,6 @@ api.interceptors.response.use(
       void logger.debug("API Response", {
         url: response.config.url,
         status: response.status,
-        data: response.data,
       });
     }
 

@@ -4,6 +4,7 @@ import * as Notifications from "expo-notifications";
 import { useAuth, useReminder, useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
+import { pluralKey } from "../../utils";
 import { SettingsItem } from "./settings-item.component";
 import { ModalWrapper } from "../common";
 import { useNavigation } from "@react-navigation/native";
@@ -14,7 +15,7 @@ import { registerForPushNotifications } from "../../hooks/use-push-notifications
 export const NotificationsSection = () => {
   const { user } = useAuth();
   const { colors } = useTheme();
-  const { t } = useTranslate();
+  const { t, l } = useTranslate();
   const styles = getStyles(colors);
   const { offsets, updateOffsets } = useReminder();
 
@@ -87,7 +88,10 @@ export const NotificationsSection = () => {
       setCustomModalVisible(false);
       setCustomOffsetText("");
     } else {
-      Alert.alert(t("common.error"), "Введите неотрицательное число минут");
+      Alert.alert(
+        t("common.error"),
+        t("notifications.customOffsetInvalid"),
+      );
     }
   };
 
@@ -98,12 +102,15 @@ export const NotificationsSection = () => {
   };
 
   const formatOffsetLabel = (minutes: number) => {
-    if (minutes === 0) return "В момент";
-    if (minutes < 60) return `${minutes} мин`;
-    if (minutes === 60) return "1 час";
-    if (minutes === 120) return "2 часа";
-    if (minutes % 60 === 0) return `${minutes / 60} часов`;
-    return `${minutes} мин`;
+    if (minutes === 0) return t("reminders.offset.now");
+    if (minutes < 60) return t("reminders.offset.minutes", { count: minutes });
+    if (minutes % 60 === 0) {
+      const hours = minutes / 60;
+      return t(pluralKey("reminders.offset.hours", hours, l), {
+        count: hours,
+      });
+    }
+    return t("reminders.offset.minutes", { count: minutes });
   };
 
   return (
@@ -171,13 +178,17 @@ export const NotificationsSection = () => {
               style={styles.optionButton}
               onPress={() => setCustomModalVisible(true)}
             >
-              <Text style={styles.optionText}>+ Другое</Text>
+              <Text style={styles.optionText}>
+                {t("reminders.offset.custom")}
+              </Text>
             </TouchableOpacity>
           </View>
           {offsets.filter((o) => !PRESET_OFFSETS.some((p) => p.value === o))
             .length > 0 && (
             <View style={styles.customList}>
-              <Text style={styles.customLabel}>Пользовательские:</Text>
+              <Text style={styles.customLabel}>
+                {t("reminders.offset.customLabel")}
+              </Text>
               {offsets
                 .filter(
                   (offset) =>
@@ -201,7 +212,7 @@ export const NotificationsSection = () => {
 
       <SettingsItem
         icon="list"
-        label="Посмотреть все напоминания"
+        label={t("reminders.viewAll")}
         onPress={() => navigation.navigate("Reminders")}
       />
 
@@ -211,13 +222,13 @@ export const NotificationsSection = () => {
           setCustomModalVisible(false);
           setCustomOffsetText("");
         }}
-        title="Введите смещение (в минутах)"
-        confirmText="Добавить"
+        title={t("notifications.customOffsetTitle")}
+        confirmText={t("common.create")}
         onConfirm={handleCustomOffset}
       >
         <TextInput
           style={styles.input}
-          placeholder="Например: 90"
+          placeholder={t("notifications.customOffsetPlaceholder")}
           keyboardType="number-pad"
           value={customOffsetText}
           onChangeText={setCustomOffsetText}

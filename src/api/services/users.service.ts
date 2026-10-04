@@ -13,6 +13,13 @@ export const usersService = {
     api.patch<MeResponse>("/users/me", data),
 
   /**
+   * Полное удаление аккаунта. Требует пароль для подтверждения.
+   * Успех — 200 с `{ message }`; при неверном пароле — 400.
+   */
+  deleteAccount: (data: { password: string } & DeviceMetadata) =>
+    api.post<{ message: string }>("/users/me/delete", data),
+
+  /**
    * Смена пароля отзывает все сессии и возвращает новую пару токенов для
    * текущего устройства — её обязательно нужно сохранить вместо старой.
    * `remember` бэкенд здесь игнорирует: новая сессия всегда на 90 дней.

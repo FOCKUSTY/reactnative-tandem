@@ -111,6 +111,7 @@
     "confirmNew": "Confirm PIN",
     "disableTitle": "Disable PIN?",
     "disableMessage": "App will no longer ask for PIN on launch.",
+    "locked": "Too many attempts. Try again in {{minutes}} min.",
     "logoutTitle": "Logout?",
     "logoutMessage": "Are you sure you want to logout? PIN will remain saved."
   },
@@ -125,6 +126,9 @@
     "success": "Notifications set up successfully",
     "error": "Failed to set up notifications",
     "permissionDenied": "Notification permission denied. You can enable it in device settings.",
+    "customOffsetTitle": "Reminder offset",
+    "customOffsetPlaceholder": "e.g. 90",
+    "customOffsetInvalid": "Enter a non-negative number of minutes",
     "reminder": {
       "title": "Reminder",
       "offsetsLabel": "Reminders",
@@ -215,6 +219,13 @@
     "resetSubmit": "Save password",
     "resetSuccess": "Password successfully reset",
     "resetTokenMissing": "Reset token is missing",
+    "terms": {
+      "label": "I accept",
+      "and": "and",
+      "required": "You must accept the terms and privacy policy",
+      "termsOfService": "Terms of Service",
+      "privacyPolicy": "Privacy Policy"
+    },
     "remember": {
       "title": "Remember this device",
       "days30": "30 days",
@@ -401,6 +412,14 @@
     "clearCacheTitle": "Clear cache?",
     "clearCacheMessage": "All saved data will be deleted. The app will download fresh data the next time it connects.",
     "cacheCleared": "Cache cleared",
+    "dangerZone": "Danger zone",
+    "deleteAccount": "Delete account",
+    "deleteAccountTitle": "Delete account?",
+    "deleteAccountMessage": "This action is irreversible: all your records and tables will be deleted and your partner will be unlinked.",
+    "deleteAccountConfirm": "Delete forever",
+    "deleteAccountPasswordPlaceholder": "Enter password to confirm",
+    "deleteAccountSuccess": "Account deleted",
+    "deleteAccountFailed": "Failed to delete account",
     "notifications": "Notifications"
   },
   "filters": {
@@ -472,6 +491,7 @@
   "reminders": {
     "title": "Reminders",
     "empty": "No upcoming events with reminders",
+    "viewAll": "View all reminders",
     "offset": {
       "now": "At the moment",
       "30min": "30 min",
@@ -566,6 +586,19 @@
     "everyMonth": "Every month",
     "everyYear": "Every year",
     "ourInterval": "Custom interval",
-    "example": "e.g."
+    "example": "e.g.",
+    "interval": {
+      "1h": "every hour",
+      "6h": "every 6 h",
+      "12h": "every 12 h",
+      "1d": "every day",
+      "2d": "every 2 days",
+      "7d": "every week",
+      "1m": "every month",
+      "1y": "every year",
+      "5y": "every 5 years",
+      "10y": "every 10 years",
+      "100y": "every 100 years"
+    }
   }
 }

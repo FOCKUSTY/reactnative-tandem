@@ -12,18 +12,31 @@ export const PinScreen = (properties: PinProperties) => {
   const { colors } = useTheme();
   const { t } = useTranslate();
   const styles = getStyles(colors);
-  const { verifyPin, removePin } = usePin();
+  const { verifyPin, removePin, lockedUntil } = usePin();
   const { logout } = useAuth();
 
   const [pin, setPin] = useState("");
   const [error, setError] = useState("");
   const inputRef = useRef<TextInput>(null);
 
+  const [now, setNow] = useState(Date.now());
+  const isLocked = lockedUntil !== null && lockedUntil > now;
+
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 300);
   }, []);
 
+  useEffect(() => {
+    if (!isLocked) return;
+    const id = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(id);
+  }, [isLocked]);
+
+  const lockedMinutes =
+    isLocked && lockedUntil ? Math.ceil((lockedUntil - now) / 60000) : 0;
+
   const handleSubmit = async () => {
+    if (isLocked) return;
     if (pin.length < 4) {
       setError(t("pin.errorMinLength"));
       return;
@@ -70,9 +83,20 @@ export const PinScreen = (properties: PinProperties) => {
         placeholder={t("pin.placeholder")}
         placeholderTextColor={colors.textMuted}
         onSubmitEditing={handleSubmit}
+        editable={!isLocked}
       />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+      {isLocked ? (
+        <Text style={styles.error}>
+          {t("pin.locked", { minutes: lockedMinutes })}
+        </Text>
+      ) : error ? (
+        <Text style={styles.error}>{error}</Text>
+      ) : null}
+      <TouchableOpacity
+        style={styles.button}
+        onPress={handleSubmit}
+        disabled={isLocked}
+      >
         <Text style={styles.buttonText}>{t("pin.unlock")}</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout} style={styles.logoutLink}>

@@ -8,7 +8,7 @@ import { useTranslate } from "../i18n";
 
 export const useEditProfile = () => {
   const { t } = useTranslate();
-  const { user, updateProfile, replaceSession } = useAuth();
+  const { user, updateProfile, replaceSession, logout } = useAuth();
 
   const [name, setName] = useState(user?.name ?? "");
   const [username, setUsername] = useState(user?.username ?? "");
@@ -19,6 +19,10 @@ export const useEditProfile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordLoading, setPasswordLoading] = useState(false);
+
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const handleSaveProfile = async () => {
     const trimmedName = name.trim();
@@ -113,6 +117,35 @@ export const useEditProfile = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!deletePassword) {
+      Alert.alert(t("common.error"), t("auth.errors.passwordRequired"));
+      return;
+    }
+    setDeleteLoading(true);
+    try {
+      const response = await usersService.deleteAccount({
+        password: deletePassword,
+        ...(await getDeviceMetadata()),
+      });
+      setDeleteModalVisible(false);
+      setDeletePassword("");
+      Alert.alert(
+        t("common.success"),
+        response.data?.message || t("settings.deleteAccountSuccess"),
+      );
+      await logout();
+    } catch (error) {
+      const apiError = handleApiError(error);
+      Alert.alert(
+        t("common.error"),
+        apiError.message || t("settings.deleteAccountFailed"),
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
   return {
     name,
     setName,
@@ -131,5 +164,11 @@ export const useEditProfile = () => {
     setConfirmPassword,
     passwordLoading,
     handleChangePassword,
+    deleteModalVisible,
+    setDeleteModalVisible,
+    deletePassword,
+    setDeletePassword,
+    deleteLoading,
+    handleDeleteAccount,
   };
 };

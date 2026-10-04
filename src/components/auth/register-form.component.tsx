@@ -1,4 +1,5 @@
-import { View, Text, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, TextInput, TouchableOpacity, Linking } from "react-native";
+import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useTheme } from "../../contexts";
 import { createStyles } from "../../utils";
 import { useTranslate } from "../../hooks";
@@ -8,6 +9,9 @@ import {
   type RememberOption,
 } from "../../constants";
 import { RadioGroup } from "../common";
+
+const TERMS_URL = "https://tandem-links.vercel.app/terms";
+const PRIVACY_URL = "https://tandem-links.vercel.app/privacy";
 
 export type RegisterFormProperties = {
   username: string;
@@ -22,8 +26,12 @@ export type RegisterFormProperties = {
   setConfirmPassword: (text: string) => void;
   remember: RememberOption;
   setRemember: (value: RememberOption) => void;
+  terms: boolean;
+  setTerms: (value: boolean) => void;
   loading: boolean;
-  errors?: Partial<Record<"username" | "name" | "email" | "password", string>>;
+  errors?: Partial<
+    Record<"username" | "name" | "email" | "password" | "terms", string>
+  >;
   onSubmit: () => void;
   onSwitchToLogin?: () => void;
 };
@@ -41,6 +49,8 @@ export const RegisterForm = ({
   setConfirmPassword,
   remember,
   setRemember,
+  terms,
+  setTerms,
   loading,
   errors,
   onSubmit,
@@ -115,6 +125,35 @@ export const RegisterForm = ({
       />
 
       <TouchableOpacity
+        style={styles.termsRow}
+        onPress={() => setTerms(!terms)}
+        activeOpacity={0.7}
+      >
+        <MaterialIcons
+          name={terms ? "check-box" : "check-box-outline-blank"}
+          size={22}
+          color={colors.primary}
+        />
+        <Text style={styles.termsText}>
+          {t("auth.terms.label")}{" "}
+          <Text
+            style={styles.termsLink}
+            onPress={() => Linking.openURL(TERMS_URL)}
+          >
+            {t("auth.terms.termsOfService")}
+          </Text>{" "}
+          {t("auth.terms.and")}{" "}
+          <Text
+            style={styles.termsLink}
+            onPress={() => Linking.openURL(PRIVACY_URL)}
+          >
+            {t("auth.terms.privacyPolicy")}
+          </Text>
+        </Text>
+      </TouchableOpacity>
+      {errors?.terms && <Text style={styles.errorText}>{errors.terms}</Text>}
+
+      <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
         onPress={() => {
           onSubmit();
@@ -141,6 +180,22 @@ export const RegisterForm = ({
 const getStyles = createStyles((colors) => ({
   inputError: {
     borderColor: colors.danger,
+  },
+  termsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 12,
+  },
+  termsText: {
+    flex: 1,
+    fontSize: 13,
+    color: colors.textSecondary,
+    lineHeight: 18,
+  },
+  termsLink: {
+    color: colors.primary,
+    fontWeight: "600",
   },
   errorText: {
     color: colors.danger,

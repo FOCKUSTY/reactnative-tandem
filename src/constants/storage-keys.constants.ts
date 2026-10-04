@@ -9,6 +9,8 @@ export const STORAGE_KEYS = {
   LOGGING_ENABLED: ".logging_enabled",
   PIN_ENABLED: ".pin_enabled",
   PIN_CODE: ".pin_code",
+  PIN_FAILED_ATTEMPTS: ".pin_failed_attempts",
+  PIN_LOCKED_UNTIL: ".pin_locked_until",
   CACHE_SETTINGS: ".cache_settings",
   PUSH_TOKEN: ".push_token",
 } as const;

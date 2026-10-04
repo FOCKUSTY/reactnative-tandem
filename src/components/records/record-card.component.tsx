@@ -105,7 +105,7 @@ export const RecordCard = ({
         <View style={styles.recurringBadge}>
           <MaterialIcons name="repeat" size={14} color={colors.primary} />
           <Text style={styles.recurringText}>
-            {formatIntervalLabel(record.recurringInterval)}
+            {t(formatIntervalLabel(record.recurringInterval))}
           </Text>
         </View>
       )}

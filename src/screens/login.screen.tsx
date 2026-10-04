@@ -52,6 +52,8 @@ export const LoginScreen = () => {
           setConfirmPassword={register.setConfirmPassword}
           remember={register.remember}
           setRemember={register.setRemember}
+          terms={register.terms}
+          setTerms={register.setTerms}
           loading={register.loading}
           onSubmit={register.handleRegister}
           onSwitchToLogin={() => setMode("login")}
