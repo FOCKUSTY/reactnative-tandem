@@ -1,0 +1,66 @@
+name: EAS Update (OTA)
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - ".github/**"
+      - "**/*.md"
+      - ".gitignore"
+      - ".easignore"
+      - ".collectignore"
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "Сообщение обновления (опционально)"
+        required: false
+        default: "manual update"
+
+concurrency:
+  group: eas-update-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.head_commit.message, '[skip ota]') }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Setup Expo & EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Resolve message
+        id: msg
+        env:
+          INPUT_MESSAGE: ${{ github.event.inputs.message }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        run: |
+          if [ -n "$INPUT_MESSAGE" ]; then
+            TEXT="$INPUT_MESSAGE"
+          else
+            TEXT=$(printf '%s' "$COMMIT_MESSAGE" | head -n1)
+          fi
+          echo "text=$TEXT" >> "$GITHUB_OUTPUT"
+
+      - name: Publish OTA update
+        env:
+          MESSAGE: ${{ steps.msg.outputs.text }}
+        run: |
+          eas update \
+            --channel preview \
+            --message "$MESSAGE" \
+            --non-interactive

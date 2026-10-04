@@ -44,8 +44,6 @@ const App = () => {
   useEffect(() => {
     (async () => {
       try {
-        // OTA-проверка — фоном: не блокирует bootstrap и не мешает, если
-        // сеть недоступна. Скачанное применится на следующем холодном старте.
         void checkAndFetchOnLaunch();
 
         await initI18n();
