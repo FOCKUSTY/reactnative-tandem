@@ -4,6 +4,9 @@
 # пишите https://github.com/FOCKUSTY/collect-files-cli/issues/new
 # MIT License Copyright (c) 2026-present FOCKUSTY
 
+# Секреты (не собирать в дампы)
+service-key.json
+
 android/
 .expo/
 .vscode/

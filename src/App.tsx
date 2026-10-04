@@ -8,6 +8,7 @@ import { persistQueryClient } from "@tanstack/query-persist-client-core";
 
 import { initI18n } from "./i18n";
 import { logger, setLoggingEnabled, storage } from "./utils";
+import { checkAndFetchOnLaunch } from "./utils/ota-updates.utils";
 import { OFFLINE_CONFIG, STORAGE_KEYS } from "./constants";
 import { AppContent } from "./components/app";
 
@@ -43,6 +44,10 @@ const App = () => {
   useEffect(() => {
     (async () => {
       try {
+        // OTA-проверка — фоном: не блокирует bootstrap и не мешает, если
+        // сеть недоступна. Скачанное применится на следующем холодном старте.
+        void checkAndFetchOnLaunch();
+
         await initI18n();
 
         const storedSettings = await AsyncStorage.getItem(

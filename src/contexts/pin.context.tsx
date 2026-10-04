@@ -79,10 +79,7 @@ export const PinProvider: FC<{ children: ReactNode }> = ({ children }) => {
       await storage.deleteItem(STORAGE_KEYS.PIN_FAILED_ATTEMPTS);
       setLockedUntil(until);
     } else {
-      await storage.setItem(
-        STORAGE_KEYS.PIN_FAILED_ATTEMPTS,
-        String(attempts),
-      );
+      await storage.setItem(STORAGE_KEYS.PIN_FAILED_ATTEMPTS, String(attempts));
     }
   };
 

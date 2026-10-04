@@ -88,10 +88,7 @@ export const NotificationsSection = () => {
       setCustomModalVisible(false);
       setCustomOffsetText("");
     } else {
-      Alert.alert(
-        t("common.error"),
-        t("notifications.customOffsetInvalid"),
-      );
+      Alert.alert(t("common.error"), t("notifications.customOffsetInvalid"));
     }
   };
 

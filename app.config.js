@@ -2,7 +2,15 @@ export default {
   expo: {
     name: "Tandem",
     slug: "tandem",
-    version: "1.2.0-beta",
+    version: "1.3.0-beta",
+    runtimeVersion: {
+      policy: "appVersion",
+    },
+    updates: {
+      url: "https://u.expo.dev/aca049ab-3766-4c93-9c0e-df58df5968ad",
+      checkAutomatically: "ON_LOAD",
+      fallbackToCacheTimeout: 0,
+    },
     scheme: "tandem",
     orientation: "portrait",
     icon: "./assets/icon.png",
