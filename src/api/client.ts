@@ -32,6 +32,8 @@ const NO_REFRESH_ENDPOINTS = new Set([
 
 type RetriableRequestConfig = InternalAxiosRequestConfig & {
   _retry?: boolean;
+  /** Помечаем запрос, на котором интерцептор уже попробовал refresh. */
+  _refreshAttempted?: boolean;
 };
 
 type TimeoutAwareError = AxiosError & { isTimeout?: boolean };
@@ -105,8 +107,6 @@ const refreshAccessToken = async (): Promise<string> => {
 
     let response;
     try {
-      // Отдельный запрос в обход этого инстанса: иначе интерцепторы
-      // рекурсивно пытались бы обновить токен для самого обновления.
       response = await axios.post<AuthResponse>(
         `${API_BASE}/auth/refresh`,
         { refreshToken, ...metadata },
@@ -118,20 +118,13 @@ const refreshAccessToken = async (): Promise<string> => {
     } catch (error) {
       const reason = refreshFailureReason(error);
       if (reason) {
-        // Сервер отверг refresh-токен: локально сессии тоже больше нет.
         await tokenManager.clear();
         authEvents.emit("expired", { reason });
         throw new SessionExpiredError("Сервер отверг refresh-токен");
       }
-      // Сеть или 5xx — не повод разлогинивать.
       throw error;
     }
 
-    // Ротация: старый refresh-токен уже недействителен, хранить нужно новый.
-    // Но пока запрос шёл, сессия могла смениться — выход, повторный вход или
-    // смена пароля. Тогда в хранилище лежит пара новее нашей, и затирать её
-    // нельзя: иначе пользователь останется с токенами уже отозванной сессии
-    // и вылетит при первом же запросе.
     const current = await tokenManager.getSession();
     if (!current) {
       throw new SessionExpiredError("Сессия завершилась во время обновления");
@@ -141,8 +134,6 @@ const refreshAccessToken = async (): Promise<string> => {
     }
 
     const next = await tokenManager.persist(response.data);
-    // Пара токенов сменилась не по инициативе контекста — сообщаем ему, чтобы
-    // состояние в приложении не разъехалось с хранилищем.
     authEvents.emit("refreshed");
     return next.accessToken;
   })();
@@ -169,17 +160,13 @@ api.interceptors.request.use(async (config) => {
 
   const timeLeft = tokenManager.accessTokenTimeLeft(session);
   if (timeLeft !== null && timeLeft < REFRESH_MARGIN_MS) {
+    (config as RetriableRequestConfig)._refreshAttempted = true;
     try {
       const accessToken = await refreshAccessToken();
       config.headers.Authorization = `Bearer ${accessToken}`;
       return config;
     } catch (error) {
-      if (error instanceof SessionExpiredError) {
-        // Сессия умерла: отправлять запрос со старым токеном бессмысленно.
-        return Promise.reject(error);
-      }
-      // Сеть или 5xx — отправляем как есть, дальше разберётся
-      // response-интерцептор (или пользователь увидит ошибку сети).
+      return Promise.reject(error);
     }
   }
 
@@ -207,29 +194,20 @@ api.interceptors.response.use(
       error.response?.status === 401 &&
       !!config &&
       !config._retry &&
+      !config._refreshAttempted &&
       !isNoRefreshEndpoint(config.url) &&
-      // Обновляемся только по «протух access-токен». Если сервер назвал другую
-      // причину (например, проблемы с самим refresh-токеном), обновление лишь
-      // добьёт сессию reuse-детекцией. 401 без кода — это запрос без заголовка
-      // Authorization; такой случай отсекает проверка ниже.
       (code === undefined || code === ACCESS_TOKEN_INVALID);
 
     if (shouldRefresh && config) {
       const session = await tokenManager.getSession();
       if (session?.refreshToken) {
-        config._retry = true; // повторяем такой запрос только один раз
+        config._retry = true;
         try {
           const accessToken = await refreshAccessToken();
           config.headers.Authorization = `Bearer ${accessToken}`;
           return await api.request(config);
-        } catch {
-          // Не получилось — падаем ниже, к обычной обработке ошибки: сессия
-          // могла умереть, а мог просто пропасть интернет.
-        }
+        } catch {}
       } else if (config.headers?.Authorization) {
-        // Запрос уходил с заголовком, а refresh-токена в хранилище нет —
-        // сессию восстанавливать нечем. Без заголовка 401 означает просто
-        // «запрос без авторизации», и пугать пользователя тут нечем.
         authEvents.emit("expired", { reason: "noRefreshToken" });
       }
     }

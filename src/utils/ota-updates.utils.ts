@@ -162,6 +162,17 @@ export const subscribeToUpdateEvents = (): (() => void) => {
       void logger.info("OTA: checking for update");
     }
 
+    if (
+      was.isChecking &&
+      !context.isChecking &&
+      !context.isUpdateAvailable &&
+      !context.checkError
+    ) {
+      void logger.info("OTA: check finished, no update available", {
+        sequenceNumber: context.sequenceNumber,
+      });
+    }
+
     if (!was.isUpdateAvailable && context.isUpdateAvailable) {
       void logger.info("OTA: update available", {
         updateId: context.latestManifest?.id ?? null,
@@ -299,17 +310,31 @@ export const checkAndFetchOnLaunch = async (): Promise<void> => {
   if (!isOtaUsable()) return;
 
   const startedAt = Date.now();
+  await logger.info("OTA: check on launch started", {
+    runtimeVersion: Updates.runtimeVersion ?? null,
+    channel: Updates.channel ?? null,
+    updateId: Updates.updateId ?? null,
+    isEmbeddedLaunch: Updates.isEmbeddedLaunch,
+  });
+
   try {
     const result = await Updates.checkForUpdateAsync();
     if (result.isAvailable) {
-      await logger.info("OTA: update available on launch, fetching");
+      await logger.info("OTA: update available on launch, fetching", {
+        latestUpdateId: Updates.latestContext.latestManifest?.id ?? null,
+      });
       await Updates.fetchUpdateAsync();
       await logger.info("OTA update fetched, will apply on next launch", {
         durationMs: Date.now() - startedAt,
       });
     } else {
-      await logger.debug("OTA: no update on launch", {
+      // INFO, а не DEBUG: в проде нужно видеть, что проверка реально прошла
+      // и апдейта нет, — иначе «нет апдейтов» не отличить от «проверка
+      // не запускалась» и от «проверка упала на другом runtimeVersion».
+      await logger.info("OTA: no update on launch", {
         durationMs: Date.now() - startedAt,
+        runtimeVersion: Updates.runtimeVersion ?? null,
+        channel: Updates.channel ?? null,
       });
     }
   } catch (error) {

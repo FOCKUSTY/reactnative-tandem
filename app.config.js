@@ -4,7 +4,7 @@ export default {
     slug: "tandem",
     version: "1.4.0-beta",
     runtimeVersion: {
-      policy: "appVersion",
+      policy: "fingerprint",
     },
     updates: {
       url: "https://u.expo.dev/aca049ab-3766-4c93-9c0e-df58df5968ad",
