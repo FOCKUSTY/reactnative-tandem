@@ -5,20 +5,6 @@ import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
 
-const FUNCTIONS: { sig: string; descKey: TranslationInput }[] = [
-  { sig: "years(a, b?)", descKey: "templateHelp.functions.years" },
-  { sig: "days(a, b?)", descKey: "templateHelp.functions.days" },
-  { sig: "months(a, b?)", descKey: "templateHelp.functions.months" },
-  {
-    sig: "formatDate(date, pattern?)",
-    descKey: "templateHelp.functions.formatDate",
-  },
-  {
-    sig: "plural(n, one, few, many)",
-    descKey: "templateHelp.functions.plural",
-  },
-];
-
 const VARIABLES = [
   "[date]",
   "[createdAt]",
@@ -38,14 +24,35 @@ const VARIABLES = [
   "[partner.username]",
 ];
 
+const FUNCTIONS: { sig: string; descKey: TranslationInput }[] = [
+  { sig: "years(a, b?)", descKey: "templateHelp.functions.years" },
+  { sig: "months(a, b?)", descKey: "templateHelp.functions.months" },
+  { sig: "weeks(a, b?)", descKey: "templateHelp.functions.weeks" },
+  { sig: "days(a, b?)", descKey: "templateHelp.functions.days" },
+  { sig: "hours(a, b?)", descKey: "templateHelp.functions.hours" },
+  { sig: "age(date, at?)", descKey: "templateHelp.functions.age" },
+  {
+    sig: "formatDate(date, pattern?)",
+    descKey: "templateHelp.functions.formatDate",
+  },
+  {
+    sig: "plural(n, one, few, many)",
+    descKey: "templateHelp.functions.plural",
+  },
+  { sig: "join(arr, sep?)", descKey: "templateHelp.functions.join" },
+  { sig: "count(arr)", descKey: "templateHelp.functions.count" },
+  { sig: "capitalize(s)", descKey: "templateHelp.functions.capitalize" },
+];
+
 const EXAMPLES = [
   "{{ years([date]) }}-летие свадьбы",
   "{{ days([date]) }} дней вместе",
   '{{ plural(years([date]), "год", "года", "лет") }}',
-  '{{ formatDate([date], "dd.MM.yyyy") }}',
+  '{{ formatDate([date], "EEEE, d MMMM") }}',
   '{{ years([date]) >= 5 ? "юбилей!" : "ещё рано" }}',
   "С днём рождения, {{ [partner.name] }}!",
-  "Подарок для {{ [partner.name] }}",
+  'Теги: {{ join([tags], " · ") }}',
+  "{{ capitalize([section]) }}: {{ [title] }}",
 ];
 
 export const TemplateHelpScreen = () => {

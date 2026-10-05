@@ -550,10 +550,16 @@
     "examplesTitle": "Examples",
     "functions": {
       "years": "Difference in years between two dates. Without the second argument — against now.",
-      "days": "Difference in days.",
       "months": "Difference in months.",
-      "formatDate": "Formats a date using date-fns pattern (default dd.MM.yyyy).",
-      "plural": "Returns the Russian plural form (11–14 → many)."
+      "weeks": "Difference in weeks.",
+      "days": "Difference in days.",
+      "hours": "Difference in hours.",
+      "age": "Synonym for years: full age from the date to the moment. Without the second argument — against now.",
+      "formatDate": "Formats a date using a date-fns pattern (default dd.MM.yyyy). Uses the app language.",
+      "plural": "Returns the Russian plural form (11–14 → many).",
+      "join": "Joins an array into a string. Second argument — separator (default \", \").",
+      "count": "Array length. E.g. {{ count([tags]) }} — number of tags.",
+      "capitalize": "Capitalizes the first letter, the rest stays as is."
     }
   },
   "recurring": {
