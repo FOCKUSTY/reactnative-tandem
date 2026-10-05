@@ -1,5 +1,6 @@
 import type { MyRecord } from "../types";
 
+import { useMemo } from "react";
 import { useRoute } from "@react-navigation/native";
 import {
   View,
@@ -13,6 +14,7 @@ import {
 import { useRecordForm } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
+import { hasTemplate, renderTemplate } from "../template";
 import {
   SectionSelectorComponent,
   TagsInputComponent,
@@ -74,6 +76,10 @@ export const CreateRecordScreen = () => {
     setIsReport,
   } = useRecordForm({ initialSectionId, record });
 
+  // Стабильная метка «сейчас», одна на открытие экрана: иначе на каждый
+  // ре-рендер предпросмотр пересобирался бы с новым `updatedAt`.
+  const previewNow = useMemo(() => new Date().toISOString(), []);
+
   if (loading) {
     return <SkeletonCreateRecord />;
   }
@@ -107,6 +113,30 @@ export const CreateRecordScreen = () => {
           onChangeText={setTitle}
         />
       </View>
+
+      {hasTemplate(title) && (
+        <View style={styles.preview}>
+          <Text style={styles.previewLabel}>
+            {t("records.template.previewLabel")}
+          </Text>
+          <Text style={styles.previewText}>
+            {renderTemplate(title, {
+              id: record?.id ?? "",
+              userId: record?.userId ?? "",
+              sectionId: selectedSectionId ?? "",
+              title,
+              content,
+              dateEvent: dateEvent ? dateEvent.toISOString() : null,
+              isCompleted: completed,
+              isPinned: pinned,
+              tags,
+              metadata: {},
+              createdAt: record?.createdAt ?? previewNow,
+              updatedAt: previewNow,
+            })}
+          </Text>
+        </View>
+      )}
 
       <View style={styles.field}>
         <Text style={styles.label}>{t("records.field.content")} *</Text>
@@ -195,6 +225,21 @@ export const CreateRecordScreen = () => {
 const getStyles = createStyles((colors) => ({
   content: { padding: 16, paddingBottom: 40 },
   textArea: { minHeight: 120, textAlignVertical: "top" },
+  preview: {
+    marginTop: -8,
+    marginBottom: 16,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: colors.inputBackground,
+  },
+  previewLabel: {
+    fontSize: 12,
+    color: colors.textMuted,
+    marginBottom: 4,
+  },
+  previewText: {
+    color: colors.text,
+  },
   saveButtonDisabled: { opacity: 0.6 },
   saveButton: {
     backgroundColor: colors.primary,

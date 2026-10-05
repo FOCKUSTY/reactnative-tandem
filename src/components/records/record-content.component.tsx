@@ -3,6 +3,7 @@ import { TouchableOpacity, View } from "react-native";
 
 import { createStyles, getMarkdownStyles } from "../../utils";
 import { useTheme } from "../../contexts";
+import { renderTemplate } from "../../template";
 
 import { RecordHeader } from "./record-header.component";
 import { RecordTags } from "./record-tags.component";
@@ -13,17 +14,18 @@ import { useState } from "react";
 import MaterialIcons from "@react-native-vector-icons/material-icons";
 
 export type RecordContentProperties = {
-  record: MyRecord & {
-    dateLabel: string | null;
-    timeLabel: string | null;
-  };
+  record: MyRecord;
+  dateLabel: string | null;
+  timeLabel: string | null;
 };
 
 export const RecordContent = ({
-  record: {
+  record,
+  dateLabel,
+  timeLabel,
+}: RecordContentProperties) => {
+  const {
     title,
-    dateLabel,
-    timeLabel,
     content,
     tags,
     isCompleted,
@@ -31,13 +33,12 @@ export const RecordContent = ({
     createdAt,
     updatedAt,
     ...initialRecord
-  },
-}: RecordContentProperties) => {
+  } = record;
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const markdownStyles = getMarkdownStyles(colors);
   const { toggleStar, isPending } = useToggleStar();
-  const [record, setRecord] = useState(initialRecord);
+  const [localRecord, setLocalRecord] = useState(initialRecord);
 
   const { RefreshableScrollView } = useRefresh({
     queryKeys: [["record", initialRecord.id]],
@@ -45,8 +46,8 @@ export const RecordContent = ({
 
   const handleStarPress = () => {
     if (!isPending) {
-      toggleStar(record.id, !!record.isStarred).then(() => {
-        setRecord((prev) => ({ ...prev, isStarred: !prev.isStarred }));
+      toggleStar(localRecord.id, !!localRecord.isStarred).then(() => {
+        setLocalRecord((prev) => ({ ...prev, isStarred: !prev.isStarred }));
       });
     }
   };
@@ -59,16 +60,19 @@ export const RecordContent = ({
       <View style={styles.card}>
         <View style={styles.card_header}>
           <RecordHeader
-            title={title}
+            // Мержим свежий `localRecord` (там актуальный `isStarred` и
+            // прочие локальные тогглы) поверх исходного `record`, чтобы
+            // шаблон в шапке реагировал на локальные изменения.
+            title={renderTemplate(title, { ...record, ...localRecord })}
             date={dateLabel || undefined}
             time={timeLabel || undefined}
           />
 
           <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
             <MaterialIcons
-              name={record.isStarred ? "star" : "star-border"}
+              name={localRecord.isStarred ? "star" : "star-border"}
               size={32}
-              color={record.isStarred ? colors.primary : colors.textMuted}
+              color={localRecord.isStarred ? colors.primary : colors.textMuted}
             />
           </TouchableOpacity>
         </View>

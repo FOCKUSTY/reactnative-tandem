@@ -32,6 +32,7 @@ export type RootStackParameters = {
     tableName?: string;
     mode?: "view" | "edit";
   };
+  TemplateHelp: undefined;
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;

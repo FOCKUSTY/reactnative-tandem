@@ -324,6 +324,10 @@
     "share": "Share",
     "title": "Records",
     "repeat": "Repeat?",
+    "template": {
+      "previewLabel": "Preview:",
+      "insert": "Insert template"
+    },
     "empty": "No records in this section",
     "createFirst": "Create first record",
     "deleteConfirm": {
@@ -531,6 +535,24 @@
     "title": "Starred",
     "empty": "No starred records",
     "goToRecords": "Go to records"
+  },
+  "templateHelp": {
+    "sectionTitle": "Templates",
+    "open": "Templates guide",
+    "title": "Templates",
+    "intro": "Use {{ … }} expressions in a record title or content — they substitute field values and compute the result.",
+    "syntaxTitle": "Syntax",
+    "syntaxBody": "Wrap an expression in double curly braces. Field references use square brackets, e.g. [date].",
+    "variablesTitle": "Available variables",
+    "functionsTitle": "Functions",
+    "examplesTitle": "Examples",
+    "functions": {
+      "years": "Difference in years between two dates. Without the second argument — against now.",
+      "days": "Difference in days.",
+      "months": "Difference in months.",
+      "formatDate": "Formats a date using date-fns pattern (default dd.MM.yyyy).",
+      "plural": "Returns the Russian plural form (11–14 → many)."
+    }
   },
   "recurring": {
     "mode": {

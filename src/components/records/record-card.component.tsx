@@ -7,6 +7,7 @@ import { useNavigation } from "@react-navigation/native";
 import { createStyles, formatDateTime, formatIntervalLabel } from "../../utils";
 import { useTheme } from "../../contexts";
 import { useToggleStar, useTranslate } from "../../hooks";
+import { renderTemplate } from "../../template";
 
 export type RecordCardProps = {
   record: MyRecord;
@@ -68,7 +69,7 @@ export const RecordCard = ({
     >
       <View style={styles.header}>
         <Text style={styles.title} numberOfLines={1}>
-          {record.title || t("records.untitled")}
+          {renderTemplate(record.title, record) || t("records.untitled")}
         </Text>
         <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
           <MaterialIcons

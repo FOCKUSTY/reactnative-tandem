@@ -14,6 +14,7 @@ import {
   PinSection,
   CacheSection,
   NotificationsSection,
+  TemplateHelpSection,
 } from "../components";
 
 export const SettingsScreen = () => {
@@ -33,6 +34,7 @@ export const SettingsScreen = () => {
       <CacheSection />
       <NotificationsSection />
       <PinSection />
+      <TemplateHelpSection />
       <LogoutButton onPress={handleLogout} />
       <AppFooter />
     </ScrollView>

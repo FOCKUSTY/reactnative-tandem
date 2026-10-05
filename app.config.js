@@ -2,7 +2,7 @@ export default {
   expo: {
     name: "Tandem",
     slug: "tandem",
-    version: "1.3.3-beta",
+    version: "1.4.0-beta",
     runtimeVersion: {
       policy: "appVersion",
     },

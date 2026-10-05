@@ -25,6 +25,7 @@ import {
   SessionsScreen,
   ForgotPasswordScreen,
   ResetPasswordScreen,
+  TemplateHelpScreen,
 } from "../../screens";
 import { MainTabs } from "./main-tabs";
 
@@ -165,6 +166,11 @@ export const AppNavigator = () => {
             name="Settings"
             component={SettingsScreen}
             options={{ title: t("settings.title") }}
+          />
+          <Stack.Screen
+            name="TemplateHelp"
+            component={TemplateHelpScreen}
+            options={{ title: t("templateHelp.title") }}
           />
         </>
       )}

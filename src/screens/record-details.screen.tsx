@@ -73,11 +73,9 @@ export const RecordDetailsScreen = () => {
 
   return (
     <RecordContent
-      record={{
-        ...record,
-        dateLabel,
-        timeLabel,
-      }}
+      record={record}
+      dateLabel={dateLabel}
+      timeLabel={timeLabel}
     />
   );
 };
