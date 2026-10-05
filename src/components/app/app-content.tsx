@@ -18,6 +18,7 @@ import { StatusWidget } from "../status-widget.component";
 import { usePushNotifications } from "../../hooks/use-push-notifications.hook";
 import { linking } from "../../navigation";
 import { DeepLinkHandler } from "./deep-link-handler.component";
+import { UpdatesObserver } from "./updates-observer.component";
 
 interface AppContentProps {
   queryClient: QueryClient;
@@ -68,6 +69,7 @@ export const AppContent = ({ queryClient }: AppContentProps) => {
             <StatusWidget />
             <AuthProvider>
               <PushNotificationsGate />
+              <UpdatesObserver />
               <FiltersProvider>
                 <ReminderProvider>
                   <NavigationContainer linking={linking} fallback={<View />}>

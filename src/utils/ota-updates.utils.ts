@@ -26,7 +26,7 @@ export type OtaCheckResult =
 /** Куда сохраняем `updateId` предыдущего запуска, чтобы поймать факт апдейта. */
 const PREV_UPDATE_ID_KEY = ".ota_prev_update_id";
 
-const isOtaUsable = (): boolean => !__DEV__ && Updates.isEnabled;
+export const isOtaUsable = (): boolean => !__DEV__ && Updates.isEnabled;
 
 /** Снимок текущего бандла — то, что имеет смысл писать в лог. */
 const currentBundleInfo = () => ({
@@ -134,83 +134,80 @@ export const subscribeToUpdateEvents = (): (() => void) => {
 
   let prev: UpdatesContext | null = null;
 
-  const subscription = Updates.addUpdatesStateChangeListener(
-    ({ context }) => {
-      const was = prev;
-      prev = context;
+  const subscription = Updates.addUpdatesStateChangeListener(({ context }) => {
+    const was = prev;
+    prev = context;
 
-      if (was === null) {
-        void logger.info("OTA: initial state", {
-          sequenceNumber: context.sequenceNumber,
-          isStartupProcedureRunning: context.isStartupProcedureRunning,
-          isChecking: context.isChecking,
-          isDownloading: context.isDownloading,
-          isUpdateAvailable: context.isUpdateAvailable,
-          isUpdatePending: context.isUpdatePending,
-          isRestarting: context.isRestarting,
-          restartCount: context.restartCount,
-        });
-        return;
-      }
+    if (was === null) {
+      void logger.info("OTA: initial state", {
+        sequenceNumber: context.sequenceNumber,
+        isStartupProcedureRunning: context.isStartupProcedureRunning,
+        isChecking: context.isChecking,
+        isDownloading: context.isDownloading,
+        isUpdateAvailable: context.isUpdateAvailable,
+        isUpdatePending: context.isUpdatePending,
+        isRestarting: context.isRestarting,
+        restartCount: context.restartCount,
+      });
+      return;
+    }
 
-      if (context.sequenceNumber === was.sequenceNumber) return;
+    if (context.sequenceNumber === was.sequenceNumber) return;
 
-      if (!was.isStartupProcedureRunning && context.isStartupProcedureRunning) {
-        void logger.info("OTA: startup procedure running");
-      }
+    if (!was.isStartupProcedureRunning && context.isStartupProcedureRunning) {
+      void logger.info("OTA: startup procedure running");
+    }
 
-      if (!was.isChecking && context.isChecking) {
-        void logger.info("OTA: checking for update");
-      }
+    if (!was.isChecking && context.isChecking) {
+      void logger.info("OTA: checking for update");
+    }
 
-      if (!was.isUpdateAvailable && context.isUpdateAvailable) {
-        void logger.info("OTA: update available", {
-          updateId: context.latestManifest?.id ?? null,
-        });
-      }
+    if (!was.isUpdateAvailable && context.isUpdateAvailable) {
+      void logger.info("OTA: update available", {
+        updateId: context.latestManifest?.id ?? null,
+      });
+    }
 
-      if (!was.isDownloading && context.isDownloading) {
-        void logger.info("OTA: download started");
-      }
+    if (!was.isDownloading && context.isDownloading) {
+      void logger.info("OTA: download started");
+    }
 
-      if (context.isDownloading) {
-        void logger.debug("OTA: download progress", {
-          progress: Math.round(context.downloadProgress * 100),
-        });
-      }
+    if (context.isDownloading) {
+      void logger.debug("OTA: download progress", {
+        progress: Math.round(context.downloadProgress * 100),
+      });
+    }
 
-      if (!was.isUpdatePending && context.isUpdatePending) {
-        void logger.info(
-          "OTA: download complete, will apply on next launch",
-          { updateId: context.downloadedManifest?.id ?? null },
-        );
-      }
+    if (!was.isUpdatePending && context.isUpdatePending) {
+      void logger.info("OTA: download complete, will apply on next launch", {
+        updateId: context.downloadedManifest?.id ?? null,
+      });
+    }
 
-      if (!was.isRestarting && context.isRestarting) {
-        void logger.info("OTA: restarting to apply update", {
-          restartCount: context.restartCount,
-        });
-      }
+    if (!was.isRestarting && context.isRestarting) {
+      void logger.info("OTA: restarting to apply update", {
+        restartCount: context.restartCount,
+      });
+    }
 
-      if (!was.checkError && context.checkError) {
-        void logger.error("OTA: check error", {
-          message: errorMessage(context.checkError),
-        });
-      }
+    if (!was.checkError && context.checkError) {
+      void logger.error("OTA: check error", {
+        message: errorMessage(context.checkError),
+      });
+    }
 
-      if (!was.downloadError && context.downloadError) {
-        void logger.error("OTA: download error", {
-          message: errorMessage(context.downloadError),
-        });
-      }
+    if (!was.downloadError && context.downloadError) {
+      void logger.error("OTA: download error", {
+        message: errorMessage(context.downloadError),
+      });
+    }
 
-      if (!was.rollback && context.rollback) {
-        void logger.warn("OTA: rollback", {
-          rollback: context.rollback,
-        });
-      }
-    },
-  );
+    if (!was.rollback && context.rollback) {
+      void logger.warn("OTA: rollback", {
+        rollback: context.rollback,
+      });
+    }
+  });
 
   return () => subscription.remove();
 };
@@ -307,10 +304,9 @@ export const checkAndFetchOnLaunch = async (): Promise<void> => {
     if (result.isAvailable) {
       await logger.info("OTA: update available on launch, fetching");
       await Updates.fetchUpdateAsync();
-      await logger.info(
-        "OTA update fetched, will apply on next launch",
-        { durationMs: Date.now() - startedAt },
-      );
+      await logger.info("OTA update fetched, will apply on next launch", {
+        durationMs: Date.now() - startedAt,
+      });
     } else {
       await logger.debug("OTA: no update on launch", {
         durationMs: Date.now() - startedAt,

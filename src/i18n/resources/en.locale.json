@@ -377,6 +377,8 @@
     }
   },
   "settings": {
+    "updateReady": "Update ready",
+    "restartNow": "Restart now",
     "logs": "Logs",
     "logging": "Logging",
     "title": "Settings",
