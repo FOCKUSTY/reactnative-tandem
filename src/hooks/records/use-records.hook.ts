@@ -4,12 +4,16 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { recordsService } from "../../api";
 import { RecordFilters } from "../../contexts";
 import { notificationService } from "../../services/notification.service";
+import { applyTemplatesToRecords } from "../../template";
 
 export const useRecords = (filters?: RecordFilters) => {
   const queryKey = filters ? ["records", filters] : ["records"];
   return useQuery<MyRecord[]>({
     queryKey,
-    queryFn: () => recordsService.getRecords(filters).then((res) => res.data),
+    queryFn: async () => {
+      const res = await recordsService.getRecords(filters);
+      return applyTemplatesToRecords(res.data);
+    },
     enabled: true,
   });
 };
@@ -17,8 +21,10 @@ export const useRecords = (filters?: RecordFilters) => {
 export const useRecordsBySlug = (slug: string) => {
   return useQuery<MyRecord[]>({
     queryKey: ["records", slug],
-    queryFn: () =>
-      recordsService.getRecordsBySlug(slug).then((res) => res.data),
+    queryFn: async () => {
+      const res = await recordsService.getRecordsBySlug(slug);
+      return applyTemplatesToRecords(res.data);
+    },
     enabled: !!slug,
     staleTime: 1000 * 60 * 2,
   });

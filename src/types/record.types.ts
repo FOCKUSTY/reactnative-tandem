@@ -18,6 +18,13 @@ export interface MyRecord {
   recurringInterval?: string | null;
   isStarred?: boolean;
   isReport?: boolean;
+  /**
+   * Исходные (сырые) title и content до применения шаблонов. Заполняется
+   * на клиенте в `applyTemplatesToRecord`. Нужен форме редактирования:
+   * в самой записи `title`/`content` уже содержат готовый текст, а тут
+   * лежит шаблон.
+   */
+  templateSource?: { title?: string; content?: string };
 }
 
 export type CreateRecordDto = Omit<

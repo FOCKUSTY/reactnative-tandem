@@ -3,7 +3,6 @@ import { TouchableOpacity, View } from "react-native";
 
 import { createStyles, getMarkdownStyles } from "../../utils";
 import { useTheme } from "../../contexts";
-import { renderTemplate } from "../../template";
 
 import { RecordHeader } from "./record-header.component";
 import { RecordTags } from "./record-tags.component";
@@ -60,10 +59,7 @@ export const RecordContent = ({
       <View style={styles.card}>
         <View style={styles.card_header}>
           <RecordHeader
-            // Мержим свежий `localRecord` (там актуальный `isStarred` и
-            // прочие локальные тогглы) поверх исходного `record`, чтобы
-            // шаблон в шапке реагировал на локальные изменения.
-            title={renderTemplate(title, { ...record, ...localRecord })}
+            title={title}
             date={dateLabel || undefined}
             time={timeLabel || undefined}
           />

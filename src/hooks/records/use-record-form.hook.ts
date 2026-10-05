@@ -33,8 +33,12 @@ export const useRecordForm = ({
   const [selectedSectionId, setSelectedSectionId] = useState<
     string | undefined
   >(initialSectionId);
-  const [title, setTitle] = useState(record?.title || "");
-  const [content, setContent] = useState(record?.content || "");
+  const [title, setTitle] = useState(
+    record?.templateSource?.title ?? record?.title ?? "",
+  );
+  const [content, setContent] = useState(
+    record?.templateSource?.content ?? record?.content ?? "",
+  );
   const [dateEvent, setDateEvent] = useState<Date | null>(
     record?.dateEvent ? new Date(record.dateEvent) : null,
   );

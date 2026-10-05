@@ -1,11 +1,15 @@
 import type { MyRecord } from "../../types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { starredService } from "../../api";
+import { applyTemplatesToRecords } from "../../template";
 
 export const useStarredRecords = () => {
   return useQuery<MyRecord[]>({
     queryKey: ["starred"],
-    queryFn: () => starredService.getStarred().then((res) => res.data),
+    queryFn: async () => {
+      const res = await starredService.getStarred();
+      return applyTemplatesToRecords(res.data);
+    },
     staleTime: 1000 * 60 * 1,
   });
 };
