@@ -14,7 +14,11 @@ import {
 import { useRecordForm } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
-import { hasTemplate, renderTemplate } from "../template";
+import {
+  hasTemplate,
+  renderTemplateWithDiagnostics,
+  type TemplateRenderResult,
+} from "../template";
 import {
   SectionSelectorComponent,
   TagsInputComponent,
@@ -76,13 +80,33 @@ export const CreateRecordScreen = () => {
     setIsReport,
   } = useRecordForm({ initialSectionId, record });
 
-  // Стабильная метка «сейчас», одна на открытие экрана: иначе на каждый
-  // ре-рендер предпросмотр пересобирался бы с новым `updatedAt`.
   const previewNow = useMemo(() => new Date().toISOString(), []);
 
   if (loading) {
     return <SkeletonCreateRecord />;
   }
+
+  const previewRecord = {
+    id: record?.id ?? "",
+    userId: record?.userId ?? "",
+    sectionId: selectedSectionId ?? "",
+    title,
+    content,
+    dateEvent: dateEvent ? dateEvent.toISOString() : null,
+    isCompleted: completed,
+    isPinned: pinned,
+    tags,
+    metadata: {},
+    createdAt: record?.createdAt ?? previewNow,
+    updatedAt: previewNow,
+  };
+
+  const titlePreview = hasTemplate(title)
+    ? renderTemplateWithDiagnostics(title, previewRecord)
+    : null;
+  const contentPreview = hasTemplate(content)
+    ? renderTemplateWithDiagnostics(content, previewRecord)
+    : null;
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
@@ -114,29 +138,7 @@ export const CreateRecordScreen = () => {
         />
       </View>
 
-      {hasTemplate(title) && (
-        <View style={styles.preview}>
-          <Text style={styles.previewLabel}>
-            {t("records.template.previewLabel")}
-          </Text>
-          <Text style={styles.previewText}>
-            {renderTemplate(title, {
-              id: record?.id ?? "",
-              userId: record?.userId ?? "",
-              sectionId: selectedSectionId ?? "",
-              title,
-              content,
-              dateEvent: dateEvent ? dateEvent.toISOString() : null,
-              isCompleted: completed,
-              isPinned: pinned,
-              tags,
-              metadata: {},
-              createdAt: record?.createdAt ?? previewNow,
-              updatedAt: previewNow,
-            })}
-          </Text>
-        </View>
-      )}
+      {titlePreview && <TemplatePreview result={titlePreview} />}
 
       <View style={styles.field}>
         <Text style={styles.label}>{t("records.field.content")} *</Text>
@@ -151,6 +153,8 @@ export const CreateRecordScreen = () => {
           textAlignVertical="top"
         />
       </View>
+
+      {contentPreview && <TemplatePreview result={contentPreview} />}
 
       <View style={styles.field}>
         <Text style={styles.label}>{t("records.field.date")}</Text>
@@ -222,6 +226,36 @@ export const CreateRecordScreen = () => {
   );
 };
 
+/**
+ * Превью шаблона: сам результат рендера + список ошибок, если какие-то
+ * выражения не распарсились. Ошибки подсвечиваем красным — иначе опечатку
+ * легко принять за «шаблон так и должен выглядеть».
+ */
+const TemplatePreview = ({ result }: { result: TemplateRenderResult }) => {
+  const { colors } = useTheme();
+  const { t } = useTranslate();
+  const styles = getStyles(colors);
+
+  return (
+    <View style={styles.preview}>
+      <Text style={styles.previewLabel}>
+        {t("records.template.previewLabel")}
+      </Text>
+      <Text style={styles.previewText} numberOfLines={5}>
+        {result.text}
+      </Text>
+      {result.errors.map((error, index) => (
+        <Text
+          key={`${error.expression}-${index}`}
+          style={styles.previewErrorText}
+        >
+          {t("records.template.errorLabel", { expression: error.expression })}
+        </Text>
+      ))}
+    </View>
+  );
+};
+
 const getStyles = createStyles((colors) => ({
   content: { padding: 16, paddingBottom: 40 },
   textArea: { minHeight: 120, textAlignVertical: "top" },
@@ -239,6 +273,11 @@ const getStyles = createStyles((colors) => ({
   },
   previewText: {
     color: colors.text,
+  },
+  previewErrorText: {
+    color: colors.danger,
+    fontSize: 12,
+    marginTop: 4,
   },
   saveButtonDisabled: { opacity: 0.6 },
   saveButton: {

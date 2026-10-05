@@ -2,7 +2,7 @@ export default {
   expo: {
     name: "Tandem",
     slug: "tandem",
-    version: "1.4.1-beta",
+    version: "1.4.2-beta",
     runtimeVersion: {
       policy: "fingerprint",
     },

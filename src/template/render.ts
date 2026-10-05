@@ -10,27 +10,68 @@ export const hasTemplate = (text?: string | null): boolean => {
   return HAS_TEMPLATE_REGEX.test(text);
 };
 
-export const renderTemplate = (
+export type TemplateRenderError = {
+  expression: string;
+  message: string;
+};
+
+export type TemplateRenderResult = {
+  text: string;
+  errors: TemplateRenderError[];
+};
+
+/**
+ * Рендерит шаблон и попутно собирает ошибки вычисления.
+ *
+ * Нужно экрану создания записи: там показывается превью, и если пользователь
+ * написал выражение с опечаткой, лучше подсветить это сразу, а не показывать
+ * ему исходный `{{ ... }}` в превью как будто так и надо.
+ */
+export const renderTemplateWithDiagnostics = (
   text: string | null | undefined,
   record: TemplateRecord,
-): string => {
-  if (!text) return "";
+): TemplateRenderResult => {
+  if (!text) return { text: "", errors: [] };
 
   const ctx = buildContext(record);
   const templateRegex = /{{\s*(.+?)\s*}}/g;
+  const errors: TemplateRenderError[] = [];
 
-  return text.replace(templateRegex, (match, expression: string) => {
+  const rendered = text.replace(templateRegex, (match, expression: string) => {
     try {
       const result = evaluateExpression(expression, ctx);
       return result === null || result === undefined ? "" : String(result);
     } catch (error) {
-      if (__DEV__) {
-        void logger.warn("Template render failed", {
-          expression,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+      errors.push({
+        expression,
+        message: error instanceof Error ? error.message : String(error),
+      });
       return match;
     }
   });
+
+  return { text: rendered, errors };
+};
+
+/**
+ * Тонкая обёртка без диагностики: возвращает только текст, ошибки пишет
+ * в лог в `__DEV__`. Используется там, где результат нужен ради себя самого
+ * (например, при загрузке записи с бэкенда).
+ */
+export const renderTemplate = (
+  text: string | null | undefined,
+  record: TemplateRecord,
+): string => {
+  const { text: rendered, errors } = renderTemplateWithDiagnostics(
+    text,
+    record,
+  );
+
+  if (__DEV__ && errors.length > 0) {
+    for (const error of errors) {
+      void logger.warn("Template render failed", error);
+    }
+  }
+
+  return rendered;
 };

@@ -326,7 +326,8 @@
     "repeat": "Repeat?",
     "template": {
       "previewLabel": "Preview:",
-      "insert": "Insert template"
+      "insert": "Insert template",
+      "errorLabel": "Failed to evaluate {{expression}}"
     },
     "empty": "No records in this section",
     "createFirst": "Create first record",
