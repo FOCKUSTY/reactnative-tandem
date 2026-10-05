@@ -312,7 +312,8 @@
     "template": {
       "previewLabel": "Предпросмотр:",
       "insert": "Вставить шаблон",
-      "errorLabel": "Не удалось вычислить {{expression}}"
+      "errorLabel": "Не удалось вычислить {{expression}}",
+      "variablesLabel": "Переменные — нажмите, чтобы вставить"
     },
     "empty": "Нет записей в этом разделе",
     "createFirst": "Создать первую запись",

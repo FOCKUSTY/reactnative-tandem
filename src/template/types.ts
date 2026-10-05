@@ -14,6 +14,13 @@ export type TemplateRecord = {
   section?: { name?: string; slug?: string } | null;
 };
 
+/** Один участник пары — как он виден шаблонам. */
+export type TemplateIdentityMember = {
+  id: string;
+  name: string;
+  username: string;
+};
+
 export type TemplateVars = {
   date: Date | null;
   createdAt: Date;
@@ -27,6 +34,16 @@ export type TemplateVars = {
   isPinned: boolean;
   now: Date;
   today: Date;
+  /**
+   * Автор записи: `[author.name]`, `[author.username]`. Один и тот же
+   * для всех, кто эту запись смотрит.
+   */
+  author: TemplateIdentityMember;
+  /**
+   * Второй участник пары с точки зрения автора: `[partner.name]`. Тоже
+   * не зависит от зрителя. Пустые строки, если пары нет.
+   */
+  partner: TemplateIdentityMember;
 };
 
 export type TemplateContext = {

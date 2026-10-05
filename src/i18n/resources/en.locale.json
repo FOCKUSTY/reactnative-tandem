@@ -327,7 +327,8 @@
     "template": {
       "previewLabel": "Preview:",
       "insert": "Insert template",
-      "errorLabel": "Failed to evaluate {{expression}}"
+      "errorLabel": "Failed to evaluate {{expression}}",
+      "variablesLabel": "Variables — tap to insert"
     },
     "empty": "No records in this section",
     "createFirst": "Create first record",

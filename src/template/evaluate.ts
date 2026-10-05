@@ -9,7 +9,7 @@ parser.functions = {
   ...templateHelpers,
 };
 
-const FIELD_REGEX = /\[([a-zA-Z0-9_]+)\]/g;
+const FIELD_REGEX = /\[([a-zA-Z0-9_.]+)\]/g;
 
 export const evaluateExpression = (
   expression: string,

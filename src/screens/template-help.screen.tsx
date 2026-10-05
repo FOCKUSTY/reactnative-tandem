@@ -5,21 +5,6 @@ import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
 
-const VARIABLES = [
-  "[date]",
-  "[createdAt]",
-  "[updatedAt]",
-  "[title]",
-  "[content]",
-  "[tags]",
-  "[section]",
-  "[sectionSlug]",
-  "[isCompleted]",
-  "[isPinned]",
-  "[now]",
-  "[today]",
-];
-
 const FUNCTIONS: { sig: string; descKey: TranslationInput }[] = [
   { sig: "years(a, b?)", descKey: "templateHelp.functions.years" },
   { sig: "days(a, b?)", descKey: "templateHelp.functions.days" },
@@ -34,12 +19,33 @@ const FUNCTIONS: { sig: string; descKey: TranslationInput }[] = [
   },
 ];
 
+const VARIABLES = [
+  "[date]",
+  "[createdAt]",
+  "[updatedAt]",
+  "[title]",
+  "[content]",
+  "[tags]",
+  "[section]",
+  "[sectionSlug]",
+  "[isCompleted]",
+  "[isPinned]",
+  "[now]",
+  "[today]",
+  "[author.name]",
+  "[author.username]",
+  "[partner.name]",
+  "[partner.username]",
+];
+
 const EXAMPLES = [
   "{{ years([date]) }}-летие свадьбы",
   "{{ days([date]) }} дней вместе",
   '{{ plural(years([date]), "год", "года", "лет") }}',
   '{{ formatDate([date], "dd.MM.yyyy") }}',
   '{{ years([date]) >= 5 ? "юбилей!" : "ещё рано" }}',
+  "С днём рождения, {{ [partner.name] }}!",
+  "Подарок для {{ [partner.name] }}",
 ];
 
 export const TemplateHelpScreen = () => {

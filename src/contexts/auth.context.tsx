@@ -23,6 +23,10 @@ import {
   storage,
   tokenManager,
 } from "../utils";
+import {
+  clearTemplateIdentity,
+  setTemplateIdentity,
+} from "../template/identity";
 import type {
   AuthResponse,
   AuthSession,
@@ -77,8 +81,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Слушатель событий подписывается один раз, а перевод нужен ему всегда
-  // актуальный — держим последний `t` в ref.
   const translateRef = useRef(t);
   useEffect(() => {
     translateRef.current = t;
@@ -99,9 +101,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       return meData;
     } catch (error) {
       const apiError = handleApiError(error);
-      // 401 (протух access или мёртвый refresh) разбирает интерцептор, а
-      // разлогином занимается подписка на authEvents — второй раз здесь
-      // вызывать logout() нельзя.
       void logger.warn("Background fetchMe error", {
         message: apiError.message,
         status: apiError.status,
@@ -139,12 +138,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
     if (stored) setSession(stored);
   }, []);
 
-  // Подписка объявлена раньше бутстрапа: событие «сессия истекла» может
-  // прилететь уже во время первого fetchMe().
   useEffect(() => {
     return authEvents.subscribe((event, payload) => {
-      // Токены обновились сами по себе (например, истёк access) — пользователя
-      // это не касается, но sessionId и токены в контексте надо освежить.
       if (event === "refreshed") {
         void syncSessionFromStorage();
         return;
@@ -175,7 +170,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   useEffect(() => {
     const loadFromStorage = async () => {
-      // Ключ `.auth_token` от версий с одним токеном больше не используется.
       await tokenManager.clearLegacyKeys();
 
       const storedSession = await tokenManager.getSession();
@@ -200,9 +194,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         } catch {}
       }
 
-      // Показываем приложение сразу, не дожидаясь сети: сохранённый access
-      // почти наверняка просрочен, но обновление делает request-интерцептор,
-      // и первый же запрос уходит уже с новой парой.
       setIsLoading(false);
       await fetchMe();
     };
@@ -216,6 +207,28 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       void logger.warn("Failed to persist me", {
         error: e instanceof Error ? e.message : String(e),
       });
+    });
+  }, [me]);
+
+  useEffect(() => {
+    if (!me) {
+      clearTemplateIdentity();
+      return;
+    }
+
+    const toMember = (u: { id: string; name: string; username: string }) => ({
+      id: u.id,
+      name: u.name || u.username,
+      username: u.username,
+    });
+
+    const members = me.pair
+      ? [toMember(me.pair.userA), toMember(me.pair.userB)]
+      : [toMember(me)];
+
+    setTemplateIdentity({
+      currentUserId: me.id,
+      members,
     });
   }, [me]);
 
@@ -266,7 +279,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   const logout = async () => {
-    // Отмена локальных напоминаний не должна мешать выходу.
     try {
       await notificationService.cancelAll();
     } catch (error) {
@@ -275,9 +287,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       });
     }
 
-    // Отвязываем push-токен, пока сессия ещё жива: после очистки хранилища
-    // запрос ушёл бы без заголовка Authorization и молча не сработал (это и
-    // был прежний баг порядка).
     try {
       const deviceId = await getDeviceId();
       await pushService.unregisterDevice(deviceId);
@@ -287,9 +296,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       });
     }
 
-    // Сессию на сервере отзываем последней: пока она жива, запрос мог
-    // обновить access-токен, а после отзыва это уже невозможно. Токен мог
-    // истечь сам — для пользователя это не ошибка, локально всё равно выходим.
     try {
       const refreshToken = await tokenManager.getRefreshToken();
       if (refreshToken) await authService.logout(refreshToken);
