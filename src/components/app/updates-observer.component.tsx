@@ -5,6 +5,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { useTheme } from "../../contexts";
 import { useTranslate } from "../../hooks";
 import { createStyles, logger, isOtaUsable } from "../../utils";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 /**
  * Реактивный слой поверх `useUpdates()`.
@@ -120,27 +121,29 @@ export const UpdatesObserver = () => {
   if (!isUpdatePending) return null;
 
   return (
-    <View style={styles.banner}>
-      <Text style={styles.text}>{t("settings.updateReady")}</Text>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => {
-          void logger.info("OTA: user confirmed restart to apply update");
-          void Updates.reloadAsync();
-        }}
-      >
-        <Text style={styles.buttonText}>{t("settings.restartNow")}</Text>
-      </TouchableOpacity>
-    </View>
+    <SafeAreaView edges={["top"]} style={styles.safe}>
+      <View style={styles.banner}>
+        <Text style={styles.text}>{t("settings.updateReady")}</Text>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => {
+            void logger.info("OTA: user confirmed restart to apply update");
+            void Updates.reloadAsync();
+          }}
+        >
+          <Text style={styles.buttonText}>{t("settings.restartNow")}</Text>
+        </TouchableOpacity>
+      </View>
+    </SafeAreaView>
   );
 };
 
 const getStyles = createStyles((colors) => ({
+  safe: { backgroundColor: colors.bannerBackground },
   banner: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: colors.bannerBackground,
     borderBottomWidth: 1,
     borderBottomColor: colors.bannerBorder,
     paddingHorizontal: 16,

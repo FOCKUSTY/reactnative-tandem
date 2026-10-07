@@ -30,12 +30,12 @@ export const RecordMeta = ({
             : t("records.meta.inProgress")}
         </Text>
       </View>
-      <View style={styles.metaRow}>
-        <Text style={styles.metaLabel}>{t("records.meta.pinned")}</Text>
-        <Text style={styles.metaValue}>
-          {isPinned ? t("records.meta.yes") : t("records.meta.no")}
-        </Text>
-      </View>
+      {isPinned && (
+        <View style={styles.metaRow}>
+          <Text style={styles.metaLabel}>{t("records.meta.pinned")}</Text>
+          <Text style={styles.metaValue}>{t("records.meta.yes")}</Text>
+        </View>
+      )}
       <View style={styles.metaRow}>
         <Text style={styles.metaLabel}>{t("records.meta.createdAt")}</Text>
         <Text style={styles.metaValue}>{formatDateTime(createdAt)}</Text>

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, Alert } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useState } from "react";
-import { useTheme, useCacheSettings, STALE_TIME_PRESETS } from "../../contexts";
+import { useTheme, useCacheSettings } from "../../contexts";
 import { useTranslate } from "../../hooks";
 import { createStyles } from "../../utils";
 import { SettingsItem } from "./settings-item.component";
@@ -12,6 +12,15 @@ import Toast from "react-native-toast-message";
 import { OFFLINE_CONFIG } from "../../constants";
 import { TranslationInput } from "../../i18n";
 
+const STALE_TIME_OPTIONS: { value: number; key: TranslationInput }[] = [
+  { value: 0, key: "cache.off" },
+  { value: 5 * 60 * 1000, key: "cache.5min" },
+  { value: 15 * 60 * 1000, key: "cache.15min" },
+  { value: 60 * 60 * 1000, key: "cache.1hour" },
+  { value: 24 * 60 * 60 * 1000, key: "cache.24hours" },
+  { value: -1, key: "cache.never" },
+];
+
 export const CacheSection = () => {
   const { colors } = useTheme();
   const { t } = useTranslate();
@@ -19,18 +28,12 @@ export const CacheSection = () => {
   const { settings, updateSettings } = useCacheSettings();
   const [modalVisible, setModalVisible] = useState(false);
 
-  const STALE_TIME_OPTIONS: { value: number; key: TranslationInput }[] = [
-    { value: 0, key: "cache.off" },
-    { value: 5 * 60 * 1000, key: "cache.5min" },
-    { value: 15 * 60 * 1000, key: "cache.15min" },
-    { value: 60 * 60 * 1000, key: "cache.1hour" },
-    { value: 24 * 60 * 60 * 1000, key: "cache.24hours" },
-    { value: -1, key: "cache.never" },
-  ];
-
-  const currentStaleTimeLabel =
-    STALE_TIME_PRESETS.find((p) => p.value === settings.staleTime)?.label ||
-    t("cache.5min");
+  const currentStaleTimeLabel = (() => {
+    const option = STALE_TIME_OPTIONS.find(
+      (p) => p.value === settings.staleTime,
+    );
+    return option ? t(option.key) : t("cache.5min");
+  })();
 
   const handleSelectStaleTime = async (value: number) => {
     await updateSettings({ staleTime: value as any });

@@ -70,8 +70,9 @@ const getStyles = createStyles((colors) => ({
     lineHeight: 32,
   },
   daysLabel: {
-    fontSize: 12,
-    color: colors.textMuted,
+    fontSize: 13,
+    color: colors.textSecondary,
     marginTop: 2,
+    letterSpacing: 0.2,
   },
 }));

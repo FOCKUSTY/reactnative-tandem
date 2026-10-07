@@ -29,21 +29,18 @@ export const RecordDetailsScreen = () => {
         headerRight: () => (
           <View style={styles.headerButtons}>
             <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
-              <MaterialIcons name="share" size={24} color={colors.primary} />
+              <MaterialIcons name="share" size={22} color={colors.primary} />
             </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleEdit}
-              style={[styles.headerButton, { marginLeft: 16 }]}
-            >
-              <MaterialIcons name="edit" size={24} color={colors.primary} />
+            <TouchableOpacity onPress={handleEdit} style={styles.headerButton}>
+              <MaterialIcons name="edit" size={22} color={colors.primary} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleDelete}
-              style={[styles.headerButton, { marginLeft: 16 }]}
+              style={styles.headerButton}
             >
               <MaterialIcons
                 name="delete-outline"
-                size={24}
+                size={22}
                 color={colors.danger}
               />
             </TouchableOpacity>
@@ -98,6 +95,7 @@ const getStyles = createStyles((colors) => ({
   headerButtons: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 8,
   },
   headerButton: {
     padding: 4,

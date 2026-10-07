@@ -345,14 +345,27 @@ const TemplatePreview = ({ result }: { result: TemplateRenderResult }) => {
       <Text style={styles.previewText} numberOfLines={5}>
         {result.text}
       </Text>
-      {result.errors.map((error, index) => (
-        <Text
-          key={`${error.expression}-${index}`}
-          style={styles.previewErrorText}
-        >
-          {t("records.template.errorLabel", { expression: error.expression })}
-        </Text>
-      ))}
+      {result.errors.length > 0 && (
+        <View style={styles.previewErrors}>
+          {result.errors.map((error, index) => (
+            <View
+              key={`${error.expression}-${index}`}
+              style={styles.previewErrorRow}
+            >
+              <MaterialIcons
+                name="error-outline"
+                size={14}
+                color={colors.danger}
+              />
+              <Text style={styles.previewErrorText}>
+                {t("records.template.errorLabel", {
+                  expression: error.expression,
+                })}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
     </View>
   );
 };
@@ -414,6 +427,9 @@ const getStyles = createStyles((colors) => ({
     borderRadius: 8,
     backgroundColor: colors.inputBackground,
   },
+  previewErrors: { marginTop: 8, gap: 4 },
+  previewErrorRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  previewErrorText: { color: colors.danger, fontSize: 12, flexShrink: 1 },
   previewLabel: {
     fontSize: 12,
     color: colors.textMuted,
@@ -421,11 +437,6 @@ const getStyles = createStyles((colors) => ({
   },
   previewText: {
     color: colors.text,
-  },
-  previewErrorText: {
-    color: colors.danger,
-    fontSize: 12,
-    marginTop: 4,
   },
   paletteWrapper: {
     marginTop: -8,

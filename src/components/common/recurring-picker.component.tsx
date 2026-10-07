@@ -144,7 +144,6 @@ export const RecurringPicker = ({ value, onChange }: RecurringPickerProps) => {
         </TouchableOpacity>
       </View>
 
-      {/* Контент */}
       {mode === "simple" ? (
         <SimpleMode value={simpleValue} onChange={updateSimple} />
       ) : (
