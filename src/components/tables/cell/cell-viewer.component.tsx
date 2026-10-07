@@ -81,19 +81,28 @@ export const CellViewer = (props: CellBaseProps) => {
       title: field.name,
       headerRight: () => (
         <View style={styles.headerButtons}>
-          <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
-            <MaterialIcons name="share" size={22} color={colors.primary} />
+          <TouchableOpacity
+            onPress={handleShare}
+            style={styles.headerButton}
+            accessibilityLabel={t("records.share")}
+          >
+            <MaterialIcons name="share" size={24} color={colors.primary} />
           </TouchableOpacity>
-          <OverflowMenu
-            actions={[
-              {
-                label: swipeEnabled
-                  ? t("tables.cell.enableScroll")
-                  : t("tables.cell.enableSwipe"),
-                onPress: toggleSwipe,
-              },
-            ]}
-          />
+          <TouchableOpacity
+            onPress={toggleSwipe}
+            style={[styles.headerButton, { marginLeft: 12 }]}
+            accessibilityLabel={
+              swipeEnabled
+                ? t("tables.cell.enableScroll")
+                : t("tables.cell.enableSwipe")
+            }
+          >
+            <MaterialIcons
+              name={swipeEnabled ? "swipe" : "unfold-more"}
+              size={24}
+              color={colors.primary}
+            />
+          </TouchableOpacity>
         </View>
       ),
     });

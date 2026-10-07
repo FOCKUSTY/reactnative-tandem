@@ -127,18 +127,22 @@ export const TableDetailScreen = () => {
       headerRight: () => (
         <View style={styles.headerButtons}>
           <TouchableOpacity
-            onPress={handleShareTable}
+            onPress={() => setFieldModalVisible(true)}
             style={styles.headerButton}
             disabled={!table}
-            accessibilityLabel={t("tables.share")}
+            accessibilityLabel={t("tables.addField")}
           >
-            <MaterialIcons name="share" size={22} color={colors.primary} />
+            <MaterialIcons
+              name="playlist-add"
+              size={22}
+              color={colors.primary}
+            />
           </TouchableOpacity>
           <OverflowMenu
             actions={[
               {
-                label: t("tables.addField"),
-                onPress: () => setFieldModalVisible(true),
+                label: t("tables.share"),
+                onPress: handleShareTable,
               },
               {
                 label: t("tables.deleteConfirm.title"),

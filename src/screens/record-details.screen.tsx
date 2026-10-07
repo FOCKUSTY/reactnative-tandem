@@ -41,11 +41,11 @@ export const RecordDetailsScreen = () => {
       headerRight: () => (
         <View style={styles.headerButtons}>
           <TouchableOpacity
-            onPress={handleShare}
+            onPress={handleEdit}
             style={styles.headerButton}
-            accessibilityLabel={t("records.share")}
+            accessibilityLabel={t("common.edit")}
           >
-            <MaterialIcons name="share" size={22} color={colors.primary} />
+            <MaterialIcons name="edit" size={22} color={colors.primary} />
           </TouchableOpacity>
           <OverflowMenu
             actions={[
@@ -55,7 +55,7 @@ export const RecordDetailsScreen = () => {
                   : t("records.star"),
                 onPress: handleToggleStar,
               },
-              { label: t("common.edit"), onPress: handleEdit },
+              { label: t("records.share"), onPress: handleShare },
               {
                 label: t("common.delete"),
                 onPress: handleDelete,
