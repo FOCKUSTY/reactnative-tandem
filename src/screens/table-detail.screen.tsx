@@ -14,6 +14,7 @@ import {
   TABLE_ACTION_WIDTH,
   RenameFieldModal,
   RenameTableModal,
+  OverflowMenu,
 } from "../components";
 import {
   useTable,
@@ -129,29 +130,23 @@ export const TableDetailScreen = () => {
             onPress={handleShareTable}
             style={styles.headerButton}
             disabled={!table}
+            accessibilityLabel={t("tables.share")}
           >
-            <MaterialIcons name="share" size={24} color={colors.primary} />
+            <MaterialIcons name="share" size={22} color={colors.primary} />
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => setFieldModalVisible(true)}
-            style={[styles.headerButton, { marginLeft: 12 }]}
-          >
-            <MaterialIcons
-              name="playlist-add"
-              size={24}
-              color={colors.primary}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={handleDeleteTable}
-            style={[styles.headerButton, { marginLeft: 12 }]}
-          >
-            <MaterialIcons
-              name="delete-outline"
-              size={24}
-              color={colors.danger}
-            />
-          </TouchableOpacity>
+          <OverflowMenu
+            actions={[
+              {
+                label: t("tables.addField"),
+                onPress: () => setFieldModalVisible(true),
+              },
+              {
+                label: t("tables.deleteConfirm.title"),
+                onPress: handleDeleteTable,
+                destructive: true,
+              },
+            ]}
+          />
         </View>
       ),
       headerTitle: () => (
@@ -441,9 +436,10 @@ const getStyles = createStyles((colors) => ({
   headerButtons: {
     flexDirection: "row",
     alignItems: "center",
+    gap: 4,
   },
   headerButton: {
-    padding: 4,
+    padding: 6,
   },
   emptyContainer: {
     flex: 1,

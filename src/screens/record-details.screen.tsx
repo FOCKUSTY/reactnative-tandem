@@ -5,8 +5,12 @@ import { View, TouchableOpacity, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useLayoutEffect } from "react";
 
-import { RecordContent, SkeletonRecordDetail } from "../components";
-import { useRecordDetail, useShare } from "../hooks";
+import {
+  RecordContent,
+  SkeletonRecordDetail,
+  OverflowMenu,
+} from "../components";
+import { useRecordDetail, useShare, useToggleStar } from "../hooks";
 import { createStyles, formatDate, formatTime } from "../utils";
 import { useTheme } from "../contexts";
 import { useTranslate } from "../hooks";
@@ -20,35 +24,59 @@ export const RecordDetailsScreen = () => {
   const navigation = useNavigation<NavigationProperty>();
 
   const { shareRecord } = useShare();
+  const { toggleStar, isPending: starPending } = useToggleStar();
+
   const handleShare = () => record && shareRecord(record);
 
+  const handleToggleStar = () => {
+    if (!record || starPending) return;
+    void toggleStar(record.id, !!record.isStarred);
+  };
+
   useLayoutEffect(() => {
-    if (record) {
-      navigation.setOptions({
-        title: record.title || t("records.details"),
-        headerRight: () => (
-          <View style={styles.headerButtons}>
-            <TouchableOpacity onPress={handleShare} style={styles.headerButton}>
-              <MaterialIcons name="share" size={22} color={colors.primary} />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleEdit} style={styles.headerButton}>
-              <MaterialIcons name="edit" size={22} color={colors.primary} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={handleDelete}
-              style={styles.headerButton}
-            >
-              <MaterialIcons
-                name="delete-outline"
-                size={22}
-                color={colors.danger}
-              />
-            </TouchableOpacity>
-          </View>
-        ),
-      });
-    }
-  }, [record, colors, t]);
+    if (!record) return;
+
+    navigation.setOptions({
+      title: record.title || t("records.details"),
+      headerRight: () => (
+        <View style={styles.headerButtons}>
+          <TouchableOpacity
+            onPress={handleShare}
+            style={styles.headerButton}
+            accessibilityLabel={t("records.share")}
+          >
+            <MaterialIcons name="share" size={22} color={colors.primary} />
+          </TouchableOpacity>
+          <OverflowMenu
+            actions={[
+              {
+                label: record.isStarred
+                  ? t("records.unstar")
+                  : t("records.star"),
+                onPress: handleToggleStar,
+              },
+              { label: t("common.edit"), onPress: handleEdit },
+              {
+                label: t("common.delete"),
+                onPress: handleDelete,
+                destructive: true,
+              },
+            ]}
+          />
+        </View>
+      ),
+    });
+  }, [
+    record,
+    record?.isStarred,
+    starPending,
+    colors,
+    t,
+    handleShare,
+    handleEdit,
+    handleDelete,
+    handleToggleStar,
+  ]);
 
   if (isLoading) {
     return <SkeletonRecordDetail />;
@@ -83,10 +111,6 @@ const getStyles = createStyles((colors) => ({
     justifyContent: "center",
     alignItems: "center",
   },
-  loadingText: {
-    color: colors.textSecondary,
-    fontSize: 16,
-  },
   errorText: {
     color: colors.danger,
     fontSize: 16,
@@ -95,10 +119,10 @@ const getStyles = createStyles((colors) => ({
   headerButtons: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 4,
   },
   headerButton: {
-    padding: 4,
+    padding: 6,
   },
 }));
 

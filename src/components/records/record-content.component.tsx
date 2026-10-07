@@ -1,5 +1,5 @@
 import Markdown from "react-native-markdown-renderer";
-import { TouchableOpacity, View } from "react-native";
+import { View } from "react-native";
 
 import { createStyles, getMarkdownStyles } from "../../utils";
 import { useTheme } from "../../contexts";
@@ -8,9 +8,7 @@ import { RecordHeader } from "./record-header.component";
 import { RecordTags } from "./record-tags.component";
 import { RecordMeta } from "./record-meta.component";
 import { MyRecord } from "../../types";
-import { useRefresh, useToggleStar } from "../../hooks";
-import { useState } from "react";
-import MaterialIcons from "@react-native-vector-icons/material-icons";
+import { useRefresh } from "../../hooks";
 
 export type RecordContentProperties = {
   record: MyRecord;
@@ -23,33 +21,20 @@ export const RecordContent = ({
   dateLabel,
   timeLabel,
 }: RecordContentProperties) => {
-  const {
-    title,
-    content,
-    tags,
-    isCompleted,
-    isPinned,
-    createdAt,
-    updatedAt,
-    ...initialRecord
-  } = record;
+  const { title, content, tags, isCompleted, isPinned, createdAt, updatedAt } =
+    record;
   const { colors } = useTheme();
   const styles = getStyles(colors);
   const markdownStyles = getMarkdownStyles(colors);
-  const { toggleStar, isPending } = useToggleStar();
-  const [localRecord, setLocalRecord] = useState(initialRecord);
+
+  const cellMarkdownStyles = {
+    ...markdownStyles,
+    root: { ...markdownStyles.root, flex: 0 as const },
+  };
 
   const { RefreshableScrollView } = useRefresh({
-    queryKeys: [["record", initialRecord.id]],
+    queryKeys: [["record", record.id]],
   });
-
-  const handleStarPress = () => {
-    if (!isPending) {
-      toggleStar(localRecord.id, !!localRecord.isStarred).then(() => {
-        setLocalRecord((prev) => ({ ...prev, isStarred: !prev.isStarred }));
-      });
-    }
-  };
 
   return (
     <RefreshableScrollView
@@ -57,23 +42,13 @@ export const RecordContent = ({
       contentContainerStyle={styles.content}
     >
       <View style={styles.card}>
-        <View style={styles.card_header}>
-          <RecordHeader
-            title={title}
-            date={dateLabel || undefined}
-            time={timeLabel || undefined}
-          />
+        <RecordHeader
+          title={title}
+          date={dateLabel || undefined}
+          time={timeLabel || undefined}
+        />
 
-          <TouchableOpacity onPress={handleStarPress} disabled={isPending}>
-            <MaterialIcons
-              name={localRecord.isStarred ? "star" : "star-border"}
-              size={32}
-              color={localRecord.isStarred ? colors.primary : colors.textMuted}
-            />
-          </TouchableOpacity>
-        </View>
-
-        <Markdown style={markdownStyles}>{content || ""}</Markdown>
+        <Markdown style={cellMarkdownStyles}>{content || ""}</Markdown>
 
         <RecordTags tags={tags} />
 
@@ -103,11 +78,5 @@ const getStyles = createStyles((colors) => ({
     padding: 16,
     borderWidth: 1,
     borderColor: colors.cardBorder,
-  },
-  card_header: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 8,
-    justifyContent: "space-between",
   },
 }));

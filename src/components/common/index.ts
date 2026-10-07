@@ -8,3 +8,4 @@ export * from "./sort-controls.component";
 export * from "./status-switches.component";
 export * from "./modal-wrapper.component";
 export * from "./recurring-picker.component";
+export * from "./overflow-menu.component";
