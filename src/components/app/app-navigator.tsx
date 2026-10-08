@@ -26,6 +26,7 @@ import {
   ForgotPasswordScreen,
   ResetPasswordScreen,
   TemplateHelpScreen,
+  FormulaHelpScreen,
 } from "../../screens";
 import { MainTabs } from "./main-tabs";
 
@@ -171,6 +172,11 @@ export const AppNavigator = () => {
             name="TemplateHelp"
             component={TemplateHelpScreen}
             options={{ title: t("templateHelp.title") }}
+          />
+          <Stack.Screen
+            name="FormulaHelp"
+            component={FormulaHelpScreen}
+            options={{ title: t("formulaHelp.title") }}
           />
         </>
       )}

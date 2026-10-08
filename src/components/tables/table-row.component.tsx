@@ -1,4 +1,5 @@
 import type { Field, TableRowData } from "../../types/table.types";
+import { hasTemplate, type RenderedCellMap } from "../../tables/formula/types";
 
 import { View, Text, TouchableOpacity, Switch } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
@@ -13,6 +14,7 @@ export const TABLE_ACTION_WIDTH = 48;
 export type TableRowProps = {
   row: TableRowData;
   fields: Field[];
+  renderedCells?: RenderedCellMap;
   onCellPress: (field: Field, row: TableRowData) => void;
   onCellLongPress: (field: Field, row: TableRowData) => void;
   onCellBooleanChange?: (rowId: string, fieldId: string, value: string) => void;
@@ -23,6 +25,7 @@ export type TableRowProps = {
 export const TableRow = ({
   row,
   fields,
+  renderedCells,
   onCellPress,
   onCellLongPress,
   onCellBooleanChange,
@@ -35,6 +38,26 @@ export const TableRow = ({
 
   const renderValue = (field: Field) => {
     const raw = row.cells[field.id] ?? "";
+
+    if (hasTemplate(raw)) {
+      const rendered = renderedCells?.get(`${row.id}:${field.id}`) ?? "…";
+      const isError = rendered.startsWith("#");
+      return (
+        <View style={styles.cellInner}>
+          <Text
+            style={[styles.cellText, isError && styles.formulaError]}
+            numberOfLines={2}
+          >
+            {rendered}
+          </Text>
+          <MaterialIcons
+            name="functions"
+            size={14}
+            color={isError ? colors.danger : colors.primary}
+          />
+        </View>
+      );
+    }
 
     if (field.type === "boolean") {
       const isTrue = raw === "true";
@@ -172,6 +195,9 @@ const getStyles = createStyles((colors) => ({
   },
   placeholderText: {
     color: colors.textMuted,
+  },
+  formulaError: {
+    color: colors.danger,
   },
   booleanCell: {
     alignItems: "flex-start",

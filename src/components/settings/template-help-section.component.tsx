@@ -23,6 +23,11 @@ export const TemplateHelpSection = () => {
           label={t("templateHelp.open")}
           onPress={() => navigation.navigate("TemplateHelp")}
         />
+        <SettingsItem
+          icon="functions"
+          label={t("formulaHelp.open")}
+          onPress={() => navigation.navigate("FormulaHelp")}
+        />
       </View>
     </View>
   );

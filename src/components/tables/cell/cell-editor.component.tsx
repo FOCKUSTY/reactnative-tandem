@@ -20,6 +20,22 @@ import { useTheme } from "../../../contexts";
 import { useTranslate, useCreateOrUpdateCell } from "../../../hooks";
 import { createStyles, getMarkdownStyles, parseDate } from "../../../utils";
 import type { NavigationProperty } from "../../../types";
+import { hasTemplate } from "../../../tables/formula/types";
+
+const FORMULA_TOKENS = [
+  "С1Р1",
+  "С-1Р-1",
+  "С1Р1:С3Р5",
+  "[Цена]",
+  "сумма",
+  "среднее",
+  "мин",
+  "макс",
+  "количество",
+  "счёт",
+  "округл",
+  "если",
+] as const;
 
 export const CellEditor = (props: CellBaseProps) => {
   const {
@@ -50,10 +66,12 @@ export const CellEditor = (props: CellBaseProps) => {
 
   const [value, setValue] = useState(initialValue);
   const [tab, setTab] = useState<"edit" | "preview">("edit");
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   useEffect(() => {
     setValue(initialValue);
-  }, [rowId, field.id]);
+    setSelection({ start: 0, end: 0 });
+  }, [rowId, field.id, initialValue]);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: field.name });
@@ -83,7 +101,11 @@ export const CellEditor = (props: CellBaseProps) => {
   const handleSave = async () => {
     let finalValue = value;
 
-    if (field.type === "number" && finalValue.trim() !== "") {
+    if (
+      field.type === "number" &&
+      finalValue.trim() !== "" &&
+      !hasTemplate(finalValue)
+    ) {
       finalValue = finalValue.replace(",", ".").trim();
       if (Number.isNaN(Number(finalValue))) {
         Alert.alert(t("common.error"), t("tables.errors.invalidNumber"));
@@ -101,6 +123,19 @@ export const CellEditor = (props: CellBaseProps) => {
     } catch {
       Alert.alert(t("common.error"), t("tables.errors.saveFailed"));
     }
+  };
+
+  /**
+   * Вставляет токен в позицию курсора в активное поле. Позицию храним в
+   * `selection` и передаём в `selection` prop TextInput'а — RN сам поставит
+   * курсор сразу после вставленного токена.
+   */
+  const insertToken = (token: string) => {
+    const before = value.slice(0, selection.start);
+    const after = value.slice(selection.end);
+    const cursor = selection.start + token.length;
+    setValue(before + token + after);
+    setSelection({ start: cursor, end: cursor });
   };
 
   const renderMultiline = () => (
@@ -143,6 +178,8 @@ export const CellEditor = (props: CellBaseProps) => {
           style={[styles.input, styles.textArea]}
           value={value}
           onChangeText={setValue}
+          selection={selection}
+          onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
           placeholder={t("tables.cell.markdownPlaceholder")}
           placeholderTextColor={colors.textMuted}
           multiline
@@ -175,6 +212,8 @@ export const CellEditor = (props: CellBaseProps) => {
             style={styles.input}
             value={value}
             onChangeText={setValue}
+            selection={selection}
+            onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
             placeholder={field.name}
             placeholderTextColor={colors.textMuted}
             keyboardType="numeric"
@@ -261,6 +300,8 @@ export const CellEditor = (props: CellBaseProps) => {
             style={styles.input}
             value={value}
             onChangeText={setValue}
+            selection={selection}
+            onSelectionChange={(e) => setSelection(e.nativeEvent.selection)}
             placeholder={field.name}
             placeholderTextColor={colors.textMuted}
             autoFocus
@@ -271,6 +312,11 @@ export const CellEditor = (props: CellBaseProps) => {
 
   const isPending = updateCell.isPending;
   const isMultilinePreview = field.type === "multiline" && tab === "preview";
+
+  const showFormulaUi =
+    field.type === "text" ||
+    field.type === "number" ||
+    field.type === "multiline";
 
   return (
     <ScrollView
@@ -301,6 +347,39 @@ export const CellEditor = (props: CellBaseProps) => {
           : t("tables.cell.value")}
       </Text>
       {renderInput()}
+
+      {showFormulaUi && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.paletteContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          {FORMULA_TOKENS.map((token) => (
+            <TouchableOpacity
+              key={token}
+              style={styles.paletteChip}
+              onPress={() => insertToken(`{{ ${token} }}`)}
+              activeOpacity={0.6}
+            >
+              <Text style={styles.paletteChipText}>{token}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+
+      {showFormulaUi && (
+        <TouchableOpacity
+          style={styles.formulaHintRow}
+          onPress={() => navigation.navigate("FormulaHelp")}
+          activeOpacity={0.7}
+        >
+          <MaterialIcons name="functions" size={16} color={colors.primary} />
+          <Text style={styles.formulaHintText}>
+            {t("tables.cell.formulaHint")}
+          </Text>
+        </TouchableOpacity>
+      )}
 
       {isDirty && (
         <Text style={styles.dirtyHint}>{t("tables.cell.unsavedHint")}</Text>
@@ -485,5 +564,35 @@ const getStyles = createStyles((colors) => ({
   },
   disabled: {
     opacity: 0.6,
+  },
+  formulaHintRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 8,
+    paddingHorizontal: 4,
+  },
+  formulaHintText: {
+    fontSize: 12,
+    color: colors.textMuted,
+    flexShrink: 1,
+  },
+  paletteContent: {
+    gap: 6,
+    paddingRight: 16,
+    paddingVertical: 8,
+  },
+  paletteChip: {
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 14,
+    backgroundColor: colors.inputBackground,
+    borderWidth: 1,
+    borderColor: colors.inputBorder,
+  },
+  paletteChipText: {
+    fontFamily: "monospace",
+    fontSize: 12,
+    color: colors.text,
   },
 }));

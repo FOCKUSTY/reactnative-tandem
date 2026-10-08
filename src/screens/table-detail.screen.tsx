@@ -18,6 +18,7 @@ import {
 } from "../components";
 import {
   useTable,
+  useTableWithFormulas,
   useCreateRow,
   useDeleteRow,
   useCreateField,
@@ -28,9 +29,12 @@ import {
   useUpdateField,
   useShare,
   useUpdateTable,
+  useInsertRow,
 } from "../hooks";
 import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
+import { tablesService } from "../api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export type TableDetailRouteProperties = {
   key: string;
@@ -46,15 +50,17 @@ export const TableDetailScreen = () => {
   const route = useRoute<TableDetailRouteProperties>();
   const { tableId, tableName } = route.params;
 
-  const { data, isLoading } = useTable(tableId);
-  const table = data as TableWithRecordRows | undefined;
+  const { table, renderedCells, isLoading } = useTableWithFormulas(tableId);
 
   const createRow = useCreateRow();
+  const insertRow = useInsertRow();
   const deleteRow = useDeleteRow();
   const createField = useCreateField();
   const deleteField = useDeleteField();
   const updateCell = useCreateOrUpdateCell();
   const deleteTable = useDeleteTable();
+
+  const queryClient = useQueryClient();
 
   const [fieldModalVisible, setFieldModalVisible] = useState(false);
 
@@ -172,6 +178,79 @@ export const TableDetailScreen = () => {
   }, [navigation, table, colors, t]);
 
   const handleAddRow = () => createRow.mutate({ tableId });
+
+  const handleInsertRow = (
+    referenceRowId: string,
+    position: "above" | "below",
+  ) => {
+    if (!table) return;
+    insertRow.mutate(
+      {
+        tableId,
+        rows: table.rows,
+        referenceRowId,
+        position,
+      },
+      {
+        onError: () => {
+          Alert.alert(t("common.error"), t("tables.errors.insertFailed"));
+        },
+      },
+    );
+  };
+
+  const handleRowMenu = (row: TableRowData) => {
+    Alert.alert(t("tables.insertRow.menuTitle"), undefined, [
+      {
+        text: t("tables.insertRow.above"),
+        onPress: () => handleInsertRow(row.id, "above"),
+      },
+      {
+        text: t("tables.insertRow.below"),
+        onPress: () => handleInsertRow(row.id, "below"),
+      },
+      {
+        text: t("tables.insertRow.duplicate"),
+        onPress: () => handleDuplicateRow(row),
+      },
+      {
+        text: t("common.delete"),
+        style: "destructive",
+        onPress: () => handleDeleteRow(row.id),
+      },
+      { text: t("common.cancel"), style: "cancel" },
+    ]);
+  };
+
+  /**
+   * Дублирование строки: создаём пустую строку, копируем значения ячеек,
+   * затем переупорядочиваем ids, чтобы дубликат шёл сразу за оригиналом.
+   */
+  const handleDuplicateRow = async (row: TableRowData) => {
+    if (!table) return;
+    try {
+      const created = await tablesService.createRow(tableId, {});
+      const newRowId = created.data.id;
+      for (const field of table.fields) {
+        const value = row.cells[field.id];
+        if (value) {
+          await tablesService.createOrUpdateCell({
+            rowId: newRowId,
+            fieldId: field.id,
+            value,
+          });
+        }
+      }
+      const refIndex = table.rows.findIndex((r) => r.id === row.id);
+      const ids = table.rows.map((r) => r.id);
+      ids.splice(refIndex + 1, 0, newRowId);
+      await tablesService.reorderRows({ tableId, ids });
+      queryClient.invalidateQueries({ queryKey: ["table", tableId] });
+      queryClient.invalidateQueries({ queryKey: ["tables"] });
+    } catch {
+      Alert.alert(t("common.error"), t("tables.errors.duplicateRowFailed"));
+    }
+  };
 
   const handleDeleteRow = (rowId: string) => {
     Alert.alert(
@@ -321,10 +400,11 @@ export const TableDetailScreen = () => {
                     key={row.id}
                     row={row}
                     fields={table.fields}
+                    renderedCells={renderedCells}
                     onCellPress={handleCellPress}
                     onCellLongPress={handleCellLongPress}
                     onCellBooleanChange={handleBooleanChange}
-                    onRowLongPress={() => handleDeleteRow(row.id)}
+                    onRowLongPress={() => handleRowMenu(row)}
                     onRowDelete={() => handleDeleteRow(row.id)}
                   />
                 ))

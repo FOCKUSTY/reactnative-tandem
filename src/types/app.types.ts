@@ -33,6 +33,7 @@ export type RootStackParameters = {
     mode?: "view" | "edit";
   };
   TemplateHelp: undefined;
+  FormulaHelp: undefined;
 };
 
 export type NavigationProperty = NativeStackNavigationProp<RootStackParameters>;
