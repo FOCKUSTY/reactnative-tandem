@@ -10,6 +10,7 @@ import type {
   UpdateFieldDto,
   CreateRowDto,
   UpdateCellDto,
+  CreateOrUpdateCellDto,
   ReorderDto,
   ReorderTablesDto,
   ReorderFieldsDto,
@@ -46,6 +47,13 @@ export const tablesService = {
   reorderFields: (data: ReorderFieldsDto) =>
     api.post<void>("/tables/fields/reorder", data),
 
+  /**
+   * Создать строку. Если передан `position`:
+   *   1  — в начало
+   *   -1 — в конец (последней)
+   *   -2 — предпоследней
+   * Если ничего не передано — сервер добавит в конец.
+   */
   createRow: (tableId: string, data?: CreateRowDto) =>
     api.post<Row>(`/tables/${tableId}/rows`, data || {}),
   deleteRow: (id: string) => api.delete<void>(`/tables/rows/${id}`),
@@ -54,11 +62,17 @@ export const tablesService = {
 
   updateCell: (id: string, data: UpdateCellDto) =>
     api.patch<Cell>(`/tables/cells/${id}`, data),
-  createOrUpdateCell: (data: {
-    rowId: string;
-    fieldId: string;
-    value: string;
-  }) => api.post<Cell>("/tables/cells", data),
+
+  createOrUpdateCell: (data: CreateOrUpdateCellDto) => {
+    const payload: Record<string, unknown> = {
+      rowId: data.rowId,
+      fieldId: data.fieldId,
+      value: data.value,
+    };
+    if (data.cellType !== undefined) payload.cellType = data.cellType;
+    return api.post<Cell>("/tables/cells", payload);
+  },
+
   getCellsForTable: (tableId: string) =>
     api.get<Row[]>(`/tables/${tableId}/cells`),
 

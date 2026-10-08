@@ -1,7 +1,14 @@
-import type { NavigationProperty, TableWithRecordRows } from "../types";
+import type { NavigationProperty } from "../types";
 import type { Field, TableRowData } from "../types/table.types";
 
-import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+  TextInput,
+} from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { useLayoutEffect, useState } from "react";
@@ -15,9 +22,9 @@ import {
   RenameFieldModal,
   RenameTableModal,
   OverflowMenu,
+  ModalWrapper,
 } from "../components";
 import {
-  useTable,
   useTableWithFormulas,
   useCreateRow,
   useDeleteRow,
@@ -68,6 +75,10 @@ export const TableDetailScreen = () => {
   const [renameField, setRenameField] = useState<Field | null>(null);
   const [renameTableVisible, setRenameTableVisible] = useState(false);
   const updateTable = useUpdateTable();
+
+  // Модалка «вставить строку на конкретную позицию».
+  const [insertPositionVisible, setInsertPositionVisible] = useState(false);
+  const [insertPositionText, setInsertPositionText] = useState("");
 
   const { shareTable } = useShare();
 
@@ -177,7 +188,49 @@ export const TableDetailScreen = () => {
     });
   }, [navigation, table, colors, t]);
 
-  const handleAddRow = () => createRow.mutate({ tableId });
+  /**
+   * Короткое нажатие на FAB — добавить строку в конец (backward compat).
+   * Долгое нажатие — меню: «в начало», «в конец», «на позицию…».
+   */
+  const handleAddRow = () =>
+    createRow.mutate({ tableId, data: { position: -1 } });
+
+  const handleAddRowMenu = () => {
+    Alert.alert(t("tables.insertRow.addTitle"), undefined, [
+      {
+        text: t("tables.insertRow.atStart"),
+        onPress: () => createRow.mutate({ tableId, data: { position: 1 } }),
+      },
+      {
+        text: t("tables.insertRow.atEnd"),
+        onPress: () => createRow.mutate({ tableId, data: { position: -1 } }),
+      },
+      {
+        text: t("tables.insertRow.atPosition"),
+        onPress: () => {
+          setInsertPositionText("");
+          setInsertPositionVisible(true);
+        },
+      },
+      { text: t("common.cancel"), style: "cancel" },
+    ]);
+  };
+
+  const handleInsertAtPosition = () => {
+    const parsed = parseInt(insertPositionText.trim(), 10);
+    if (!Number.isFinite(parsed) || parsed === 0) {
+      Alert.alert(t("common.error"), t("tables.errors.invalidPosition"));
+      return;
+    }
+    createRow.mutate(
+      { tableId, data: { position: parsed } },
+      {
+        onSuccess: () => setInsertPositionVisible(false),
+        onError: () =>
+          Alert.alert(t("common.error"), t("tables.errors.addRowFailed")),
+      },
+    );
+  };
 
   const handleInsertRow = (
     referenceRowId: string,
@@ -415,7 +468,12 @@ export const TableDetailScreen = () => {
       )}
 
       {hasFields && (
-        <TouchableOpacity style={styles.fab} onPress={handleAddRow}>
+        <TouchableOpacity
+          style={styles.fab}
+          onPress={handleAddRow}
+          onLongPress={handleAddRowMenu}
+          delayLongPress={400}
+        >
           <MaterialIcons name="add" size={28} color="#fff" />
         </TouchableOpacity>
       )}
@@ -447,6 +505,28 @@ export const TableDetailScreen = () => {
         onRename={handleRenameTable}
         loading={updateTable.isPending}
       />
+
+      <ModalWrapper
+        visible={insertPositionVisible}
+        onClose={() => setInsertPositionVisible(false)}
+        title={t("tables.insertRow.atPositionTitle")}
+        confirmText={t("common.create")}
+        onConfirm={handleInsertAtPosition}
+        loading={createRow.isPending}
+      >
+        <Text style={styles.modalLabel}>
+          {t("tables.insertRow.positionHint")}
+        </Text>
+        <TextInput
+          style={styles.modalInput}
+          value={insertPositionText}
+          onChangeText={setInsertPositionText}
+          placeholder={t("tables.insertRow.positionPlaceholder")}
+          placeholderTextColor={colors.textMuted}
+          keyboardType="numbers-and-punctuation"
+          autoFocus
+        />
+      </ModalWrapper>
     </View>
   );
 };
@@ -568,6 +648,20 @@ const getStyles = createStyles((colors) => ({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 4,
+  },
+  modalLabel: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: 8,
+  },
+  modalInput: {
+    borderWidth: 1,
+    borderColor: colors.inputBorder,
+    backgroundColor: colors.inputBackground,
+    color: colors.text,
+    padding: 12,
+    borderRadius: 8,
+    fontSize: 16,
   },
 }));
 

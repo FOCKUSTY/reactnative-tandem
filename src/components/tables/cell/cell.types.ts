@@ -1,4 +1,8 @@
-import type { Field, TableWithRecordRows } from "../../../types/table.types";
+import type {
+  Field,
+  FieldType,
+  TableWithRecordRows,
+} from "../../../types/table.types";
 
 export type CellBaseProps = {
   table: TableWithRecordRows;
@@ -6,6 +10,12 @@ export type CellBaseProps = {
 
   rowId: string;
   initialValue: string;
+  /**
+   * Тип, переопределённый для этой конкретной ячейки.
+   * `null`/`undefined` — используется `field.type`.
+   */
+  initialCellType?: FieldType | null;
+
   rowNumber: number;
   totalRows: number;
   hasPrevRow: boolean;

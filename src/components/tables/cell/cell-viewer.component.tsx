@@ -18,7 +18,6 @@ import { useTheme } from "../../../contexts";
 import { useShare, useTranslate } from "../../../hooks";
 import { createStyles, storage } from "../../../utils";
 import type { NavigationProperty } from "../../../types";
-import { OverflowMenu } from "../../common";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 const SWIPE_THRESHOLD = 80;
@@ -31,6 +30,7 @@ export const CellViewer = (props: CellBaseProps) => {
     field,
     rowId,
     initialValue,
+    initialCellType,
     rowNumber,
     totalRows,
     hasPrevRow,
@@ -237,7 +237,13 @@ export const CellViewer = (props: CellBaseProps) => {
     }),
   ).current;
 
-  const valueContent = <CellValueDisplay field={field} value={initialValue} />;
+  const valueContent = (
+    <CellValueDisplay
+      field={field}
+      value={initialValue}
+      overrideType={initialCellType}
+    />
+  );
 
   return (
     <View style={styles.container}>

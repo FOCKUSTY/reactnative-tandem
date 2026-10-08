@@ -3,6 +3,7 @@ import type {
   Table,
   UpdateCellDto,
   CreateRowDto,
+  CreateOrUpdateCellDto,
 } from "../../types/table.types";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -212,10 +213,16 @@ export const useUpdateCell = () => {
   });
 };
 
+/**
+ * Upsert значения и типа ячейки. Тип — необязательный:
+ *  - не передаём `cellType` → не трогаем override;
+ *  - `cellType: null` → снимаем override;
+ *  - `cellType: <тип>` → устанавливаем тип.
+ */
 export const useCreateOrUpdateCell = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: { rowId: string; fieldId: string; value: string }) =>
+    mutationFn: (data: CreateOrUpdateCellDto) =>
       tablesService.createOrUpdateCell(data).then((res) => res.data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["table"] });

@@ -1,4 +1,4 @@
-import type { Field, TableRowData } from "../../types/table.types";
+import type { Field, FieldType, TableRowData } from "../../types/table.types";
 import { hasTemplate, type RenderedCellMap } from "../../tables/formula/types";
 
 import { View, Text, TouchableOpacity, Switch } from "react-native";
@@ -36,8 +36,13 @@ export const TableRow = ({
   const { t } = useTranslate();
   const styles = getStyles(colors);
 
+  /** Эффективный тип: override ячейки важнее типа поля. */
+  const effectiveType = (field: Field): FieldType =>
+    row.cellTypes?.[field.id] ?? field.type;
+
   const renderValue = (field: Field) => {
     const raw = row.cells[field.id] ?? "";
+    const type = effectiveType(field);
 
     if (hasTemplate(raw)) {
       const rendered = renderedCells?.get(`${row.id}:${field.id}`) ?? "…";
@@ -59,7 +64,7 @@ export const TableRow = ({
       );
     }
 
-    if (field.type === "boolean") {
+    if (type === "boolean") {
       const isTrue = raw === "true";
       return (
         <View style={styles.booleanCell}>
@@ -75,7 +80,7 @@ export const TableRow = ({
       );
     }
 
-    if (field.type === "date") {
+    if (type === "date") {
       return (
         <View style={styles.cellInner}>
           <Text
@@ -89,7 +94,7 @@ export const TableRow = ({
       );
     }
 
-    if (field.type === "select") {
+    if (type === "select") {
       return (
         <View style={styles.cellInner}>
           <Text
@@ -125,7 +130,7 @@ export const TableRow = ({
       activeOpacity={1}
     >
       {fields.map((field) => {
-        const isBoolean = field.type === "boolean";
+        const isBoolean = effectiveType(field) === "boolean";
         return (
           <TouchableOpacity
             key={field.id}

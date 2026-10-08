@@ -19,6 +19,7 @@ import { DatePickerComponent } from "../../common";
 import { useTheme } from "../../../contexts";
 import { useTranslate, useCreateOrUpdateCell } from "../../../hooks";
 import { createStyles, getMarkdownStyles, parseDate } from "../../../utils";
+import type { FieldType } from "../../../types/table.types";
 import type { NavigationProperty } from "../../../types";
 import { hasTemplate } from "../../../tables/formula/types";
 
@@ -37,12 +38,23 @@ const FORMULA_TOKENS = [
   "если",
 ] as const;
 
+/** Порядок отображения типов в селекторе. */
+const OVERRIDE_TYPE_ORDER: FieldType[] = [
+  "text",
+  "number",
+  "date",
+  "boolean",
+  "select",
+  "multiline",
+];
+
 export const CellEditor = (props: CellBaseProps) => {
   const {
     table,
     field,
     rowId,
     initialValue,
+    initialCellType,
     rowNumber,
     totalRows,
     hasPrevRow,
@@ -65,19 +77,31 @@ export const CellEditor = (props: CellBaseProps) => {
   const updateCell = useCreateOrUpdateCell();
 
   const [value, setValue] = useState(initialValue);
+  const [cellType, setCellType] = useState<FieldType | null>(
+    initialCellType ?? null,
+  );
   const [tab, setTab] = useState<"edit" | "preview">("edit");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
 
   useEffect(() => {
     setValue(initialValue);
+    setCellType(initialCellType ?? null);
     setSelection({ start: 0, end: 0 });
-  }, [rowId, field.id, initialValue]);
+  }, [rowId, field.id, initialValue, initialCellType]);
 
   useLayoutEffect(() => {
     navigation.setOptions({ title: field.name });
   }, [navigation, field.name]);
 
-  const isDirty = value !== initialValue;
+  /** Тип, который реально применяется к этой ячейке. */
+  const effectiveType: FieldType = cellType ?? field.type;
+  const isDirty =
+    value !== initialValue || cellType !== (initialCellType ?? null);
+
+  // select без опций предлагать бессмысленно — рендерить нечего.
+  const availableTypes = OVERRIDE_TYPE_ORDER.filter(
+    (ft) => ft !== "select" || field.options.length > 0,
+  );
 
   const confirmIfDirty = (action: () => void) => {
     if (!isDirty) {
@@ -98,11 +122,19 @@ export const CellEditor = (props: CellBaseProps) => {
     );
   };
 
+  const handleTypeChange = (next: FieldType | null) => {
+    setCellType(next);
+    // Если уходим с multiline, сбрасываем вкладку на edit: превью
+    // относится только к multiline.
+    const nextType = next ?? field.type;
+    if (nextType !== "multiline") setTab("edit");
+  };
+
   const handleSave = async () => {
     let finalValue = value;
 
     if (
-      field.type === "number" &&
+      effectiveType === "number" &&
       finalValue.trim() !== "" &&
       !hasTemplate(finalValue)
     ) {
@@ -118,9 +150,10 @@ export const CellEditor = (props: CellBaseProps) => {
         rowId,
         fieldId: field.id,
         value: finalValue,
+        cellType,
       });
       navigation.goBack();
-    } catch {
+    } catch (error) {
       Alert.alert(t("common.error"), t("tables.errors.saveFailed"));
     }
   };
@@ -137,6 +170,56 @@ export const CellEditor = (props: CellBaseProps) => {
     setValue(before + token + after);
     setSelection({ start: cursor, end: cursor });
   };
+
+  const renderTypeSelector = () => (
+    <View style={styles.typeSection}>
+      <Text style={styles.typeLabel}>{t("tables.cell.typeSectionTitle")}</Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.typeChipsRow}
+        keyboardShouldPersistTaps="handled"
+      >
+        <TouchableOpacity
+          style={[styles.typeChip, cellType === null && styles.typeChipActive]}
+          onPress={() => handleTypeChange(null)}
+          activeOpacity={0.7}
+        >
+          <Text
+            style={[
+              styles.typeChipText,
+              cellType === null && styles.typeChipTextActive,
+            ]}
+          >
+            {t("tables.cell.typeAuto", {
+              type: t(`tables.field.types.${field.type}`),
+            })}
+          </Text>
+        </TouchableOpacity>
+
+        {availableTypes.map((ft) => {
+          const active = cellType === ft;
+          return (
+            <TouchableOpacity
+              key={ft}
+              style={[styles.typeChip, active && styles.typeChipActive]}
+              onPress={() => handleTypeChange(ft)}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.typeChipText,
+                  active && styles.typeChipTextActive,
+                ]}
+              >
+                {t(`tables.field.types.${ft}`)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </ScrollView>
+    </View>
+  );
 
   const renderMultiline = () => (
     <View>
@@ -202,7 +285,7 @@ export const CellEditor = (props: CellBaseProps) => {
   );
 
   const renderInput = () => {
-    switch (field.type) {
+    switch (effectiveType) {
       case "multiline":
         return renderMultiline();
 
@@ -248,10 +331,16 @@ export const CellEditor = (props: CellBaseProps) => {
         );
       }
 
-      case "select":
+      case "select": {
+        const options = field.options ?? [];
         return (
           <View style={styles.optionsList}>
-            {(field.options || []).map((option) => {
+            {options.length === 0 && (
+              <Text style={styles.valueEmpty}>
+                {t("tables.field.noOptions")}
+              </Text>
+            )}
+            {options.map((option) => {
               const selected = value === option;
               return (
                 <TouchableOpacity
@@ -292,6 +381,7 @@ export const CellEditor = (props: CellBaseProps) => {
             )}
           </View>
         );
+      }
 
       case "text":
       default:
@@ -311,12 +401,14 @@ export const CellEditor = (props: CellBaseProps) => {
   };
 
   const isPending = updateCell.isPending;
-  const isMultilinePreview = field.type === "multiline" && tab === "preview";
+  const isMultilinePreview = effectiveType === "multiline" && tab === "preview";
 
+  // Палитру и подсказку про формулы показываем для типов, в которые
+  // осмысленно писать `{{ … }}` — текст, число, многострочный.
   const showFormulaUi =
-    field.type === "text" ||
-    field.type === "number" ||
-    field.type === "multiline";
+    effectiveType === "text" ||
+    effectiveType === "number" ||
+    effectiveType === "multiline";
 
   return (
     <ScrollView
@@ -340,6 +432,8 @@ export const CellEditor = (props: CellBaseProps) => {
         onPrevField={() => confirmIfDirty(onPrevField)}
         onNextField={() => confirmIfDirty(onNextField)}
       />
+
+      {renderTypeSelector()}
 
       <Text style={styles.label}>
         {isMultilinePreview
@@ -594,5 +688,41 @@ const getStyles = createStyles((colors) => ({
     fontFamily: "monospace",
     fontSize: 12,
     color: colors.text,
+  },
+  typeSection: {
+    marginBottom: 12,
+  },
+  typeLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: colors.textMuted,
+    textTransform: "uppercase",
+    marginBottom: 6,
+    paddingHorizontal: 4,
+  },
+  typeChipsRow: {
+    gap: 6,
+    paddingRight: 16,
+  },
+  typeChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: colors.inputBackground,
+    borderWidth: 1,
+    borderColor: colors.inputBorder,
+  },
+  typeChipActive: {
+    backgroundColor: colors.primary,
+    borderColor: colors.primary,
+  },
+  typeChipText: {
+    fontSize: 13,
+    color: colors.textSecondary,
+    fontWeight: "500",
+  },
+  typeChipTextActive: {
+    color: "#fff",
+    fontWeight: "600",
   },
 }));

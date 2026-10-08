@@ -63,6 +63,8 @@
     "updateSuccess": "Table updated",
     "rowsCount": "{{count}} rows",
     "cell": {
+      "typeSectionTitle": "Cell type",
+      "typeAuto": "Same as column ({{type}})",
       "row": "Row",
       "value": "Value",
       "empty": "—",
@@ -79,6 +81,7 @@
       "fieldLabel": "Column",
       "swipeHint2d": "Swipe ↑ ↓ for rows, ← → for columns",
       "scrollHint": "Reading mode: content is scrollable",
+      "formulaHint": "Formulas: insert {{ expression }} — e.g. {{ sum(C1P1:C1P5) }} or {{ [Price] * [Quantity] }}. Tap to open the guide.",
       "enableScroll": "Enable scrolling",
       "enableSwipe": "Enable swipe navigation"
     },
@@ -86,18 +89,29 @@
       "menuTitle": "Row",
       "above": "Insert above",
       "below": "Insert below",
-      "duplicate": "Duplicate"
+      "duplicate": "Duplicate",
+      "addTitle": "Add row",
+      "atStart": "At the top",
+      "atEnd": "At the bottom",
+      "atPosition": "At position…",
+      "atPositionTitle": "Row position",
+      "positionHint": "1 — start, -1 — end. For example: 2 or -2.",
+      "positionPlaceholder": "e.g. 2 or -1"
     },
     "errors": {
       "duplicateFailed": "Failed to duplicate the table.",
       "nameRequired": "Enter table name",
       "sectionRequired": "Select a section",
       "renameTableFailed": "Failed to rename table",
+      "insertFailed": "Failed to insert row",
       "renameFailed": "Failed to rename column",
       "createFailed": "Failed to create table",
       "updateFailed": "Failed to update table",
       "saveFailed": "Failed to save value",
-      "invalidNumber": "Enter a valid number"
+      "invalidNumber": "Enter a valid number",
+      "invalidPosition": "Enter a non-zero integer",
+      "addRowFailed": "Failed to add row",
+      "duplicateRowFailed": "Failed to duplicate row"
     }
   },
   "pin": {

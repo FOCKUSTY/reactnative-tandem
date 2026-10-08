@@ -13,8 +13,10 @@
  * приводим к нижнему регистру — так они совпадают с ключами
  * `formulaFunctions` (`sum`, `avg`, `if`, …).
  *
- * Важно: все внутренние функции (`GET_CELL`, `RANGE`, `GET_FIELD`) вставляем
- * ПОСЛЕ перевода имён функций, чтобы не лоуэркейсить их самих.
+ * Внутренние функции (`GET_CELL`, `RANGE`, `GET_FIELD`) вставляем ПОСЛЕ
+ * перевода имён функций, чтобы не лоуэркейсить их самих. И прячем
+ * найденные диапазоны в плейсхолдеры, иначе одиночные ссылки «залезут»
+ * внутрь строковых аргументов `RANGE("C1P1","C3P5")` и сломают выражение.
  */
 
 import { normalizeRefString } from "./references";
@@ -87,6 +89,10 @@ function translateFunctionNames(expr: string): string {
   return out.join("");
 }
 
+/** Плейсхолдеры. `\u0000` в реальном тексте выражений не встречается. */
+const FIELD_PLACEHOLDER = (i: number) => `\u0000F${i}\u0000`;
+const RANGE_PLACEHOLDER = (i: number) => `\u0000R${i}\u0000`;
+
 /**
  * Приводит пользовательское выражение к форме, понятной expr-eval.
  *
@@ -94,31 +100,53 @@ function translateFunctionNames(expr: string): string {
  *   1. Прячем `[Имя поля]` в плейсхолдеры, чтобы их не задели следующие regex.
  *   2. Переводим имена функций (только оригинальные идентификаторы, без GET_*).
  *   3. Нормализуем кириллические С/Р в C/P.
- *   4. Подставляем ссылки на ячейки и диапазоны.
- *   5. Возвращаем имена полей через GET_FIELD.
+ *   4. Прячем найденные диапазоны в плейсхолдеры — их содержимое (C1P1 и C3P5
+ *      в строковых аргументах) не должно попасть под следующий проход.
+ *   5. Заменяем одиночные ссылки на GET_CELL(...).
+ *   6. Возвращаем диапазоны и имена полей обратно.
  */
 export function preprocessExpression(expr: string): string {
   const fields: string[] = [];
+  const ranges: string[] = [];
+
+  // 1. [Имя поля] -> \u0000F0\u0000
   let s = expr.replace(/\[([^\]]*)\]/g, (_, name: string) => {
     const idx = fields.length;
     fields.push(name);
-    return `\u0000F${idx}\u0000`;
+    return FIELD_PLACEHOLDER(idx);
   });
 
+  // 2. Русские имена функций -> английские (и лоуэркейс для английских).
   s = translateFunctionNames(s);
+
+  // 3. С/Р -> C/P.
   s = normalizeRefString(s);
 
+  // 4. Диапазоны -> \u0000R0\u0000. Сохраняем финальный RANGE(...) в массив,
+  //    чтобы вернуть его обратно уже после замены одиночных ссылок.
   s = s.replace(
     /([Cc]-?\d+[Pp]-?\d+)\s*:\s*([Cc]-?\d+[Pp]-?\d+)/g,
-    (_, a: string, b: string) =>
-      `RANGE(${JSON.stringify(a.toUpperCase())},${JSON.stringify(b.toUpperCase())})`,
+    (_, a: string, b: string) => {
+      const idx = ranges.length;
+      ranges.push(
+        `RANGE(${JSON.stringify(a.toUpperCase())},${JSON.stringify(b.toUpperCase())})`,
+      );
+      return RANGE_PLACEHOLDER(idx);
+    },
   );
 
+  // 5. Одиночные ссылки -> GET_CELL("C1P1").
   s = s.replace(
     /([Cc]-?\d+[Pp]-?\d+)/g,
     (_, a: string) => `GET_CELL(${JSON.stringify(a.toUpperCase())})`,
   );
 
+  // 6. Возвращаем диапазоны.
+  s = s.replace(/\u0000R(\d+)\u0000/g, (_, i: string) => {
+    return ranges[parseInt(i, 10)] ?? "";
+  });
+
+  // 7. Возвращаем имена полей.
   s = s.replace(/\u0000F(\d+)\u0000/g, (_, i: string) => {
     const name = fields[parseInt(i, 10)] ?? "";
     return `GET_FIELD(${JSON.stringify(name)})`;

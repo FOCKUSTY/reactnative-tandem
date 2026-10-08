@@ -4,14 +4,20 @@ import Markdown from "react-native-markdown-renderer";
 import { useTheme } from "../../../contexts";
 import { useTranslate } from "../../../hooks";
 import { createStyles, formatDate, getMarkdownStyles } from "../../../utils";
-import type { Field } from "../../../types/table.types";
+import type { Field, FieldType } from "../../../types/table.types";
 
 export type CellValueDisplayProps = {
   field: Field;
   value: string;
+  /** Тип, переопределённый для этой конкретной ячейки. */
+  overrideType?: FieldType | null;
 };
 
-export const CellValueDisplay = ({ field, value }: CellValueDisplayProps) => {
+export const CellValueDisplay = ({
+  field,
+  value,
+  overrideType,
+}: CellValueDisplayProps) => {
   const { t } = useTranslate();
   const { colors } = useTheme();
   const styles = getStyles(colors);
@@ -24,19 +30,19 @@ export const CellValueDisplay = ({ field, value }: CellValueDisplayProps) => {
     },
   };
 
+  const effectiveType: FieldType = overrideType ?? field.type;
   const empty = !value;
 
-  if (field.type === "multiline") {
+  if (effectiveType === "multiline") {
     if (empty) {
       return <Text style={styles.valueEmpty}>{t("tables.cell.empty")}</Text>;
     }
-
     return <Markdown style={cellMarkdownStyles}>{value}</Markdown>;
   }
 
   const textStyle = [styles.valueText, empty && styles.valueEmpty];
 
-  switch (field.type) {
+  switch (effectiveType) {
     case "boolean":
       return (
         <Text style={textStyle}>

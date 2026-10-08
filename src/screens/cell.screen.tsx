@@ -60,6 +60,8 @@ export const CellScreen = () => {
 
     rowId: currentRow.id,
     initialValue: currentRow.cells[fieldId] ?? "",
+    initialCellType: currentRow.cellTypes?.[fieldId] ?? null,
+
     rowNumber: rowIndex + 1,
     totalRows,
     hasPrevRow: rowIndex > 0,
