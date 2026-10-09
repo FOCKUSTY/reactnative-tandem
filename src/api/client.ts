@@ -2,7 +2,8 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Toast from "react-native-toast-message";
 
 import type { AuthResponse } from "../types";
-import { API_BASE, OFFLINE_CONFIG } from "../constants";
+import { OFFLINE_CONFIG } from "../constants";
+import { getApiUrl, subscribeApiUrl } from "../config/api-url";
 import { authEvents, getDeviceMetadata, logger, tokenManager } from "../utils";
 import type { AuthEventReason } from "../utils/auth-events.utils";
 
@@ -39,17 +40,23 @@ type RetriableRequestConfig = InternalAxiosRequestConfig & {
 type TimeoutAwareError = AxiosError & { isTimeout?: boolean };
 
 const api = axios.create({
-  baseURL: API_BASE,
+  baseURL: getApiUrl(),
   headers: { "Content-Type": "application/json" },
   timeout: OFFLINE_CONFIG.API_TIMEOUT,
+});
+
+// Пользователь может переключить сервер в настройках (в dev-режиме) —
+// axios должен подхватить это без пересоздания инстанса.
+subscribeApiUrl((url) => {
+  api.defaults.baseURL = url;
 });
 
 /** Путь запроса без origin и query: `/auth/login`, `/auth/sessions/42` и т.п. */
 const endpointOf = (url?: string): string => {
   if (!url) return "";
-  const withoutOrigin = url.startsWith(API_BASE)
-    ? url.slice(API_BASE.length)
-    : url;
+  const base = getApiUrl();
+  const withoutOrigin =
+    base && url.startsWith(base) ? url.slice(base.length) : url;
   return withoutOrigin.split("?")[0];
 };
 
@@ -108,7 +115,7 @@ const refreshAccessToken = async (): Promise<string> => {
     let response;
     try {
       response = await axios.post<AuthResponse>(
-        `${API_BASE}/auth/refresh`,
+        `${getApiUrl()}/auth/refresh`,
         { refreshToken, ...metadata },
         {
           headers: { "Content-Type": "application/json" },

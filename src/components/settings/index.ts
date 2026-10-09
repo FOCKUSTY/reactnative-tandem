@@ -12,3 +12,4 @@ export * from "./cache-section.component";
 export * from "./notifications-section.component";
 export * from "./template-help-section.component";
 export * from "./api-url-section.component";
+export * from "./developer-section.component";

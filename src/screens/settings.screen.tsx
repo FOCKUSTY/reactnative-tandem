@@ -1,7 +1,7 @@
 import { ScrollView } from "react-native";
 import { createStyles } from "../utils";
 import { useSettings } from "../hooks";
-import { useTheme } from "../contexts";
+import { useDeveloperMode, useTheme } from "../contexts";
 import {
   ProfileSection,
   PartnerSection,
@@ -10,12 +10,10 @@ import {
   LogoutButton,
   AppFooter,
   LanguageSection,
-  LoggingSection,
-  PinSection,
-  CacheSection,
+  DeveloperSection,
   NotificationsSection,
+  PinSection,
   TemplateHelpSection,
-  ApiUrlSection,
 } from "../components";
 
 export const SettingsScreen = () => {
@@ -23,23 +21,20 @@ export const SettingsScreen = () => {
   const styles = getStyles(colors);
   const { user, mode, toggleTheme, handleLogout, isPartnerLinked } =
     useSettings();
+  const { isDeveloperMode } = useDeveloperMode();
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <ProfileSection user={user} />
       <PartnerSection isPartnerLinked={isPartnerLinked} />
       <AppearanceSection mode={mode} onToggleTheme={toggleTheme} />
-
       <LanguageSection />
+      <AboutSection />
       <NotificationsSection />
       <PinSection />
       <TemplateHelpSection />
 
-      <AboutSection />
-
-      <LoggingSection />
-      <CacheSection />
-      <ApiUrlSection />
+      {isDeveloperMode && <DeveloperSection />}
 
       <LogoutButton onPress={handleLogout} />
       <AppFooter />
@@ -53,5 +48,3 @@ const getStyles = createStyles(() => ({
     paddingBottom: 40,
   },
 }));
-
-export default SettingsScreen;

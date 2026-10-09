@@ -4,3 +4,4 @@ export * from "./theme.context";
 export * from "./pin.context";
 export * from "./cache-settings.context";
 export * from "./reminder.context";
+export * from "./developer-mode.context";

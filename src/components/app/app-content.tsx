@@ -11,6 +11,7 @@ import {
   AuthProvider,
   FiltersProvider,
   ReminderProvider,
+  DeveloperModeProvider,
 } from "../../contexts";
 import { PinScreen } from "../../screens";
 import { AppNavigator } from "./app-navigator";
@@ -65,21 +66,23 @@ export const AppContent = ({ queryClient }: AppContentProps) => {
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <View style={{ flex: 1 }}>
-            <StatusWidget />
-            <AuthProvider>
-              <PushNotificationsGate />
-              <UpdatesObserver />
-              <FiltersProvider>
-                <ReminderProvider>
-                  <NavigationContainer linking={linking} fallback={<View />}>
-                    <DeepLinkHandler />
-                    <AppNavigator />
-                  </NavigationContainer>
-                </ReminderProvider>
-              </FiltersProvider>
-            </AuthProvider>
-          </View>
+          <DeveloperModeProvider>
+            <View style={{ flex: 1 }}>
+              <StatusWidget />
+              <AuthProvider>
+                <PushNotificationsGate />
+                <UpdatesObserver />
+                <FiltersProvider>
+                  <ReminderProvider>
+                    <NavigationContainer linking={linking} fallback={<View />}>
+                      <DeepLinkHandler />
+                      <AppNavigator />
+                    </NavigationContainer>
+                  </ReminderProvider>
+                </FiltersProvider>
+              </AuthProvider>
+            </View>
+          </DeveloperModeProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </I18nextProvider>

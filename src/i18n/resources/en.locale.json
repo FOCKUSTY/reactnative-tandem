@@ -405,6 +405,12 @@
       "saveFailed": "Failed to save record"
     }
   },
+  "developerMode": {
+    "enabled": "Developer mode enabled",
+    "enabledHint": "Hidden settings are now available at the bottom of the screen",
+    "disableTitle": "Disable developer mode?",
+    "disableMessage": "Hidden settings will be hidden."
+  },
   "apiUrl": {
     "current": "Current server",
     "custom": "Custom URL",

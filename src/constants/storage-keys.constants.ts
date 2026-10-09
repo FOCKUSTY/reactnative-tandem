@@ -14,4 +14,5 @@ export const STORAGE_KEYS = {
   CACHE_SETTINGS: ".cache_settings",
   PUSH_TOKEN: ".push_token",
   API_URL: ".api_url",
+  DEVELOPER_MODE: ".developer_mode",
 } as const;
