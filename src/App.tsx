@@ -15,6 +15,7 @@ import { AppContent } from "./components/app";
 import { PinProvider, CacheSettingsProvider } from "./contexts";
 
 import * as Notifications from "expo-notifications";
+import { loadApiUrl, setApiUrl } from "./config";
 
 const previousErrorHandler = ErrorUtils.getGlobalHandler();
 ErrorUtils.setGlobalHandler((error, isFatal) => {
@@ -46,6 +47,9 @@ const App = () => {
       try {
         void initOta();
         await initI18n();
+
+        const storedApiUrl = await loadApiUrl();
+        setApiUrl(storedApiUrl);
 
         const storedSettings = await AsyncStorage.getItem(
           STORAGE_KEYS.CACHE_SETTINGS,

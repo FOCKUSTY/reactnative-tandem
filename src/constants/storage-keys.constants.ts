@@ -13,4 +13,5 @@ export const STORAGE_KEYS = {
   PIN_LOCKED_UNTIL: ".pin_locked_until",
   CACHE_SETTINGS: ".cache_settings",
   PUSH_TOKEN: ".push_token",
+  API_URL: ".api_url",
 } as const;

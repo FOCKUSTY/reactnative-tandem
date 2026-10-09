@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { API_BASE, OFFLINE_CONFIG } from "../constants";
+import { OFFLINE_CONFIG } from "../constants";
+import { getApiUrl, subscribeApiUrl } from "../config";
 import { logger } from "../utils";
 
 export const useServerStatus = () => {
@@ -13,7 +14,7 @@ export const useServerStatus = () => {
 
     const checkHealth = async () => {
       try {
-        const baseUrl = API_BASE.replace(/\/api$/, "");
+        const baseUrl = getApiUrl().replace(/\/api$/, "");
         const response = await axios.get(`${baseUrl}/health`, {
           timeout: OFFLINE_CONFIG.HEALTH_CHECK_TIMEOUT,
         });
@@ -29,11 +30,15 @@ export const useServerStatus = () => {
     };
 
     checkHealth();
+    const unsubscribe = subscribeApiUrl(() => {
+      void checkHealth();
+    });
     intervalId = setInterval(() => {
       checkHealth();
     }, OFFLINE_CONFIG.HEALTH_CHECK_INTERVAL);
 
     return () => {
+      unsubscribe();
       if (intervalId) clearInterval(intervalId);
     };
   }, []);

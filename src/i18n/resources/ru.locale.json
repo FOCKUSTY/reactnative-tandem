@@ -406,7 +406,21 @@
       "changeFailed": "Не удалось сменить пароль"
     }
   },
+  "apiUrl": {
+    "current": "Текущий сервер",
+    "custom": "Свой URL",
+    "customPlaceholder": "http://192.168.0.5:8080/api",
+    "apply": "Применить",
+    "changed": "Сервер изменён",
+    "invalid": "URL должен начинаться с http:// или https://",
+    "preset": {
+      "production": "Продакшн",
+      "devServer": "Dev-сервер ({{host}})",
+      "local": "Локальный ({{host}})"
+    }
+  },
   "settings": {
+    "apiUrl": "Сервер API",
     "updateReady": "Обновление готово",
     "restartNow": "Обновите сейчас",
     "logs": "Логи",

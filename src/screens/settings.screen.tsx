@@ -15,6 +15,7 @@ import {
   CacheSection,
   NotificationsSection,
   TemplateHelpSection,
+  ApiUrlSection,
 } from "../components";
 
 export const SettingsScreen = () => {
@@ -28,13 +29,18 @@ export const SettingsScreen = () => {
       <ProfileSection user={user} />
       <PartnerSection isPartnerLinked={isPartnerLinked} />
       <AppearanceSection mode={mode} onToggleTheme={toggleTheme} />
+
       <LanguageSection />
-      <AboutSection />
-      <LoggingSection />
-      <CacheSection />
       <NotificationsSection />
       <PinSection />
       <TemplateHelpSection />
+
+      <AboutSection />
+
+      <LoggingSection />
+      <CacheSection />
+      <ApiUrlSection />
+
       <LogoutButton onPress={handleLogout} />
       <AppFooter />
     </ScrollView>

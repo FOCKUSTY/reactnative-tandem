@@ -405,7 +405,21 @@
       "saveFailed": "Failed to save record"
     }
   },
+  "apiUrl": {
+    "current": "Current server",
+    "custom": "Custom URL",
+    "customPlaceholder": "http://192.168.0.5:8080/api",
+    "apply": "Apply",
+    "changed": "Server changed",
+    "invalid": "URL must start with http:// or https://",
+    "preset": {
+      "production": "Production",
+      "devServer": "Dev server ({{host}})",
+      "local": "Local ({{host}})"
+    }
+  },
   "settings": {
+    "apiUrl": "API server",
     "updateReady": "Update ready",
     "restartNow": "Restart now",
     "logs": "Logs",

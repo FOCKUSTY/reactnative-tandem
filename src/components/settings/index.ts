@@ -11,3 +11,4 @@ export * from "./pin-section.component";
 export * from "./cache-section.component";
 export * from "./notifications-section.component";
 export * from "./template-help-section.component";
+export * from "./api-url-section.component";
