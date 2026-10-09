@@ -22,6 +22,7 @@ import { createStyles, getMarkdownStyles, parseDate } from "../../../utils";
 import type { FieldType } from "../../../types/table.types";
 import type { NavigationProperty } from "../../../types";
 import { hasTemplate } from "../../../tables/formula/types";
+import { useTableDraft } from "../../../tables/draft";
 
 const FORMULA_TOKENS = [
   "С1Р1",
@@ -52,6 +53,7 @@ export const CellEditor = (props: CellBaseProps) => {
   const {
     table,
     field,
+    draftTableId,
     rowId,
     initialValue,
     initialCellType,
@@ -71,6 +73,7 @@ export const CellEditor = (props: CellBaseProps) => {
 
   const { t } = useTranslate();
   const { colors } = useTheme();
+  const draft = useTableDraft(draftTableId);
   const styles = getStyles(colors);
   const markdownStyles = getMarkdownStyles(colors);
   const navigation = useNavigation<NavigationProperty>();
@@ -98,7 +101,6 @@ export const CellEditor = (props: CellBaseProps) => {
   const isDirty =
     value !== initialValue || cellType !== (initialCellType ?? null);
 
-  // select без опций предлагать бессмысленно — рендерить нечего.
   const availableTypes = OVERRIDE_TYPE_ORDER.filter(
     (ft) => ft !== "select" || field.options.length > 0,
   );
@@ -124,8 +126,6 @@ export const CellEditor = (props: CellBaseProps) => {
 
   const handleTypeChange = (next: FieldType | null) => {
     setCellType(next);
-    // Если уходим с multiline, сбрасываем вкладку на edit: превью
-    // относится только к multiline.
     const nextType = next ?? field.type;
     if (nextType !== "multiline") setTab("edit");
   };
@@ -145,6 +145,17 @@ export const CellEditor = (props: CellBaseProps) => {
       }
     }
 
+    if (draftTableId) {
+      draft.setChange({
+        rowId,
+        fieldId: field.id,
+        value: finalValue,
+        cellType,
+      });
+      navigation.goBack();
+      return;
+    }
+
     try {
       await updateCell.mutateAsync({
         rowId,
@@ -153,7 +164,7 @@ export const CellEditor = (props: CellBaseProps) => {
         cellType,
       });
       navigation.goBack();
-    } catch (error) {
+    } catch {
       Alert.alert(t("common.error"), t("tables.errors.saveFailed"));
     }
   };

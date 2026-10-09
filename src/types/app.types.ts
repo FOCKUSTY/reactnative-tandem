@@ -31,6 +31,7 @@ export type RootStackParameters = {
     fieldId: string;
     tableName?: string;
     mode?: "view" | "edit";
+    draftTableId?: string;
   };
   TemplateHelp: undefined;
   FormulaHelp: undefined;

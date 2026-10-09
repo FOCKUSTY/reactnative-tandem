@@ -1,5 +1,21 @@
 {
   "tables": {
+    "draft": {
+      "turnOff": "Turn off edit mode",
+      "turnOn": "Turn on edit mode",
+      "toggleMode": "Edit mode",
+      "count": "count",
+      "count_one": "{{count}} change",
+      "count_other": "{{count}} changes",
+      "save": "Save ({{count}})",
+      "discard": "Discard",
+      "discardTitle": "Discard changes?",
+      "discardMessage": "All unsaved changes will be lost.",
+      "saved": "Changes saved",
+      "saved_one": "{{count}} change saved",
+      "saved_other": "{{count}} changes saved",
+      "partialFailure": "Failed to save {{failed}} of {{total}}. Failed changes remain in the draft — try again."
+    },
     "share": "Share",
     "renameTableTitle": "Rename table",
     "tapToRename": "tap to rename",

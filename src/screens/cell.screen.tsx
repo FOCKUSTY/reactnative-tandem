@@ -19,6 +19,7 @@ export type CellScreenRouteProperties = {
     fieldId: string;
     tableName?: string;
     mode?: "view" | "edit";
+    draftTableId?: string;
   };
 };
 
@@ -26,7 +27,7 @@ export const CellScreen = () => {
   const route = useRoute<CellScreenRouteProperties>();
   const navigation = useNavigation<NavigationProperty>();
 
-  const { tableId, fieldId, rowId, mode = "view" } = route.params;
+  const { tableId, fieldId, rowId, mode = "view", draftTableId } = route.params;
 
   const { data, isLoading } = useTable(tableId);
   const table = data as TableWithRecordRows | undefined;
@@ -57,6 +58,7 @@ export const CellScreen = () => {
   const baseProps: CellBaseProps = {
     table,
     field,
+    draftTableId,
 
     rowId: currentRow.id,
     initialValue: currentRow.cells[fieldId] ?? "",

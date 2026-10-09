@@ -7,6 +7,8 @@ import type {
 export type CellBaseProps = {
   table: TableWithRecordRows;
   field: Field;
+  /** При наличии — CellEditor пишет в черновик вместо сервера. */
+  draftTableId?: string;
 
   rowId: string;
   initialValue: string;

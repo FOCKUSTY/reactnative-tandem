@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { MaterialIcons } from "@react-native-vector-icons/material-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import {
   TableRow,
@@ -42,6 +42,8 @@ import { createStyles } from "../utils";
 import { useTheme } from "../contexts";
 import { tablesService } from "../api";
 import { useQueryClient } from "@tanstack/react-query";
+import Toast from "react-native-toast-message";
+import { isTempId, makeTempId } from "../tables/draft";
 
 export type TableDetailRouteProperties = {
   key: string;
@@ -57,7 +59,14 @@ export const TableDetailScreen = () => {
   const route = useRoute<TableDetailRouteProperties>();
   const { tableId, tableName } = route.params;
 
-  const { table, renderedCells, isLoading } = useTableWithFormulas(tableId);
+  const { table, renderedCells, isLoading, draft } =
+    useTableWithFormulas(tableId);
+
+  const [draftMode, setDraftMode] = useState(false);
+  const draftModeRef = useRef(draftMode);
+  draftModeRef.current = draftMode;
+
+  const [saving, setSaving] = useState(false);
 
   const createRow = useCreateRow();
   const insertRow = useInsertRow();
@@ -76,7 +85,6 @@ export const TableDetailScreen = () => {
   const [renameTableVisible, setRenameTableVisible] = useState(false);
   const updateTable = useUpdateTable();
 
-  // Модалка «вставить строку на конкретную позицию».
   const [insertPositionVisible, setInsertPositionVisible] = useState(false);
   const [insertPositionText, setInsertPositionText] = useState("");
 
@@ -107,6 +115,11 @@ export const TableDetailScreen = () => {
   };
 
   const handleRenameField = (id: string, name: string) => {
+    if (draftModeRef.current && isTempId(id)) {
+      draft.updateField(id, { name });
+      setRenameField(null);
+      return;
+    }
     updateField.mutate(
       { id, data: { name } },
       {
@@ -166,6 +179,12 @@ export const TableDetailScreen = () => {
                 onPress: handleDeleteTable,
                 destructive: true,
               },
+              {
+                label: draftMode
+                  ? t("tables.draft.turnOff")
+                  : t("tables.draft.turnOn"),
+                onPress: () => setDraftMode((v) => !v),
+              },
             ]}
           />
         </View>
@@ -186,16 +205,39 @@ export const TableDetailScreen = () => {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, table, colors, t]);
+  }, [navigation, table, colors, t, draftMode]);
 
-  /**
-   * Короткое нажатие на FAB — добавить строку в конец (backward compat).
-   * Долгое нажатие — меню: «в начало», «в конец», «на позицию…».
-   */
-  const handleAddRow = () =>
+  const addDraftRow = (position: number) => {
+    draft.addRow({
+      tempId: makeTempId("row"),
+      position,
+      cells: {},
+      cellTypes: {},
+    });
+  };
+
+  const handleAddRow = () => {
+    if (draftMode) return addDraftRow(-1);
     createRow.mutate({ tableId, data: { position: -1 } });
+  };
 
   const handleAddRowMenu = () => {
+    if (draftMode) {
+      Alert.alert(t("tables.insertRow.addTitle"), undefined, [
+        { text: t("tables.insertRow.atStart"), onPress: () => addDraftRow(1) },
+        { text: t("tables.insertRow.atEnd"), onPress: () => addDraftRow(-1) },
+        {
+          text: t("tables.insertRow.atPosition"),
+          onPress: () => {
+            setInsertPositionText("");
+            setInsertPositionVisible(true);
+          },
+        },
+        { text: t("common.cancel"), style: "cancel" },
+      ]);
+      return;
+    }
+
     Alert.alert(t("tables.insertRow.addTitle"), undefined, [
       {
         text: t("tables.insertRow.atStart"),
@@ -222,6 +264,13 @@ export const TableDetailScreen = () => {
       Alert.alert(t("common.error"), t("tables.errors.invalidPosition"));
       return;
     }
+
+    if (draftMode) {
+      addDraftRow(parsed);
+      setInsertPositionVisible(false);
+      return;
+    }
+
     createRow.mutate(
       { tableId, data: { position: parsed } },
       {
@@ -232,11 +281,28 @@ export const TableDetailScreen = () => {
     );
   };
 
+  const computeInsertPosition = (
+    referenceRowId: string,
+    position: "above" | "below",
+  ): number => {
+    if (!table) return -1;
+    const realRows = table.rows.filter((r) => !isTempId(r.id));
+    const idx = realRows.findIndex((r) => r.id === referenceRowId);
+    if (idx < 0) return -1;
+    return position === "above" ? idx + 1 : idx + 2;
+  };
+
   const handleInsertRow = (
     referenceRowId: string,
     position: "above" | "below",
   ) => {
     if (!table) return;
+
+    if (draftMode) {
+      addDraftRow(computeInsertPosition(referenceRowId, position));
+      return;
+    }
+
     insertRow.mutate(
       {
         tableId,
@@ -275,10 +341,6 @@ export const TableDetailScreen = () => {
     ]);
   };
 
-  /**
-   * Дублирование строки: создаём пустую строку, копируем значения ячеек,
-   * затем переупорядочиваем ids, чтобы дубликат шёл сразу за оригиналом.
-   */
   const handleDuplicateRow = async (row: TableRowData) => {
     if (!table) return;
     try {
@@ -306,6 +368,11 @@ export const TableDetailScreen = () => {
   };
 
   const handleDeleteRow = (rowId: string) => {
+    if (draftMode && isTempId(rowId)) {
+      draft.removeRow(rowId);
+      return;
+    }
+
     Alert.alert(
       t("tables.deleteRowConfirm.title"),
       t("tables.deleteRowConfirm.message"),
@@ -321,6 +388,11 @@ export const TableDetailScreen = () => {
   };
 
   const handleDeleteField = (fieldId: string) => {
+    if (draftMode && isTempId(fieldId)) {
+      draft.removeField(fieldId);
+      return;
+    }
+
     Alert.alert(
       t("tables.deleteFieldConfirm.title"),
       t("tables.deleteFieldConfirm.message"),
@@ -341,7 +413,8 @@ export const TableDetailScreen = () => {
       rowId: row.id,
       fieldId: field.id,
       tableName: table?.name,
-      mode: "view",
+      mode: draftMode ? "edit" : "view",
+      draftTableId: draftMode ? tableId : undefined,
     });
   };
 
@@ -352,6 +425,7 @@ export const TableDetailScreen = () => {
       fieldId: field.id,
       tableName: table?.name,
       mode: "edit",
+      draftTableId: draftMode ? tableId : undefined,
     });
   };
 
@@ -360,8 +434,16 @@ export const TableDetailScreen = () => {
     fieldId: string,
     value: string,
   ) => {
+    if (draftMode) {
+      draft.setChange({ rowId, fieldId, value });
+      return;
+    }
     updateCell.mutate({ rowId, fieldId, value });
   };
+
+  useEffect(() => {
+    if (draft.hasChanges && !draftMode) setDraftMode(true);
+  }, [draft.hasChanges, draftMode]);
 
   if (isLoading) return <SkeletonRecordDetail />;
   if (!table) {
@@ -401,48 +483,48 @@ export const TableDetailScreen = () => {
         <ScrollView
           horizontal
           showsHorizontalScrollIndicator
-          contentContainerStyle={styles.hScroll}
+          style={styles.hScroll}
+          contentContainerStyle={styles.hScrollContent}
         >
-          <ScrollView
-            showsVerticalScrollIndicator
-            contentContainerStyle={styles.vScroll}
-          >
-            <View style={styles.tableWrap}>
-              <View style={styles.headerRow}>
-                {table.fields.map((field) => (
-                  <View key={field.id} style={styles.headerCell}>
-                    <View style={styles.headerTop}>
-                      <TouchableOpacity
-                        style={styles.headerTitleTouch}
-                        activeOpacity={0.6}
-                        onPress={() => setRenameField(field)}
-                      >
-                        <Text style={styles.headerCellText} numberOfLines={2}>
-                          {field.name}
-                          {field.required ? " *" : ""}
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => handleDeleteField(field.id)}
-                        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-                        style={styles.headerDeleteIcon}
-                        accessibilityLabel={t(
-                          "tables.deleteFieldConfirm.title",
-                        )}
-                      >
-                        <MaterialIcons
-                          name="close"
-                          size={14}
-                          color={colors.textMuted}
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={styles.headerCellType}>{field.type}</Text>
+          <View style={styles.tableWrap}>
+            <View style={styles.headerRow}>
+              {table.fields.map((field) => (
+                <View key={field.id} style={styles.headerCell}>
+                  <View style={styles.headerTop}>
+                    <TouchableOpacity
+                      style={styles.headerTitleTouch}
+                      activeOpacity={0.6}
+                      onPress={() => setRenameField(field)}
+                    >
+                      <Text style={styles.headerCellText} numberOfLines={2}>
+                        {field.name}
+                        {field.required ? " *" : ""}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => handleDeleteField(field.id)}
+                      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                      style={styles.headerDeleteIcon}
+                      accessibilityLabel={t("tables.deleteFieldConfirm.title")}
+                    >
+                      <MaterialIcons
+                        name="close"
+                        size={14}
+                        color={colors.textMuted}
+                      />
+                    </TouchableOpacity>
                   </View>
-                ))}
-                <View style={styles.headerActionCell} />
-              </View>
+                  <Text style={styles.headerCellType}>{field.type}</Text>
+                </View>
+              ))}
+              <View style={styles.headerActionCell} />
+            </View>
 
+            <ScrollView
+              style={styles.bodyScroll}
+              contentContainerStyle={styles.vScroll}
+              showsVerticalScrollIndicator
+            >
               {table.rows.length === 0 ? (
                 <View style={styles.emptyTable}>
                   <Text style={styles.emptyText}>{t("tables.emptyTable")}</Text>
@@ -462,14 +544,14 @@ export const TableDetailScreen = () => {
                   />
                 ))
               )}
-            </View>
-          </ScrollView>
+            </ScrollView>
+          </View>
         </ScrollView>
       )}
 
       {hasFields && (
         <TouchableOpacity
-          style={styles.fab}
+          style={[styles.fab, draftMode && draft.hasChanges && { bottom: 96 }]}
           onPress={handleAddRow}
           onLongPress={handleAddRowMenu}
           delayLongPress={400}
@@ -482,6 +564,18 @@ export const TableDetailScreen = () => {
         visible={fieldModalVisible}
         onClose={() => setFieldModalVisible(false)}
         onCreate={(data) => {
+          if (draftMode) {
+            draft.addField({
+              tempId: makeTempId("field"),
+              name: data.name,
+              type: data.type,
+              required: data.required,
+              options: data.options,
+              defaultValue: data.defaultValue,
+            });
+            setFieldModalVisible(false);
+            return;
+          }
           createField.mutate(
             { tableId, data },
             { onSuccess: () => setFieldModalVisible(false) },
@@ -527,11 +621,137 @@ export const TableDetailScreen = () => {
           autoFocus
         />
       </ModalWrapper>
+
+      {draftMode && draft.hasChanges && (
+        <View style={styles.draftBar}>
+          <Text style={styles.draftCount}>
+            {t("tables.draft.count", { count: draft.changeCount })}
+          </Text>
+          <View style={styles.draftActions}>
+            <TouchableOpacity
+              style={[styles.draftButton, styles.draftDiscard]}
+              disabled={saving}
+              onPress={() => {
+                Alert.alert(
+                  t("tables.draft.discardTitle"),
+                  t("tables.draft.discardMessage"),
+                  [
+                    { text: t("common.cancel"), style: "cancel" },
+                    {
+                      text: t("common.confirm"),
+                      style: "destructive",
+                      onPress: () => {
+                        draft.discardAll();
+                        setDraftMode(false);
+                      },
+                    },
+                  ],
+                );
+              }}
+            >
+              <Text style={styles.draftDiscardText}>
+                {t("tables.draft.discard")}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.draftButton,
+                styles.draftSave,
+                saving && styles.draftSaveDisabled,
+              ]}
+              disabled={saving}
+              onPress={async () => {
+                if (saving) return;
+                setSaving(true);
+                try {
+                  const result = await draft.saveAll();
+                  if (result.failed === 0) {
+                    Toast.show({
+                      type: "success",
+                      text1: t("tables.draft.saved", {
+                        count: result.succeeded,
+                      }),
+                      position: "bottom",
+                    });
+                  } else {
+                    Alert.alert(
+                      t("common.error"),
+                      t("tables.draft.partialFailure", {
+                        failed: result.failed,
+                        total: result.total,
+                      }),
+                    );
+                  }
+                } finally {
+                  setSaving(false);
+                }
+              }}
+            >
+              <MaterialIcons name="save" size={18} color="#fff" />
+              <Text style={styles.draftSaveText}>
+                {t("tables.draft.save", { count: draft.changeCount })}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
 
 const getStyles = createStyles((colors) => ({
+  draftBar: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 24,
+    backgroundColor: colors.card,
+    borderTopWidth: 1,
+    borderTopColor: colors.cardBorder,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+  },
+  draftCount: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    flexShrink: 1,
+  },
+  draftActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  draftButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  draftDiscard: {
+    backgroundColor: colors.inputBackground,
+    borderWidth: 1,
+    borderColor: colors.inputBorder,
+  },
+  draftDiscardText: {
+    color: colors.text,
+    fontWeight: "600",
+  },
+  draftSave: {
+    backgroundColor: colors.primary,
+  },
+  draftSaveDisabled: {
+    opacity: 0.6,
+  },
+  draftSaveText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
   headerTop: {
     flexDirection: "row",
     alignItems: "flex-start",
@@ -560,11 +780,20 @@ const getStyles = createStyles((colors) => ({
     paddingHorizontal: 16,
     paddingTop: 12,
   },
+  /** Горизонтальный скролл занимает всю высоту экрана под контейнером. */
   hScroll: {
-    paddingBottom: 100,
+    flex: 1,
+  },
+  /** Растягивает tableWrap по вертикали на всю доступную высоту. */
+  hScrollContent: {
+    alignItems: "stretch",
+  },
+  /** Вертикальный скролл — только тело таблицы; шапка снаружи. */
+  bodyScroll: {
+    flex: 1,
   },
   vScroll: {
-    paddingBottom: 40,
+    paddingBottom: 100,
   },
   tableWrap: {
     margin: 16,
